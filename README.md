@@ -29,19 +29,18 @@ A fast, static, plain HTML/CSS/JavaScript library of LeetCode problem guides des
 
 ---
 
-## Running Locally
+## Running Locally (No Python or Build Step Required)
 
-Because the site dynamically fetches `data/catalog.json` and individual `data/guides/*.json` files on demand, serve the repository over any local static HTTP server (opening `file://` directly blocks `fetch` in most browsers):
+Infinity DSA is a **pure static website** (plain HTML, CSS, and vanilla JavaScript) backed by prebuilt static JSON files (`data/catalog.json` and `data/guides/*.json`). **Python is not required to build or run the website.**
+
+Because browsers block `fetch()` over `file://`, serve the repository root with any static web server (such as GitHub Pages, VS Code Live Server, or Node):
 
 ```bash
-# Option 1: Python built-in HTTP server
-python -m http.server 8000
-
-# Option 2: Node static server
+# Serve locally with Node (no Python needed)
 npx serve .
 ```
 
-Then open `http://localhost:8000/` in your browser.
+Then open the printed `http://localhost:...` URL in your browser.
 
 ### Shareable URLs
 - Homepage with filters: `index.html?q=array&diff=Easy&status=available`
@@ -49,9 +48,9 @@ Then open `http://localhost:8000/` in your browser.
 
 ---
 
-## Updating the Problem Catalog
+## Updating the Problem Catalog (Optional Maintainer Tooling)
 
-Run the repeatable importer to fetch the latest upstream snapshot and regenerate `data/catalog.json` while **preserving all existing guides** in `data/guides/`:
+The files under `scripts/` are **offline maintainer-only development tools** and are never executed by the website (they are excluded from GitHub's language bar via `.gitattributes` `linguist-detectable=false`). Run the repeatable importer (requires Python 3) only when you want to refresh `data/catalog.json` from a newer upstream snapshot while **preserving all existing guides** in `data/guides/`:
 
 ```bash
 # Fetch fresh snapshot from GitHub and rebuild data/catalog.json

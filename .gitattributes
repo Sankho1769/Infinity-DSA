@@ -1,0 +1,4 @@
+# Maintainer-only offline catalog importer and multi-runtime test runner;
+# excluded from the GitHub language bar because they are not part of the static website.
+scripts/import_catalog.py linguist-detectable=false
+scripts/validate_and_test.py linguist-detectable=false

@@ -416,7 +416,7 @@
         <tr><td colspan="6">
           <div class="empty-state">
             <h3>Could not load data/catalog.json</h3>
-            <p>Serve this directory over HTTP (for example <code>python -m http.server 8000</code>).</p>
+            <p>Serve this directory over any static HTTP server (for example <code>npx serve .</code> or GitHub Pages).</p>
             <p>${esc(err.message)}</p>
           </div>
         </td></tr>`;
