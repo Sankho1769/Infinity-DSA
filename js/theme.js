@@ -13,9 +13,7 @@
     } catch (_) {
       // Ignore storage failures in restricted contexts.
     }
-    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
+    return "light";
   }
 
   function applyTheme(theme) {

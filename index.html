@@ -28,177 +28,222 @@
 
       <nav class="nav-pills" aria-label="Primary">
         <a class="nav-pill active" href="#catalog" id="navProblems">Problems</a>
-        <a class="nav-pill" href="#topics" id="navTopics">Topics</a>
-        <a class="nav-pill" href="#roadmap" id="navRoadmap">Roadmap</a>
+        <a class="nav-pill" href="#catalog" id="navTopics">Topics</a>
+        <a class="nav-pill" href="#catalog" id="navRoadmap">Roadmap</a>
       </nav>
 
       <div class="header-right">
         <div class="header-search">
           <span class="search-ico" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <circle cx="11" cy="11" r="8"></circle>
               <path d="m21 21-4.3-4.3"></path>
             </svg>
           </span>
-          <input id="headerSearchInput" type="search" placeholder="Search problems…" aria-label="Quick search problems">
-          <span class="kbd-hint">⌘K</span>
+          <input id="searchInput" type="search" placeholder="Search problems..." aria-label="Search problems by number, title, or topic">
         </div>
         <button id="themeToggle" class="theme-pill" type="button" aria-label="Toggle light or dark mode" aria-pressed="false">
           <span class="sun-slot" aria-hidden="true">☀</span>
           <span class="moon-slot" aria-hidden="true">☾</span>
         </button>
+        <a class="avatar-btn" href="problem.html?slug=two-sum" title="Catalog stats &amp; start learning (#1 Two Sum)" aria-label="Start with problem #1">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M5 20a7 7 0 0 1 14 0"></path>
+          </svg>
+        </a>
       </div>
     </div>
   </header>
 
   <main class="main-content">
     <div class="container">
-      <section class="hero-banner" aria-label="Infinity DSA overview">
-        <svg class="hero-waves" viewBox="0 0 1200 320" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0,250 C220,160 420,300 680,210 C920,130 1050,240 1200,180 L1200,320 L0,320 Z" fill="rgba(20,108,67,0.12)"></path>
-          <path d="M0,275 C260,210 470,315 740,245 C960,188 1090,265 1200,220 L1200,320 L0,320 Z" fill="rgba(25,135,84,0.15)"></path>
-          <path d="M0,240 C240,175 430,285 710,200 C940,130 1080,225 1200,175" fill="none" stroke="rgba(217,155,22,0.55)" stroke-width="2.5"></path>
+      <!-- Visual Hero Banner matching landing page reference -->
+      <section class="landing-hero" aria-label="Interactive algorithm preview">
+        <svg class="hero-waves-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="waveGrad1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#87c59d" stop-opacity="0.35"/>
+              <stop offset="60%" stop-color="#1b7a48" stop-opacity="0.72"/>
+              <stop offset="100%" stop-color="#13633a" stop-opacity="0.9"/>
+            </linearGradient>
+            <linearGradient id="waveGrad2" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#2c8c59" stop-opacity="0.55"/>
+              <stop offset="50%" stop-color="#7ec495" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#146c43" stop-opacity="0.85"/>
+            </linearGradient>
+            <linearGradient id="goldArc" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#f6c445" stop-opacity="0.9"/>
+              <stop offset="50%" stop-color="#f4b41a" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#f6c445" stop-opacity="0.8"/>
+            </linearGradient>
+            <pattern id="dotGrid" width="14" height="14" patternUnits="userSpaceOnUse">
+              <circle cx="3" cy="3" r="1.4" fill="#146c43" fill-opacity="0.18"/>
+            </pattern>
+          </defs>
+          <rect x="255" y="102" width="110" height="58" fill="url(#dotGrid)"/>
+          <rect x="465" y="34" width="125" height="60" fill="url(#dotGrid)"/>
+          <path d="M0,185 C190,105 340,265 590,190 C840,115 1010,255 1200,150 L1200,300 L0,300 Z" fill="url(#waveGrad2)"/>
+          <path d="M0,248 C230,175 430,295 720,220 C960,155 1080,250 1200,195 L1200,300 L0,300 Z" fill="url(#waveGrad1)"/>
+          <path d="M0,210 C190,130 370,285 650,215 C900,155 1060,240 1200,175" fill="none" stroke="url(#goldArc)" stroke-width="2.5"/>
+          <!-- Connected node lines on left -->
+          <path d="M60,110 L170,122 L285,55 M170,122 L255,168 L345,210" fill="none" stroke="rgba(20,108,67,0.28)" stroke-width="1.6"/>
+          <circle cx="60" cy="110" r="3.5" fill="#16804b" fill-opacity="0.7"/>
+          <circle cx="118" cy="180" r="4.5" fill="#16804b" fill-opacity="0.75"/>
+          <circle cx="295" cy="240" r="3.5" fill="#f5b31a"/>
         </svg>
 
-        <div class="hero-left">
-          <div class="hero-badge-row">
-            <span class="hero-tag">Infinity DSA · LeetCode Solutions</span>
-            <span class="hero-tag" id="heroProvenanceTag">MIT Catalog Snapshot</span>
+        <div class="hero-left-stage" aria-hidden="true">
+          <div class="float-tile tile-code">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#157347" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+              <line x1="14" y1="4" x2="10" y2="20"></line>
+            </svg>
           </div>
-          <h1>Master problem patterns with intuition before code.</h1>
-          <p>
-            Created by InfinityDevLog — explore the full indexed LeetCode library with plain-language explanations, labeled diagrams, interactive dry runs, approach comparisons, and multi-language solutions.
-          </p>
-          <div class="hero-metrics">
-            <div class="metric-pill">
-              <strong id="statTotal">—</strong>
-              <span>Indexed Problems</span>
-            </div>
-            <div class="metric-pill">
-              <strong id="statCompleted">—</strong>
-              <span>Completed Guides</span>
-            </div>
-            <div class="metric-pill">
-              <strong id="statPending">—</strong>
-              <span>Guide Pending</span>
-            </div>
-            <div class="metric-pill">
-              <strong id="statLanguages">—</strong>
-              <span>Languages Covered</span>
-            </div>
+          <div class="float-tile tile-tree">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#198754" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="3" width="6" height="4" rx="1"></rect>
+              <rect x="3" y="16" width="5" height="4" rx="1"></rect>
+              <rect x="9.5" y="16" width="5" height="4" rx="1"></rect>
+              <rect x="16" y="16" width="5" height="4" rx="1"></rect>
+              <path d="M12 7v4M5.5 16v-3h13v3M12 11v5"></path>
+            </svg>
+          </div>
+          <div class="float-tile tile-layers">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="#198754">
+              <path d="M12 2L2 7l10 5 10-5-10-5zm0 8L2 12l10 5 10-5-10-5zm0 7l-10-5 10 5 10-5-10 5z" opacity="0.9"/>
+            </svg>
+          </div>
+          <div class="float-tile tile-bars">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="#157347">
+              <rect x="3" y="13" width="3.5" height="7" rx="1"></rect>
+              <rect x="8.5" y="9" width="3.5" height="11" rx="1"></rect>
+              <rect x="14" y="11" width="3.5" height="9" rx="1"></rect>
+              <rect x="19.5" y="5" width="3.5" height="15" rx="1"></rect>
+            </svg>
           </div>
         </div>
 
-        <div class="hero-right">
-          <div class="hero-preview">
-            <div class="preview-bar">
-              <span class="dots"><i style="background:#ef4444"></i><i style="background:#f59e0b"></i><i style="background:#22c55e"></i></span>
-              <span>#1 Two Sum · Interactive Preview</span>
-              <a href="problem.html?slug=two-sum" style="color:#4ade80;font-weight:700;">Open Guide →</a>
-            </div>
-            <div class="preview-body">
-              <pre class="preview-code">def twoSum(nums, target):
+        <div class="hero-laptop-stage">
+          <div class="float-tile tile-screen-code" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#157347" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+              <line x1="14" y1="4" x2="10" y2="20"></line>
+            </svg>
+          </div>
+
+          <a class="laptop-link" href="problem.html?slug=two-sum" aria-label="Open #1 Two Sum Interactive Guide">
+            <div class="laptop-bezel">
+              <div class="laptop-screen">
+                <div class="laptop-editor">
+                  <div class="win-dots">
+                    <i style="background:#ef4444"></i>
+                    <i style="background:#f59e0b"></i>
+                    <i style="background:#22c55e"></i>
+                  </div>
+                  <pre class="laptop-code"><span class="kw">def</span> <span class="fn">twoSum</span>(nums, target):
   seen = {}
-  for i, num in enumerate(nums):
-    need = target - num
-    if need in seen:
-      return [seen[need], i]
-    seen[num] = i</pre>
-              <div class="preview-exec">
-                <span class="exec-ok">✓ Dry Run: Step 4 / 4</span>
-                <span style="color:#94a3b8;">One-Pass Hash Map · O(n)</span>
-                <div class="exec-cells">
-                  <span class="exec-cell">4</span>
-                  <span class="exec-cell hit">9</span>
-                  <span class="exec-cell hit">1</span>
-                  <span class="exec-cell">7</span>
+  <span class="kw">for</span> i, num <span class="kw">in</span> <span class="fn">enumerate</span>(nums):
+    <span class="kw">if</span> target - num <span class="kw">in</span> seen:
+      <span class="kw">return</span> [seen[target - num], i]
+    seen[num] = i
+  <span class="kw">return</span> []</pre>
                 </div>
-                <span style="color:#cbd5e1;">Target: 10 → [1, 2]</span>
+                <div class="laptop-exec">
+                  <div class="exec-heading">Execution</div>
+                  <div class="exec-stat"><span class="chk">✓</span> Runtime: 32 ms</div>
+                  <div class="exec-stat"><span class="chk">✓</span> Memory: 14.2 MB</div>
+                  <div class="exec-array">
+                    <span class="arr-cell">2</span>
+                    <span class="arr-cell active">7</span>
+                    <span class="arr-cell">11</span>
+                    <span class="arr-cell">15</span>
+                  </div>
+                  <div class="exec-target">Target: 9</div>
+                </div>
               </div>
             </div>
+            <div class="laptop-base"></div>
+          </a>
+
+          <div class="float-tile tile-bulb" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#fde047" stroke="#b45309" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18h6"></path>
+              <path d="M10 22h4"></path>
+              <path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2v.3h6v-.3c0-.8.4-1.5 1-2A7 7 0 0 0 12 2z"></path>
+            </svg>
+          </div>
+          <div class="float-tile tile-right-bars" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="#157347">
+              <rect x="4" y="12" width="4" height="8" rx="1"></rect>
+              <rect x="10" y="8" width="4" height="12" rx="1"></rect>
+              <rect x="16" y="4" width="4" height="16" rx="1"></rect>
+            </svg>
           </div>
         </div>
       </section>
 
-      <section id="roadmap" aria-label="Completed Interactive Guides" style="margin-bottom:20px;">
-        <div class="hero-badge-row" style="justify-content:space-between;">
-          <h2 style="margin:0;font-size:1.08rem;">Completed Interactive Guides (Roadmap Batch 1–3)</h2>
-          <button type="button" class="btn btn-outline-green btn-sm" id="filterAvailableBtn">Filter to Completed Guides</button>
-        </div>
-        <div class="completed-strip" id="featuredGrid"></div>
-      </section>
-
+      <!-- Main Problem Catalog Card matching reference -->
       <section id="catalog" class="catalog-panel" aria-label="Problem catalog">
         <div class="catalog-toolbar">
-          <div class="toolbar-top">
-            <div class="diff-tabs" role="group" aria-label="Filter by difficulty">
-              <button type="button" class="seg-btn active" data-diff="all">All Problems</button>
-              <button type="button" class="seg-btn" data-diff="Easy">Easy</button>
-              <button type="button" class="seg-btn" data-diff="Medium">Medium</button>
-              <button type="button" class="seg-btn" data-diff="Hard">Hard</button>
-            </div>
-
-            <div class="dropdown-row">
-              <select id="topicFilter" aria-label="Filter by topic">
-                <option value="all">All Topics</option>
-              </select>
-              <select id="languageFilter" aria-label="Filter by code language">
-                <option value="all">All Languages</option>
-              </select>
-              <select id="statusFilter" aria-label="Filter by guide availability">
-                <option value="all">All Statuses</option>
-                <option value="available">Guide available</option>
-                <option value="pending">Guide pending</option>
-              </select>
-              <select id="accessFilter" aria-label="Filter by access status">
-                <option value="all">Free &amp; Premium</option>
-                <option value="Free">Free only</option>
-                <option value="Premium">Premium only</option>
-              </select>
-              <select id="sortSelect" aria-label="Sort problems">
-                <option value="number-asc">Sort: Problem Number ↑</option>
-                <option value="number-desc">Sort: Problem Number ↓</option>
-                <option value="guides-first">Sort: Guides First</option>
-              </select>
-            </div>
+          <div class="diff-tabs" role="group" aria-label="Filter by difficulty">
+            <button type="button" class="seg-btn active" data-diff="all">All Problems</button>
+            <button type="button" class="seg-btn" data-diff="Easy">Easy</button>
+            <button type="button" class="seg-btn" data-diff="Medium">Medium</button>
+            <button type="button" class="seg-btn" data-diff="Hard">Hard</button>
           </div>
 
-          <div class="search-strip" id="topics">
-            <div class="search-input-wrap">
-              <span class="search-ico" aria-hidden="true">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.3-4.3"></path>
-                </svg>
-              </span>
-              <input id="searchInput" type="search" placeholder="Search by problem number (e.g. 53), title (e.g. Two Sum), or topic (e.g. Dynamic Programming)…" aria-label="Search problems by number, title, or topic">
-            </div>
-            <button type="button" id="resetFiltersBtn" class="btn btn-secondary btn-sm">Reset filters</button>
+          <div class="dropdown-row">
+            <select id="topicFilter" aria-label="Filter by topic">
+              <option value="all">All Topics</option>
+            </select>
+            <select id="languageFilter" aria-label="Filter by code language">
+              <option value="all">All Languages</option>
+            </select>
+            <select id="statusFilter" aria-label="Filter by guide availability">
+              <option value="all">All Guides</option>
+              <option value="available">Guide available</option>
+              <option value="pending">Guide pending</option>
+            </select>
+            <select id="accessFilter" aria-label="Filter by access status">
+              <option value="all">All Access</option>
+              <option value="Free">Free</option>
+              <option value="Premium">Premium</option>
+            </select>
+            <select id="sortSelect" aria-label="Sort problems">
+              <option value="number-asc">Sort: Problem Number</option>
+              <option value="number-desc">Sort: Number ↓</option>
+              <option value="guides-first">Sort: Guides First</option>
+            </select>
           </div>
-        </div>
-
-        <div class="results-bar">
-          <span id="resultsCount">Loading problem catalog…</span>
-          <span id="catalogProvenance"></span>
         </div>
 
         <div class="catalog-table-wrap">
           <table class="catalog-table">
             <thead>
               <tr>
-                <th style="width:82px;">#</th>
+                <th style="width:68px;">#</th>
                 <th>Title</th>
                 <th>Topic(s)</th>
-                <th style="width:120px;">Difficulty</th>
-                <th style="width:130px;">Status</th>
-                <th style="width:220px;">Solution</th>
+                <th style="width:130px;">Difficulty</th>
+                <th style="width:185px;">Solution</th>
               </tr>
             </thead>
             <tbody id="catalogBody"></tbody>
           </table>
         </div>
 
-        <div id="pagination" class="pagination"></div>
+        <div class="catalog-footer-bar">
+          <div class="catalog-meta-line">
+            <span id="resultsCount">Loading catalog…</span>
+            <span class="meta-sep" aria-hidden="true">·</span>
+            <span id="catalogProvenance"></span>
+            <button type="button" id="resetFiltersBtn" class="reset-link" hidden>Reset filters</button>
+          </div>
+          <div id="pagination" class="pagination-controls"></div>
+        </div>
       </section>
     </div>
   </main>
@@ -206,7 +251,7 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <span><strong>Infinity DSA</strong> by InfinityDevLog · LeetCode Solutions</span>
-      <span>Original plain-language guides &amp; visual dry runs. Official problem statements linked to LeetCode.</span>
+      <span id="footerStats">4,123 problems indexed · Plain-language guides, dry runs &amp; multi-language solutions</span>
     </div>
   </footer>
 

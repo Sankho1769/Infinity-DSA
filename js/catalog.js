@@ -21,14 +21,9 @@
   const els = {};
 
   function cacheElements() {
-    els.statTotal = document.getElementById("statTotal");
-    els.statCompleted = document.getElementById("statCompleted");
-    els.statPending = document.getElementById("statPending");
-    els.statLanguages = document.getElementById("statLanguages");
-    els.heroProvenanceTag = document.getElementById("heroProvenanceTag");
-    els.featuredGrid = document.getElementById("featuredGrid");
-    els.filterAvailableBtn = document.getElementById("filterAvailableBtn");
-    els.headerSearchInput = document.getElementById("headerSearchInput");
+    els.navProblems = document.getElementById("navProblems");
+    els.navTopics = document.getElementById("navTopics");
+    els.navRoadmap = document.getElementById("navRoadmap");
     els.searchInput = document.getElementById("searchInput");
     els.topicFilter = document.getElementById("topicFilter");
     els.languageFilter = document.getElementById("languageFilter");
@@ -40,6 +35,7 @@
     els.catalogProvenance = document.getElementById("catalogProvenance");
     els.catalogBody = document.getElementById("catalogBody");
     els.pagination = document.getElementById("pagination");
+    els.footerStats = document.getElementById("footerStats");
     els.diffButtons = Array.from(document.querySelectorAll("[data-diff]"));
   }
 
@@ -58,7 +54,6 @@
 
   function syncControlsFromState() {
     els.searchInput.value = state.q;
-    if (els.headerSearchInput) els.headerSearchInput.value = state.q;
     els.topicFilter.value = state.topic;
     els.languageFilter.value = state.language;
     els.statusFilter.value = state.status;
@@ -67,6 +62,22 @@
     els.diffButtons.forEach((btn) => {
       btn.classList.toggle("active", btn.getAttribute("data-diff") === state.difficulty);
     });
+    if (els.navProblems && els.navRoadmap && els.navTopics) {
+      els.navProblems.classList.toggle("active", state.status !== "available");
+      els.navRoadmap.classList.toggle("active", state.status === "available");
+      els.navTopics.classList.toggle("active", state.topic !== "all" && state.status !== "available");
+    }
+    if (els.resetFiltersBtn) {
+      const hasActive =
+        state.q.trim() !== "" ||
+        state.difficulty !== "all" ||
+        state.topic !== "all" ||
+        state.language !== "all" ||
+        state.status !== "all" ||
+        state.access !== "all" ||
+        state.sort !== "number-asc";
+      els.resetFiltersBtn.hidden = !hasActive;
+    }
   }
 
   function writeQueryParams() {
@@ -91,12 +102,6 @@
     return "badge-unknown";
   }
 
-  function accessBadgeClass(access) {
-    if (access === "Free") return "badge-free";
-    if (access === "Premium") return "badge-premium";
-    return "badge-unknown";
-  }
-
   function guideHref(problem) {
     if (problem.slug && problem.slug !== "unknown") {
       return `problem.html?slug=${encodeURIComponent(problem.slug)}`;
@@ -115,51 +120,19 @@
     els.topicFilter.appendChild(topicFrag);
 
     const langFrag = document.createDocumentFragment();
-    const coveredLangs = meta.availableLanguages || [];
-    coveredLangs.forEach((lang) => {
+    (meta.availableLanguages || []).forEach((lang) => {
       const opt = document.createElement("option");
       opt.value = lang;
       opt.textContent = lang;
       langFrag.appendChild(opt);
     });
     els.languageFilter.appendChild(langFrag);
-  }
-
-  function renderStatsAndFeatured(data) {
-    const meta = data.meta || {};
-    els.statTotal.textContent = (meta.totalProblems || 0).toLocaleString();
-    els.statCompleted.textContent = (meta.completedGuides || 0).toLocaleString();
-    els.statPending.textContent = (meta.pendingGuides || 0).toLocaleString();
-    const covCount = (meta.availableLanguages || []).length;
-    const totalLangs = (meta.allLanguages || []).length || 19;
-    els.statLanguages.textContent = `${covCount} / ${totalLangs}`;
 
     if (meta.source) {
-      if (els.heroProvenanceTag) {
-        els.heroProvenanceTag.textContent = `Snapshot ${meta.source.checkedDate} · ${meta.source.license}`;
-      }
       els.catalogProvenance.textContent = `Source: ${meta.source.name} (${meta.source.license}, checked ${meta.source.checkedDate})`;
     }
-
-    const completed = (data.problems || []).filter((p) => p.guideStatus === "available");
-    if (els.featuredGrid) {
-      els.featuredGrid.innerHTML = completed
-        .slice(0, 12)
-        .map(
-          (p) => `
-          <a class="completed-mini" href="${guideHref(p)}">
-            <div class="sub-meta" style="justify-content:space-between;">
-              <span class="problem-num">#${esc(p.number)}</span>
-              <span class="badge ${difficultyBadgeClass(p.difficulty)}">${esc(p.difficulty)}</span>
-            </div>
-            <strong style="font-size:0.9rem;">${esc(p.title)}</strong>
-            <div class="sub-meta">
-              <span class="badge badge-available">Guide available</span>
-              <span class="badge badge-unknown">${esc(p.languages.length)} langs</span>
-            </div>
-          </a>`
-        )
-        .join("");
+    if (els.footerStats) {
+      els.footerStats.textContent = `${(meta.totalProblems || 0).toLocaleString()} indexed · ${(meta.completedGuides || 0).toLocaleString()} completed guides · ${(meta.availableLanguages || []).length}/${(meta.allLanguages || []).length} languages covered`;
     }
   }
 
@@ -200,6 +173,7 @@
     const totalPages = Math.max(1, Math.ceil(state.filtered.length / PAGE_SIZE));
     if (state.page > totalPages) state.page = totalPages;
 
+    syncControlsFromState();
     writeQueryParams();
     renderResults();
   }
@@ -218,7 +192,7 @@
     if (slice.length === 0) {
       els.catalogBody.innerHTML = `
         <tr>
-          <td colspan="6">
+          <td colspan="5">
             <div class="empty-state">
               <h3>No problems match these filters</h3>
               <p>Try clearing your search or switching back to all difficulties, topics, and languages.</p>
@@ -232,46 +206,31 @@
     els.catalogBody.innerHTML = slice
       .map((p) => {
         const isAvailable = p.guideStatus === "available";
-        const guideBadge = isAvailable
-          ? `<span class="badge badge-available">Guide available</span>`
-          : `<span class="badge badge-pending">Guide pending</span>`;
+        const premiumTag = p.access === "Premium" ? `<span class="badge badge-premium">Premium</span>` : "";
 
         const topicButtons = (p.topics || ["unknown"])
-          .map(
-            (topic) =>
-              `<button type="button" class="topic-chip" data-topic-pick="${esc(topic)}">${esc(topic)}</button>`
-          )
+          .map((topic) => `<button type="button" class="topic-chip" data-topic-pick="${esc(topic)}">${esc(topic)}</button>`)
           .join("");
 
-        const viewBtn = isAvailable
+        const actionHtml = isAvailable
           ? `<a class="btn btn-outline-green btn-sm" href="${guideHref(p)}">View Solution →</a>`
-          : `<a class="btn btn-secondary btn-sm" href="${guideHref(p)}">Pending Info →</a>`;
-
-        const officialBtn =
-          p.url && p.url !== "unknown"
-            ? `<a class="btn btn-secondary btn-sm" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer" title="Official LeetCode statement">Official ↗</a>`
-            : "";
+          : `<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+               <a class="btn btn-secondary btn-sm" href="${guideHref(p)}">Guide pending</a>
+               ${p.url && p.url !== "unknown" ? `<a class="topic-chip" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer" title="Official LeetCode problem">↗</a>` : ""}
+             </div>`;
 
         return `
         <tr>
           <td><span class="problem-num">${esc(p.number)}</span></td>
           <td>
-            <div class="problem-title-cell">
+            <div class="title-wrap">
               <a class="problem-title-link" href="${guideHref(p)}">${esc(p.title)}</a>
-              <div class="sub-meta">
-                <span class="badge ${accessBadgeClass(p.access)}">${esc(p.access)}</span>
-                ${
-                  p.languages && p.languages.length > 0
-                    ? `<span class="badge badge-unknown">${esc(p.languages.length)} langs</span>`
-                    : ""
-                }
-              </div>
+              ${premiumTag}
             </div>
           </td>
           <td><div class="topic-list">${topicButtons}</div></td>
           <td><span class="badge ${difficultyBadgeClass(p.difficulty)}">${esc(p.difficulty)}</span></td>
-          <td>${guideBadge}</td>
-          <td><div class="sub-meta">${viewBtn}${officialBtn}</div></td>
+          <td>${actionHtml}</td>
         </tr>`;
       })
       .join("");
@@ -295,9 +254,7 @@
 
     let prev = 0;
     sorted.forEach((n) => {
-      if (prev && n - prev > 1) {
-        buttonsHtml += `<span class="problem-num" aria-hidden="true">…</span>`;
-      }
+      if (prev && n - prev > 1) buttonsHtml += `<span class="problem-num" aria-hidden="true">…</span>`;
       buttonsHtml += `<button type="button" class="page-btn ${n === state.page ? "active" : ""}" data-page="${n}">${n}</button>`;
       prev = n;
     });
@@ -306,38 +263,53 @@
       state.page >= totalPages ? "disabled" : ""
     }>Next</button>`;
 
-    els.pagination.innerHTML = `
-      <span class="step-indicator">Page ${state.page} of ${totalPages}</span>
-      <div class="page-buttons">${buttonsHtml}</div>
-    `;
+    els.pagination.innerHTML = buttonsHtml;
   }
 
   function bindEvents() {
     let searchTimer = null;
-    const onSearchInput = (val) => {
-      state.q = val;
-      if (els.searchInput.value !== val) els.searchInput.value = val;
-      if (els.headerSearchInput && els.headerSearchInput.value !== val) els.headerSearchInput.value = val;
+    els.searchInput.addEventListener("input", () => {
+      state.q = els.searchInput.value;
       window.clearTimeout(searchTimer);
       searchTimer = window.setTimeout(() => applyFilters(true), 120);
-    };
-
-    els.searchInput.addEventListener("input", () => onSearchInput(els.searchInput.value));
-    if (els.headerSearchInput) {
-      els.headerSearchInput.addEventListener("input", () => onSearchInput(els.headerSearchInput.value));
-    }
+    });
 
     document.addEventListener("keydown", (ev) => {
       if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === "k") {
         ev.preventDefault();
-        (els.headerSearchInput || els.searchInput).focus();
+        els.searchInput.focus();
       }
     });
+
+    if (els.navProblems) {
+      els.navProblems.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        state.status = "all";
+        applyFilters(true);
+        document.getElementById("catalog").scrollIntoView({ behavior: "smooth" });
+      });
+    }
+    if (els.navTopics) {
+      els.navTopics.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        state.status = "all";
+        applyFilters(false);
+        els.topicFilter.focus();
+        document.getElementById("catalog").scrollIntoView({ behavior: "smooth" });
+      });
+    }
+    if (els.navRoadmap) {
+      els.navRoadmap.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        state.status = state.status === "available" ? "all" : "available";
+        applyFilters(true);
+        document.getElementById("catalog").scrollIntoView({ behavior: "smooth" });
+      });
+    }
 
     els.diffButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         state.difficulty = btn.getAttribute("data-diff") || "all";
-        syncControlsFromState();
         applyFilters(true);
       });
     });
@@ -364,24 +336,13 @@
       state.access = "all";
       state.sort = "number-asc";
       state.page = 1;
-      syncControlsFromState();
       applyFilters(true);
     });
-
-    if (els.filterAvailableBtn) {
-      els.filterAvailableBtn.addEventListener("click", () => {
-        state.status = "available";
-        syncControlsFromState();
-        applyFilters(true);
-        document.getElementById("catalog").scrollIntoView({ behavior: "smooth" });
-      });
-    }
 
     els.catalogBody.addEventListener("click", (ev) => {
       const chip = ev.target.closest("[data-topic-pick]");
       if (!chip) return;
       state.topic = chip.getAttribute("data-topic-pick") || "all";
-      syncControlsFromState();
       applyFilters(true);
     });
 
@@ -407,13 +368,12 @@
       state.catalog = await resp.json();
       populateFacets(state.catalog.meta || {});
       syncControlsFromState();
-      renderStatsAndFeatured(state.catalog);
       bindEvents();
       applyFilters(false);
     } catch (err) {
       els.resultsCount.textContent = "Failed to load catalog.";
       els.catalogBody.innerHTML = `
-        <tr><td colspan="6">
+        <tr><td colspan="5">
           <div class="empty-state">
             <h3>Could not load data/catalog.json</h3>
             <p>Serve this directory over any static HTTP server (for example <code>npx serve .</code> or GitHub Pages).</p>
