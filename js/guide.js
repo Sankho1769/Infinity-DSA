@@ -842,5 +842,15 @@ Output: ${esc(u.example2.output)}</pre>
     }
   }
 
+  document.addEventListener("keydown", (ev) => {
+    if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === "k") {
+      const searchEl = document.querySelector(".header-search input");
+      if (searchEl) {
+        ev.preventDefault();
+        searchEl.focus();
+      }
+    }
+  });
+
   document.addEventListener("DOMContentLoaded", init);
 })();
