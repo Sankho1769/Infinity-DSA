@@ -219,12 +219,13 @@
                ${p.url && p.url !== "unknown" ? `<a class="topic-chip" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer" title="Official LeetCode problem">↗</a>` : ""}
              </div>`;
 
+        const href = guideHref(p);
         return `
-        <tr>
+        <tr class="problem-row-link" data-href="${esc(href)}" tabindex="0" role="link" aria-label="Open #${esc(p.number)} ${esc(p.title)}">
           <td><span class="problem-num">${esc(p.number)}</span></td>
           <td>
             <div class="title-wrap">
-              <a class="problem-title-link" href="${guideHref(p)}">${esc(p.title)}</a>
+              <a class="problem-title-link" href="${esc(href)}">${esc(p.title)}</a>
               ${premiumTag}
             </div>
           </td>
@@ -341,9 +342,33 @@
 
     els.catalogBody.addEventListener("click", (ev) => {
       const chip = ev.target.closest("[data-topic-pick]");
-      if (!chip) return;
-      state.topic = chip.getAttribute("data-topic-pick") || "all";
-      applyFilters(true);
+      if (chip) {
+        ev.stopPropagation();
+        state.topic = chip.getAttribute("data-topic-pick") || "all";
+        applyFilters(true);
+        return;
+      }
+      if (ev.target.closest("a, button")) {
+        return;
+      }
+      const row = ev.target.closest("tr[data-href]");
+      if (!row) return;
+      const href = row.getAttribute("data-href");
+      if (!href) return;
+      if (ev.ctrlKey || ev.metaKey) {
+        window.open(href, "_blank", "noopener,noreferrer");
+      } else {
+        window.location.href = href;
+      }
+    });
+
+    els.catalogBody.addEventListener("keydown", (ev) => {
+      if (ev.key !== "Enter" && ev.key !== " ") return;
+      if (ev.target.closest("a, button")) return;
+      const row = ev.target.closest("tr[data-href]");
+      if (!row) return;
+      ev.preventDefault();
+      window.location.href = row.getAttribute("data-href");
     });
 
     els.pagination.addEventListener("click", (ev) => {
