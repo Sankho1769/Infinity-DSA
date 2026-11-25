@@ -1,0 +1,194 @@
+{
+  "number": 9,
+  "slug": "palindrome-number",
+  "title": "Palindrome Number",
+  "difficulty": "Easy",
+  "topics": ["Math"],
+  "access": "Free",
+  "url": "https://leetcode.com/problems/palindrome-number/",
+  "jsFunctionName": "isPalindrome",
+  "pyMethodName": "isPalindrome",
+  "verification": {
+    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "untestedLanguages": []
+  },
+  "understand": {
+    "question": "Given an integer x, how do we check whether its decimal digits read identically forwards and backwards — ideally without converting x to a string?",
+    "plainExplanation": "Negative numbers like -121 cannot be palindromes because the minus sign is only on the left. For positive numbers, if you reverse only the RIGHT half of the digits until the reversed half catches up to the remaining left half, both halves will match!",
+    "inputMeaning": "A 32-bit signed integer x.",
+    "outputMeaning": "true if x is a palindrome, otherwise false.",
+    "rules": [
+      "All negative numbers (x < 0) are false because '-' has no matching '-' on the right.",
+      "Any positive number ending in 0 (like 10 or 120) cannot be a palindrome because no non-zero number starts with 0; only 0 itself is a palindrome.",
+      "Reversing only half of the digits completely avoids integer overflow."
+    ],
+    "terms": [
+      {
+        "term": "Half-Reversal",
+        "definition": "Building reversedRight from the rightmost digits while shrinking x from the right until x <= reversedRight."
+      },
+      {
+        "term": "Middle Digit",
+        "definition": "In odd-digit numbers like 12321, the center digit 3 lands at the end of reversedRight (123 vs 12), so comparing x == reversedRight / 10 ignores it."
+      }
+    ],
+    "example1": {
+      "input": "x = 12321",
+      "output": "true",
+      "whyValid": "Digits mirror around the middle 3: 1 matches 1, and 2 matches 2.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          { "index": 0, "value": 1, "state": "match", "label": "left" },
+          { "index": 1, "value": 2, "state": "match", "label": "left" },
+          { "index": 2, "value": 3, "state": "window", "label": "middle" },
+          { "index": 3, "value": 2, "state": "match", "label": "right" },
+          { "index": 4, "value": 1, "state": "match", "label": "right" }
+        ],
+        "caption": "12 == floor(123 / 10) -> palindrome!"
+      }
+    },
+    "example2": {
+      "input": "x = 10",
+      "output": "false",
+      "whyEdgeCase": "Trailing zero trap! If we did not reject x % 10 == 0 (for x != 0) upfront, half-reversal on x = 10 would reach x = 0 and rev = 1, where x == floor(rev / 10) (0 == 0) would falsely return true."
+    }
+  },
+  "dryRun": {
+    "approachId": "reverse-half",
+    "algorithmName": "Reverse Half of Digits",
+    "steps": [
+      {
+        "title": "Check guards and pop 1st digit (1)",
+        "description": "12321 >= 0 and does not end in 0. Pop 1 -> x = 1232, rev = 1. Still x > rev.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": 1, "state": "default" },
+            { "index": 1, "value": 2, "state": "default" },
+            { "index": 2, "value": 3, "state": "default" },
+            { "index": 3, "value": 2, "state": "default" },
+            { "index": 4, "value": 1, "state": "active", "label": "popped" }
+          ],
+          "aux": { "title": "Halves", "entries": [{ "key": "x", "value": 1232 }, { "key": "rev", "value": 1 }] },
+          "caption": "Continue while x > rev."
+        }
+      },
+      {
+        "title": "Pop 2 and 3 until x <= rev",
+        "description": "Pop 2 -> x = 123, rev = 12. Pop 3 -> x = 12, rev = 123. Now x <= rev so stop! Since 12 == floor(123 / 10), return true.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": 1, "state": "match" },
+            { "index": 1, "value": 2, "state": "match" },
+            { "index": 2, "value": 3, "state": "window", "label": "middle" },
+            { "index": 3, "value": 2, "state": "match" },
+            { "index": 4, "value": 1, "state": "match" }
+          ],
+          "aux": { "title": "Final Comparison", "entries": [{ "key": "x", "value": 12 }, { "key": "rev", "value": 123 }, { "key": "x == rev//10", "value": "true", "highlight": true }] },
+          "caption": "Half-reversal matches! Return true."
+        }
+      }
+    ]
+  },
+  "approaches": [
+    {
+      "id": "reverse-half",
+      "name": "Reverse Half of Digits",
+      "recommended": true,
+      "recommendedTradeOff": "Runs in O(log10 n) time with O(1) extra space, converts no strings, and never overflows 32-bit integers.",
+      "coreIdeaSummary": "Reverse digits into rev until x <= rev, then check x == rev or x == rev / 10.",
+      "coreIdea": "Reject negative numbers and non-zero multiples of 10 immediately. Then peel digits from x into rev until x <= rev.",
+      "steps": [
+        "If x < 0 or (x % 10 == 0 and x != 0), return false.",
+        "Initialize rev = 0. While x > rev: rev = rev * 10 + x % 10; x = floor(x / 10).",
+        "Return x == rev or x == floor(rev / 10)."
+      ],
+      "whyItWorks": "Stopping when x <= rev guarantees we split even-length numbers in half (x == rev) and odd-length numbers with the middle digit at the end of rev (x == rev / 10).",
+      "whenToUse": "Default optimal solution.",
+      "complexity": {
+        "time": "O(log10 n)",
+        "space": "O(1)",
+        "variables": "n = |x| (number of decimal digits is ~log10 n)",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public boolean isPalindrome(int x) {\n        if (x < 0 || (x % 10 == 0 && x != 0)) return false;\n        int rev = 0;\n        while (x > rev) {\n            rev = rev * 10 + x % 10;\n            x /= 10;\n        }\n        return x == rev || x == rev / 10;\n    }\n}",
+        "Python3": "class Solution:\n    def isPalindrome(self, x: int) -> bool:\n        if x < 0 or (x % 10 == 0 and x != 0):\n            return False\n        rev = 0\n        while x > rev:\n            rev = rev * 10 + x % 10\n            x //= 10\n        return x == rev or x == rev // 10",
+        "Python": "class Solution(object):\n    def isPalindrome(self, x):\n        if x < 0 or (x % 10 == 0 and x != 0):\n            return False\n        rev = 0\n        while x > rev:\n            rev = rev * 10 + x % 10\n            x //= 10\n        return x == rev or x == rev // 10",
+        "JavaScript": "function isPalindrome(x) {\n  if (x < 0 || (x % 10 === 0 && x !== 0)) return false;\n  let rev = 0;\n  while (x > rev) {\n    rev = rev * 10 + (x % 10);\n    x = Math.floor(x / 10);\n  }\n  return x === rev || x === Math.floor(rev / 10);\n}",
+        "TypeScript": "function isPalindrome(x: number): boolean {\n  if (x < 0 || (x % 10 === 0 && x !== 0)) return false;\n  let rev = 0;\n  while (x > rev) {\n    rev = rev * 10 + (x % 10);\n    x = Math.floor(x / 10);\n  }\n  return x === rev || x === Math.floor(rev / 10);\n}",
+        "C#": "public class Solution {\n    public bool IsPalindrome(int x) {\n        if (x < 0 || (x % 10 == 0 && x != 0)) return false;\n        int rev = 0;\n        while (x > rev) {\n            rev = rev * 10 + x % 10;\n            x /= 10;\n        }\n        return x == rev || x == rev / 10;\n    }\n}",
+        "PHP": "class Solution {\n    function isPalindrome($x) {\n        if ($x < 0 || ($x % 10 === 0 && $x !== 0)) return false;\n        $rev = 0;\n        while ($x > $rev) {\n            $rev = $rev * 10 + ($x % 10);\n            $x = intdiv($x, 10);\n        }\n        return $x === $rev || $x === intdiv($rev, 10);\n    }\n}"
+      }
+    },
+    {
+      "id": "string-two-pointers",
+      "name": "String Conversion + Two Pointers",
+      "recommended": false,
+      "coreIdeaSummary": "Convert x to a string and compare characters inward from both ends.",
+      "coreIdea": "Turn x into text and verify s[left] == s[right] as left and right move toward the center.",
+      "steps": [
+        "If x < 0, return false.",
+        "Convert x to string s.",
+        "Use two pointers l = 0, r = len(s) - 1; return false if s[l] != s[r], otherwise return true."
+      ],
+      "whyItWorks": "Characters of str(x) directly mirror the decimal digits in order.",
+      "whenToUse": "Readable alternative when O(log10 n) string allocation is acceptable.",
+      "complexity": {
+        "time": "O(log10 n)",
+        "space": "O(log10 n)",
+        "variables": "n = |x|",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public boolean isPalindrome(int x) {\n        if (x < 0) return false;\n        String s = String.valueOf(x);\n        int l = 0, r = s.length() - 1;\n        while (l < r) if (s.charAt(l++) != s.charAt(r--)) return false;\n        return true;\n    }\n}",
+        "Python3": "class Solution:\n    def isPalindrome(self, x: int) -> bool:\n        if x < 0:\n            return False\n        s = str(x)\n        return s == s[::-1]",
+        "Python": "class Solution(object):\n    def isPalindrome(self, x):\n        if x < 0:\n            return False\n        s = str(x)\n        return s == s[::-1]",
+        "JavaScript": "function isPalindrome(x) {\n  if (x < 0) return false;\n  const s = String(x);\n  let l = 0, r = s.length - 1;\n  while (l < r) if (s[l++] !== s[r--]) return false;\n  return true;\n}",
+        "TypeScript": "function isPalindrome(x: number): boolean {\n  if (x < 0) return false;\n  const s = String(x);\n  let l = 0, r = s.length - 1;\n  while (l < r) if (s[l++] !== s[r--]) return false;\n  return true;\n}",
+        "C#": "public class Solution {\n    public bool IsPalindrome(int x) {\n        if (x < 0) return false;\n        string s = x.ToString();\n        int l = 0, r = s.Length - 1;\n        while (l < r) if (s[l++] != s[r--]) return false;\n        return true;\n    }\n}",
+        "PHP": "class Solution {\n    function isPalindrome($x) {\n        if ($x < 0) return false;\n        $s = (string)$x;\n        return $s === strrev($s);\n    }\n}"
+      }
+    },
+    {
+      "id": "full-reverse-long",
+      "name": "Full Reversal in 64-Bit Integer",
+      "recommended": false,
+      "coreIdeaSummary": "Reverse every digit into a 64-bit integer and compare with the original x.",
+      "coreIdea": "For x >= 0, reverse all digits using a 64-bit accumulator so overflow cannot happen, then check rev == x.",
+      "steps": [
+        "If x < 0, return false.",
+        "Copy orig = x, rev = 0 (64-bit). While x > 0: rev = rev * 10 + x % 10; x /= 10.",
+        "Return rev == orig."
+      ],
+      "whyItWorks": "Any 10-digit reversed 32-bit integer easily fits inside a 64-bit signed integer.",
+      "whenToUse": "Simple math implementation when 64-bit integers are available.",
+      "complexity": {
+        "time": "O(log10 n)",
+        "space": "O(1)",
+        "variables": "n = |x|",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public boolean isPalindrome(int x) {\n        if (x < 0) return false;\n        long orig = x, rev = 0;\n        while (x > 0) {\n            rev = rev * 10 + x % 10;\n            x /= 10;\n        }\n        return rev == orig;\n    }\n}",
+        "Python3": "class Solution:\n    def isPalindrome(self, x: int) -> bool:\n        if x < 0:\n            return False\n        orig, rev = x, 0\n        while x > 0:\n            rev = rev * 10 + x % 10\n            x //= 10\n        return rev == orig",
+        "Python": "class Solution(object):\n    def isPalindrome(self, x):\n        if x < 0:\n            return False\n        orig, rev = x, 0\n        while x > 0:\n            rev = rev * 10 + x % 10\n            x //= 10\n        return rev == orig",
+        "JavaScript": "function isPalindrome(x) {\n  if (x < 0) return false;\n  let orig = x, rev = 0;\n  while (x > 0) {\n    rev = rev * 10 + (x % 10);\n    x = Math.floor(x / 10);\n  }\n  return rev === orig;\n}",
+        "TypeScript": "function isPalindrome(x: number): boolean {\n  if (x < 0) return false;\n  let orig = x, rev = 0;\n  while (x > 0) {\n    rev = rev * 10 + (x % 10);\n    x = Math.floor(x / 10);\n  }\n  return rev === orig;\n}",
+        "C#": "public class Solution {\n    public bool IsPalindrome(int x) {\n        if (x < 0) return false;\n        long orig = x, rev = 0;\n        while (x > 0) {\n            rev = rev * 10 + x % 10;\n            x /= 10;\n        }\n        return rev == orig;\n    }\n}",
+        "PHP": "class Solution {\n    function isPalindrome($x) {\n        if ($x < 0) return false;\n        $orig = $x; $rev = 0;\n        while ($x > 0) {\n            $rev = $rev * 10 + ($x % 10);\n            $x = intdiv($x, 10);\n        }\n        return $rev === $orig;\n    }\n}"
+      }
+    }
+  ],
+  "tests": [
+    { "name": "Example 1 (odd palindrome)", "args": [12321], "expected": true },
+    { "name": "Example 2 (trailing zero)", "args": [10], "expected": false },
+    { "name": "Zero", "args": [0], "expected": true },
+    { "name": "Negative", "args": [-121], "expected": false }
+  ],
+  "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (!s.isPalindrome(12321)) throw new AssertionError();\n    if (s.isPalindrome(10)) throw new AssertionError();\n    if (!s.isPalindrome(0)) throw new AssertionError();\n    if (s.isPalindrome(-121)) throw new AssertionError();\n  }\n}",
+  "phpDriver": "$s = new Solution();\nif ($s->isPalindrome(12321) !== true) exit(1);\nif ($s->isPalindrome(10) !== false) exit(1);\nif ($s->isPalindrome(0) !== true) exit(1);\nif ($s->isPalindrome(-121) !== false) exit(1);",
+  "csharpDriver": "using System;\npublic class Runner {\n  public static void Main() {\n    var s = new Solution();\n    if (!s.IsPalindrome(12321)) throw new Exception();\n    if (s.IsPalindrome(10)) throw new Exception();\n    if (!s.IsPalindrome(0)) throw new Exception();\n    if (s.IsPalindrome(-121)) throw new Exception();\n  }\n}"
+}

@@ -1,0 +1,321 @@
+{
+  "number": 1,
+  "slug": "two-sum",
+  "title": "Two Sum",
+  "difficulty": "Easy",
+  "topics": ["Array", "Hash Table"],
+  "access": "Free",
+  "url": "https://leetcode.com/problems/two-sum/",
+  "jsFunctionName": "twoSum",
+  "pyMethodName": "twoSum",
+  "verification": {
+    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "untestedLanguages": ["C++", "C", "Go", "Kotlin", "Swift", "Rust", "Ruby", "Dart", "Scala", "Elixir", "Erlang", "Racket"]
+  },
+  "understand": {
+    "question": "Given a list of whole numbers and a target total, which two different positions in the list add up to that exact target?",
+    "plainExplanation": "Imagine checking receipts to find two items whose prices add up to an exact gift-card balance. You cannot count the same receipt twice, and you must report the positions (indices) of the two chosen numbers, not the numbers themselves.",
+    "inputMeaning": "An integer array nums (for example [4, 9, 1, 7]) and an integer target (for example 10).",
+    "outputMeaning": "A two-element array [i, j] holding the 0-based positions of the two numbers where nums[i] + nums[j] == target and i != j.",
+    "rules": [
+      "You must pick two distinct positions (you cannot reuse the same index twice, even if nums[i] * 2 == target).",
+      "The same numeric value can appear at two different positions and still be valid (e.g., [5, 5] with target 10 returns [0, 1]).",
+      "Every valid input has exactly one solution, and indices may be returned in any order."
+    ],
+    "terms": [
+      {
+        "term": "Index",
+        "definition": "A 0-based position in the array. The first number sits at index 0, the second at index 1, and so on."
+      },
+      {
+        "term": "Complement",
+        "definition": "The missing partner needed to reach target: complement = target - current_number."
+      },
+      {
+        "term": "Hash Map",
+        "definition": "A lookup table that stores key -> value pairs (here, number -> index) so we can check in roughly constant time whether a needed partner appeared earlier."
+      }
+    ],
+    "example1": {
+      "input": "nums = [4, 9, 1, 7], target = 10",
+      "output": "[1, 2]",
+      "whyValid": "At index 1 we have 9 and at index 2 we have 1. Since 1 != 2 and 9 + 1 = 10, [1, 2] is the unique valid pair of indices.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          { "index": 0, "value": 4, "state": "default" },
+          { "index": 1, "value": 9, "state": "match", "label": "9" },
+          { "index": 2, "value": 1, "state": "match", "label": "+ 1 = 10" },
+          { "index": 3, "value": 7, "state": "default" }
+        ],
+        "pointers": [
+          { "index": 1, "name": "i" },
+          { "index": 2, "name": "j" }
+        ],
+        "caption": "Positions 1 and 2 hold 9 and 1, which sum to target = 10."
+      }
+    },
+    "example2": {
+      "input": "nums = [-3, 5, 5, 12], target = 10",
+      "output": "[1, 2]",
+      "whyEdgeCase": "Duplicate values and negative numbers! Notice 5 appears twice at indices 1 and 2. You cannot pair index 1 with itself, so a hash map must avoid matching an element against its own index, and negative numbers like -3 can be present."
+    }
+  },
+  "dryRun": {
+    "approachId": "one-pass-hash",
+    "algorithmName": "One-Pass Hash Map",
+    "steps": [
+      {
+        "title": "Initialize empty lookup table",
+        "description": "Start at index 0 with an empty hash map seen = {}. For each number x, we only need to check if target - x (10 - x) is already inside seen.",
+        "state": {
+          "type": "hash",
+          "items": [
+            { "index": 0, "value": 4, "state": "active" },
+            { "index": 1, "value": 9, "state": "default" },
+            { "index": 2, "value": 1, "state": "default" },
+            { "index": 3, "value": 7, "state": "default" }
+          ],
+          "pointers": [{ "index": 0, "name": "i" }],
+          "aux": { "title": "Seen Map (value -> index)", "entries": [{ "key": "empty", "value": "no entries yet" }] },
+          "caption": "Target = 10. Need 10 - 4 = 6."
+        }
+      },
+      {
+        "title": "Index 0 (value 4): store in map",
+        "description": "Complement 10 - 4 = 6 is not in seen. Store 4 -> 0 so future elements can pair with it, then advance i to 1.",
+        "state": {
+          "type": "hash",
+          "items": [
+            { "index": 0, "value": 4, "state": "skip" },
+            { "index": 1, "value": 9, "state": "active" },
+            { "index": 2, "value": 1, "state": "default" },
+            { "index": 3, "value": 7, "state": "default" }
+          ],
+          "pointers": [{ "index": 1, "name": "i" }],
+          "aux": { "title": "Seen Map (value -> index)", "entries": [{ "key": "4", "value": "idx 0" }] },
+          "caption": "At i = 1 (value 9): need 10 - 9 = 1."
+        }
+      },
+      {
+        "title": "Index 1 (value 9): store in map",
+        "description": "Complement 10 - 9 = 1 is not in seen yet. Store 9 -> 1 and advance i to 2.",
+        "state": {
+          "type": "hash",
+          "items": [
+            { "index": 0, "value": 4, "state": "skip" },
+            { "index": 1, "value": 9, "state": "default" },
+            { "index": 2, "value": 1, "state": "active" },
+            { "index": 3, "value": 7, "state": "default" }
+          ],
+          "pointers": [{ "index": 2, "name": "i" }],
+          "aux": {
+            "title": "Seen Map (value -> index)",
+            "entries": [
+              { "key": "4", "value": "idx 0" },
+              { "key": "9", "value": "idx 1" }
+            ]
+          },
+          "caption": "At i = 2 (value 1): need 10 - 1 = 9."
+        }
+      },
+      {
+        "title": "Index 2 (value 1): complement 9 found!",
+        "description": "10 - 1 = 9 IS in seen at index 1! Because we check seen BEFORE inserting nums[2], indices 1 and 2 are guaranteed to be distinct. Return [1, 2].",
+        "state": {
+          "type": "hash",
+          "items": [
+            { "index": 0, "value": 4, "state": "skip" },
+            { "index": 1, "value": 9, "state": "match" },
+            { "index": 2, "value": 1, "state": "match" },
+            { "index": 3, "value": 7, "state": "default" }
+          ],
+          "pointers": [
+            { "index": 1, "name": "seen[9]" },
+            { "index": 2, "name": "i" }
+          ],
+          "aux": {
+            "title": "Seen Map (value -> index)",
+            "entries": [
+              { "key": "4", "value": "idx 0" },
+              { "key": "9", "value": "idx 1", "highlight": true }
+            ]
+          },
+          "caption": "Match found! Return [1, 2]."
+        }
+      }
+    ]
+  },
+  "approaches": [
+    {
+      "id": "brute-force",
+      "name": "Brute Force Nested Loops",
+      "recommended": false,
+      "coreIdeaSummary": "Check every distinct pair (i, j) with i < j.",
+      "coreIdea": "Try every pair of distinct positions (i, j) with j > i and return as soon as nums[i] + nums[j] equals target.",
+      "steps": [
+        "Loop i from 0 to n - 2.",
+        "For each i, loop j from i + 1 to n - 1.",
+        "If nums[i] + nums[j] == target, return [i, j]."
+      ],
+      "whyItWorks": "Iterating over all pairs with i < j checks every valid two-index combination exactly once without ever pairing an index with itself.",
+      "whenToUse": "Use as a baseline sanity check or when memory is tightly constrained (O(1) extra space) and n is small.",
+      "complexity": {
+        "time": "O(n^2)",
+        "space": "O(1)",
+        "variables": "n = length of nums",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "C++": "#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        int n = (int)nums.size();\n        for (int i = 0; i < n; ++i) {\n            for (int j = i + 1; j < n; ++j) {\n                if (nums[i] + nums[j] == target) return {i, j};\n            }\n        }\n        return {};\n    }\n};",
+        "Java": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        for (int i = 0; i < nums.length; i++) {\n            for (int j = i + 1; j < nums.length; j++) {\n                if (nums[i] + nums[j] == target) {\n                    return new int[] { i, j };\n                }\n            }\n        }\n        return new int[0];\n    }\n}",
+        "Python3": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        n = len(nums)\n        for i in range(n):\n            for j in range(i + 1, n):\n                if nums[i] + nums[j] == target:\n                    return [i, j]\n        return []",
+        "Python": "class Solution(object):\n    def twoSum(self, nums, target):\n        n = len(nums)\n        for i in range(n):\n            for j in range(i + 1, n):\n                if nums[i] + nums[j] == target:\n                    return [i, j]\n        return []",
+        "JavaScript": "function twoSum(nums, target) {\n  for (let i = 0; i < nums.length; i++) {\n    for (let j = i + 1; j < nums.length; j++) {\n      if (nums[i] + nums[j] === target) {\n        return [i, j];\n      }\n    }\n  }\n  return [];\n}",
+        "TypeScript": "function twoSum(nums: number[], target: number): number[] {\n  for (let i = 0; i < nums.length; i++) {\n    for (let j = i + 1; j < nums.length; j++) {\n      if (nums[i] + nums[j] === target) {\n        return [i, j];\n      }\n    }\n  }\n  return [];\n}",
+        "C#": "public class Solution {\n    public int[] TwoSum(int[] nums, int target) {\n        for (int i = 0; i < nums.Length; i++) {\n            for (int j = i + 1; j < nums.Length; j++) {\n                if (nums[i] + nums[j] == target) {\n                    return new int[] { i, j };\n                }\n            }\n        }\n        return new int[0];\n    }\n}",
+        "PHP": "class Solution {\n    function twoSum($nums, $target) {\n        $n = count($nums);\n        for ($i = 0; $i < $n; $i++) {\n            for ($j = $i + 1; $j < $n; $j++) {\n                if ($nums[$i] + $nums[$j] === $target) {\n                    return [$i, $j];\n                }\n            }\n        }\n        return [];\n    }\n}"
+      }
+    },
+    {
+      "id": "two-pass-hash",
+      "name": "Two-Pass Hash Map",
+      "recommended": false,
+      "coreIdeaSummary": "Index all values first, then look up each element's complement.",
+      "coreIdea": "Build a value-to-index map in a first pass, then scan the array a second time checking whether target - nums[i] exists at a different index.",
+      "steps": [
+        "Pass 1: insert every nums[i] -> i into a hash map.",
+        "Pass 2: for each index i, compute complement = target - nums[i].",
+        "If complement is in the map and map[complement] != i, return [i, map[complement]]."
+      ],
+      "whyItWorks": "Even if duplicates exist, Pass 1 stores the latest index for a value while Pass 2 starts from index 0, so map[complement] != i still finds the second copy cleanly.",
+      "whenToUse": "Helpful when separating index construction from querying makes code easier to reason about.",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "variables": "n = length of nums",
+        "boundType": "Expected (hash table)"
+      },
+      "code": {
+        "Java": "import java.util.HashMap;\nimport java.util.Map;\n\nclass Solution {\n    public int[] twoSum(int[] nums, int target) {\n        Map<Integer, Integer> indexByVal = new HashMap<>();\n        for (int i = 0; i < nums.length; i++) {\n            indexByVal.put(nums[i], i);\n        }\n        for (int i = 0; i < nums.length; i++) {\n            int need = target - nums[i];\n            Integer j = indexByVal.get(need);\n            if (j != null && j != i) {\n                return new int[] { i, j };\n            }\n        }\n        return new int[0];\n    }\n}",
+        "Python3": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        index_by_val = {val: i for i, val in enumerate(nums)}\n        for i, val in enumerate(nums):\n            need = target - val\n            if need in index_by_val and index_by_val[need] != i:\n                return [i, index_by_val[need]]\n        return []",
+        "Python": "class Solution(object):\n    def twoSum(self, nums, target):\n        index_by_val = {val: i for i, val in enumerate(nums)}\n        for i, val in enumerate(nums):\n            need = target - val\n            if need in index_by_val and index_by_val[need] != i:\n                return [i, index_by_val[need]]\n        return []",
+        "JavaScript": "function twoSum(nums, target) {\n  const indexByVal = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    indexByVal.set(nums[i], i);\n  }\n  for (let i = 0; i < nums.length; i++) {\n    const need = target - nums[i];\n    if (indexByVal.has(need) && indexByVal.get(need) !== i) {\n      return [i, indexByVal.get(need)];\n    }\n  }\n  return [];\n}",
+        "TypeScript": "function twoSum(nums: number[], target: number): number[] {\n  const indexByVal = new Map<number, number>();\n  for (let i = 0; i < nums.length; i++) {\n    indexByVal.set(nums[i], i);\n  }\n  for (let i = 0; i < nums.length; i++) {\n    const need = target - nums[i];\n    const j = indexByVal.get(need);\n    if (j !== undefined && j !== i) {\n      return [i, j];\n    }\n  }\n  return [];\n}",
+        "C#": "using System.Collections.Generic;\n\npublic class Solution {\n    public int[] TwoSum(int[] nums, int target) {\n        var map = new Dictionary<int, int>();\n        for (int i = 0; i < nums.Length; i++) {\n            map[nums[i]] = i;\n        }\n        for (int i = 0; i < nums.Length; i++) {\n            int need = target - nums[i];\n            int j;\n            if (map.TryGetValue(need, out j) && j != i) {\n                return new int[] { i, j };\n            }\n        }\n        return new int[0];\n    }\n}",
+        "PHP": "class Solution {\n    function twoSum($nums, $target) {\n        $map = [];\n        foreach ($nums as $i => $val) {\n            $map[$val] = $i;\n        }\n        foreach ($nums as $i => $val) {\n            $need = $target - $val;\n            if (isset($map[$need]) && $map[$need] !== $i) {\n                return [$i, $map[$need]];\n            }\n        }\n        return [];\n    }\n}"
+      }
+    },
+    {
+      "id": "sort-two-pointers",
+      "name": "Sort + Two Pointers",
+      "recommended": false,
+      "coreIdeaSummary": "Sort (value, originalIndex) pairs and walk inward from both ends.",
+      "coreIdea": "Pair each value with its original index, sort by value, and move left/right pointers inward based on whether the current sum is too small or too large.",
+      "steps": [
+        "Build pairs (nums[i], i) for all i.",
+        "Sort the pairs in non-decreasing order by value.",
+        "Set left = 0, right = n - 1. While left < right, compute sum = pairs[left].val + pairs[right].val.",
+        "If sum == target, return the two original indices; if sum < target, increment left; else decrement right."
+      ],
+      "whyItWorks": "Because the pairs are sorted by value, increasing left strictly cannot decrease the sum and decreasing right strictly cannot increase it, guaranteeing we never skip the valid pair.",
+      "whenToUse": "Great when the input is already sorted (eliminating the O(n log n) sort and O(n) pairing) or as the foundation for 3Sum and 4Sum.",
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "variables": "n = length of nums",
+        "boundType": "Worst-case (comparison sort)"
+      },
+      "code": {
+        "Java": "import java.util.Arrays;\nimport java.util.Comparator;\n\nclass Solution {\n    public int[] twoSum(int[] nums, int target) {\n        int n = nums.length;\n        int[][] pairs = new int[n][2];\n        for (int i = 0; i < n; i++) {\n            pairs[i][0] = nums[i];\n            pairs[i][1] = i;\n        }\n        Arrays.sort(pairs, Comparator.comparingInt(a -> a[0]));\n        int left = 0, right = n - 1;\n        while (left < right) {\n            int sum = pairs[left][0] + pairs[right][0];\n            if (sum == target) {\n                return new int[] { pairs[left][1], pairs[right][1] };\n            } else if (sum < target) {\n                left++;\n            } else {\n                right--;\n            }\n        }\n        return new int[0];\n    }\n}",
+        "Python3": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        pairs = sorted((val, idx) for idx, val in enumerate(nums))\n        left, right = 0, len(pairs) - 1\n        while left < right:\n            total = pairs[left][0] + pairs[right][0]\n            if total == target:\n                return [pairs[left][1], pairs[right][1]]\n            if total < target:\n                left += 1\n            else:\n                right -= 1\n        return []",
+        "Python": "class Solution(object):\n    def twoSum(self, nums, target):\n        pairs = sorted((val, idx) for idx, val in enumerate(nums))\n        left, right = 0, len(pairs) - 1\n        while left < right:\n            total = pairs[left][0] + pairs[right][0]\n            if total == target:\n                return [pairs[left][1], pairs[right][1]]\n            if total < target:\n                left += 1\n            else:\n                right -= 1\n        return []",
+        "JavaScript": "function twoSum(nums, target) {\n  const pairs = nums.map((val, idx) => [val, idx]).sort((a, b) => a[0] - b[0]);\n  let left = 0;\n  let right = pairs.length - 1;\n  while (left < right) {\n    const sum = pairs[left][0] + pairs[right][0];\n    if (sum === target) return [pairs[left][1], pairs[right][1]];\n    if (sum < target) left++;\n    else right--;\n  }\n  return [];\n}",
+        "TypeScript": "function twoSum(nums: number[], target: number): number[] {\n  const pairs: [number, number][] = nums\n    .map((val, idx): [number, number] => [val, idx])\n    .sort((a, b) => a[0] - b[0]);\n  let left = 0;\n  let right = pairs.length - 1;\n  while (left < right) {\n    const sum = pairs[left][0] + pairs[right][0];\n    if (sum === target) return [pairs[left][1], pairs[right][1]];\n    if (sum < target) left++;\n    else right--;\n  }\n  return [];\n}",
+        "C#": "using System;\n\npublic class Solution {\n    public int[] TwoSum(int[] nums, int target) {\n        int n = nums.Length;\n        int[] idx = new int[n];\n        for (int i = 0; i < n; i++) idx[i] = i;\n        Array.Sort(idx, (a, b) => nums[a].CompareTo(nums[b]));\n        int left = 0, right = n - 1;\n        while (left < right) {\n            int sum = nums[idx[left]] + nums[idx[right]];\n            if (sum == target) return new int[] { idx[left], idx[right] };\n            if (sum < target) left++;\n            else right--;\n        }\n        return new int[0];\n    }\n}",
+        "PHP": "class Solution {\n    function twoSum($nums, $target) {\n        $pairs = [];\n        foreach ($nums as $i => $val) {\n            $pairs[] = [$val, $i];\n        }\n        usort($pairs, function ($a, $b) { return $a[0] <=> $b[0]; });\n        $left = 0;\n        $right = count($pairs) - 1;\n        while ($left < $right) {\n            $sum = $pairs[$left][0] + $pairs[$right][0];\n            if ($sum === $target) return [$pairs[$left][1], $pairs[$right][1]];\n            if ($sum < $target) $left++;\n            else $right--;\n        }\n        return [];\n    }\n}"
+      }
+    },
+    {
+      "id": "sort-binary-search",
+      "name": "Sort + Binary Search",
+      "recommended": false,
+      "coreIdeaSummary": "Sort (value, index) pairs and binary-search the complement for each position.",
+      "coreIdea": "After sorting value-index pairs, iterate through each position i and binary-search the suffix [i + 1 .. n - 1] for target - pairs[i].val.",
+      "steps": [
+        "Store (nums[i], i) pairs and sort by value.",
+        "For each sorted index i from 0 to n - 2, binary-search in [i + 1, n - 1] for need = target - pairs[i].val.",
+        "If found at mid, return [pairs[i].idx, pairs[mid].idx]."
+      ],
+      "whyItWorks": "Sorting makes every suffix [i + 1 .. n - 1] monotonic, so binary search checks for the partner in O(log n) without revisiting index i.",
+      "whenToUse": "Useful when worst-case O(n log n) predictability matters more than expected O(n) hash performance.",
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(n)",
+        "variables": "n = length of nums",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "import java.util.Arrays;\nimport java.util.Comparator;\n\nclass Solution {\n    public int[] twoSum(int[] nums, int target) {\n        int n = nums.length;\n        int[][] pairs = new int[n][2];\n        for (int i = 0; i < n; i++) {\n            pairs[i][0] = nums[i];\n            pairs[i][1] = i;\n        }\n        Arrays.sort(pairs, Comparator.comparingInt(a -> a[0]));\n        for (int i = 0; i < n - 1; i++) {\n            int need = target - pairs[i][0];\n            int lo = i + 1, hi = n - 1;\n            while (lo <= hi) {\n                int mid = lo + (hi - lo) / 2;\n                if (pairs[mid][0] == need) {\n                    return new int[] { pairs[i][1], pairs[mid][1] };\n                } else if (pairs[mid][0] < need) {\n                    lo = mid + 1;\n                } else {\n                    hi = mid - 1;\n                }\n            }\n        }\n        return new int[0];\n    }\n}",
+        "Python3": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        pairs = sorted((val, idx) for idx, val in enumerate(nums))\n        n = len(pairs)\n        for i in range(n - 1):\n            need = target - pairs[i][0]\n            lo, hi = i + 1, n - 1\n            while lo <= hi:\n                mid = (lo + hi) // 2\n                if pairs[mid][0] == need:\n                    return [pairs[i][1], pairs[mid][1]]\n                if pairs[mid][0] < need:\n                    lo = mid + 1\n                else:\n                    hi = mid - 1\n        return []",
+        "Python": "class Solution(object):\n    def twoSum(self, nums, target):\n        pairs = sorted((val, idx) for idx, val in enumerate(nums))\n        n = len(pairs)\n        for i in range(n - 1):\n            need = target - pairs[i][0]\n            lo, hi = i + 1, n - 1\n            while lo <= hi:\n                mid = (lo + hi) // 2\n                if pairs[mid][0] == need:\n                    return [pairs[i][1], pairs[mid][1]]\n                if pairs[mid][0] < need:\n                    lo = mid + 1\n                else:\n                    hi = mid - 1\n        return []",
+        "JavaScript": "function twoSum(nums, target) {\n  const pairs = nums.map((val, idx) => [val, idx]).sort((a, b) => a[0] - b[0]);\n  for (let i = 0; i < pairs.length - 1; i++) {\n    const need = target - pairs[i][0];\n    let lo = i + 1;\n    let hi = pairs.length - 1;\n    while (lo <= hi) {\n      const mid = (lo + hi) >> 1;\n      if (pairs[mid][0] === need) return [pairs[i][1], pairs[mid][1]];\n      if (pairs[mid][0] < need) lo = mid + 1;\n      else hi = mid - 1;\n    }\n  }\n  return [];\n}",
+        "TypeScript": "function twoSum(nums: number[], target: number): number[] {\n  const pairs: [number, number][] = nums\n    .map((val, idx): [number, number] => [val, idx])\n    .sort((a, b) => a[0] - b[0]);\n  for (let i = 0; i < pairs.length - 1; i++) {\n    const need = target - pairs[i][0];\n    let lo = i + 1;\n    let hi = pairs.length - 1;\n    while (lo <= hi) {\n      const mid = (lo + hi) >> 1;\n      if (pairs[mid][0] === need) return [pairs[i][1], pairs[mid][1]];\n      if (pairs[mid][0] < need) lo = mid + 1;\n      else hi = mid - 1;\n    }\n  }\n  return [];\n}",
+        "C#": "using System;\n\npublic class Solution {\n    public int[] TwoSum(int[] nums, int target) {\n        int n = nums.Length;\n        int[] idx = new int[n];\n        for (int i = 0; i < n; i++) idx[i] = i;\n        Array.Sort(idx, (a, b) => nums[a].CompareTo(nums[b]));\n        for (int i = 0; i < n - 1; i++) {\n            int need = target - nums[idx[i]];\n            int lo = i + 1, hi = n - 1;\n            while (lo <= hi) {\n                int mid = lo + (hi - lo) / 2;\n                int val = nums[idx[mid]];\n                if (val == need) return new int[] { idx[i], idx[mid] };\n                if (val < need) lo = mid + 1;\n                else hi = mid - 1;\n            }\n        }\n        return new int[0];\n    }\n}",
+        "PHP": "class Solution {\n    function twoSum($nums, $target) {\n        $pairs = [];\n        foreach ($nums as $i => $val) $pairs[] = [$val, $i];\n        usort($pairs, function ($a, $b) { return $a[0] <=> $b[0]; });\n        $n = count($pairs);\n        for ($i = 0; $i < $n - 1; $i++) {\n            $need = $target - $pairs[$i][0];\n            $lo = $i + 1;\n            $hi = $n - 1;\n            while ($lo <= $hi) {\n                $mid = intdiv($lo + $hi, 2);\n                if ($pairs[$mid][0] === $need) return [$pairs[$i][1], $pairs[$mid][1]];\n                if ($pairs[$mid][0] < $need) $lo = $mid + 1;\n                else $hi = $mid - 1;\n            }\n        }\n        return [];\n    }\n}"
+      }
+    },
+    {
+      "id": "one-pass-hash",
+      "name": "One-Pass Hash Map",
+      "recommended": true,
+      "recommendedTradeOff": "Trades O(n) extra hash table memory to cut runtime from O(n^2) to expected O(n) in a single left-to-right scan, while naturally preventing self-pairing.",
+      "coreIdeaSummary": "Check if target - nums[i] was already seen before inserting nums[i].",
+      "coreIdea": "Maintain a hash map of numbers seen so far and their indices. At index i, immediately query whether target - nums[i] is already stored; if not, record nums[i] -> i.",
+      "steps": [
+        "Create an empty hash map seen (value -> index).",
+        "Iterate i from 0 to n - 1 and compute complement = target - nums[i].",
+        "If complement exists in seen, return [seen[complement], i].",
+        "Otherwise insert seen[nums[i]] = i and continue."
+      ],
+      "whyItWorks": "For any valid pair (a, b) with a < b, when the loop reaches b, nums[a] has already been placed into seen. Checking seen before inserting nums[b] also guarantees a != b even when nums[a] == nums[b].",
+      "whenToUse": "Default choice for unsorted arrays whenever O(n) auxiliary space is acceptable.",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "variables": "n = length of nums",
+        "boundType": "Expected (worst-case O(n^2) only under adversarial hash collisions)"
+      },
+      "code": {
+        "C++": "#include <unordered_map>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        unordered_map<int, int> seen;\n        for (int i = 0; i < (int)nums.size(); ++i) {\n            int need = target - nums[i];\n            auto it = seen.find(need);\n            if (it != seen.end()) return {it->second, i};\n            seen[nums[i]] = i;\n        }\n        return {};\n    }\n};",
+        "Java": "import java.util.HashMap;\nimport java.util.Map;\n\nclass Solution {\n    public int[] twoSum(int[] nums, int target) {\n        Map<Integer, Integer> seen = new HashMap<>();\n        for (int i = 0; i < nums.length; i++) {\n            int need = target - nums[i];\n            if (seen.containsKey(need)) {\n                return new int[] { seen.get(need), i };\n            }\n            seen.put(nums[i], i);\n        }\n        return new int[0];\n    }\n}",
+        "Python3": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        seen: Dict[int, int] = {}\n        for i, num in enumerate(nums):\n            need = target - num\n            if need in seen:\n                return [seen[need], i]\n            seen[num] = i\n        return []",
+        "Python": "class Solution(object):\n    def twoSum(self, nums, target):\n        seen = {}\n        for i, num in enumerate(nums):\n            need = target - num\n            if need in seen:\n                return [seen[need], i]\n            seen[num] = i\n        return []",
+        "JavaScript": "function twoSum(nums, target) {\n  const seen = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const need = target - nums[i];\n    if (seen.has(need)) {\n      return [seen.get(need), i];\n    }\n    seen.set(nums[i], i);\n  }\n  return [];\n}",
+        "TypeScript": "function twoSum(nums: number[], target: number): number[] {\n  const seen = new Map<number, number>();\n  for (let i = 0; i < nums.length; i++) {\n    const need = target - nums[i];\n    const prev = seen.get(need);\n    if (prev !== undefined) {\n      return [prev, i];\n    }\n    seen.set(nums[i], i);\n  }\n  return [];\n}",
+        "C#": "using System.Collections.Generic;\n\npublic class Solution {\n    public int[] TwoSum(int[] nums, int target) {\n        var seen = new Dictionary<int, int>();\n        for (int i = 0; i < nums.Length; i++) {\n            int need = target - nums[i];\n            int prev;\n            if (seen.TryGetValue(need, out prev)) {\n                return new int[] { prev, i };\n            }\n            seen[nums[i]] = i;\n        }\n        return new int[0];\n    }\n}",
+        "C": "#include <stdlib.h>\n\nint* twoSum(int* nums, int numsSize, int target, int* returnSize) {\n    int* res = (int*)malloc(2 * sizeof(int));\n    *returnSize = 2;\n    for (int i = 0; i < numsSize; i++) {\n        for (int j = i + 1; j < numsSize; j++) {\n            if (nums[i] + nums[j] == target) {\n                res[0] = i;\n                res[1] = j;\n                return res;\n            }\n        }\n    }\n    *returnSize = 0;\n    return res;\n}",
+        "Go": "func twoSum(nums []int, target int) []int {\n\tseen := make(map[int]int, len(nums))\n\tfor i, v := range nums {\n\t\tif j, ok := seen[target-v]; ok {\n\t\t\treturn []int{j, i}\n\t\t}\n\t\tseen[v] = i\n\t}\n\treturn nil\n}",
+        "Kotlin": "class Solution {\n    fun twoSum(nums: IntArray, target: Int): IntArray {\n        val seen = HashMap<Int, Int>()\n        for (i in nums.indices) {\n            val need = target - nums[i]\n            val prev = seen[need]\n            if (prev != null) return intArrayOf(prev, i)\n            seen[nums[i]] = i\n        }\n        return intArrayOf()\n    }\n}",
+        "Swift": "class Solution {\n    func twoSum(_ nums: [Int], _ target: Int) -> [Int] {\n        var seen = [Int: Int]()\n        for (i, num) in nums.enumerated() {\n            if let prev = seen[target - num] {\n                return [prev, i]\n            }\n            seen[num] = i\n        }\n        return []\n    }\n}",
+        "Rust": "use std::collections::HashMap;\n\nimpl Solution {\n    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {\n        let mut seen = HashMap::new();\n        for (i, &num) in nums.iter().enumerate() {\n            if let Some(&prev) = seen.get(&(target - num)) {\n                return vec![prev as i32, i as i32];\n            }\n            seen.insert(num, i);\n        }\n        vec![]\n    }\n}",
+        "Ruby": "def two_sum(nums, target)\n  seen = {}\n  nums.each_with_index do |num, i|\n    need = target - num\n    return [seen[need], i] if seen.key?(need)\n    seen[num] = i\n  end\n  []\nend",
+        "PHP": "class Solution {\n    function twoSum($nums, $target) {\n        $seen = [];\n        foreach ($nums as $i => $num) {\n            $need = $target - $num;\n            if (isset($seen[$need])) {\n                return [$seen[$need], $i];\n            }\n            $seen[$num] = $i;\n        }\n        return [];\n    }\n}",
+        "Dart": "class Solution {\n  List<int> twoSum(List<int> nums, int target) {\n    final seen = <int, int>{};\n    for (var i = 0; i < nums.length; i++) {\n      final need = target - nums[i];\n      if (seen.containsKey(need)) return [seen[need]!, i];\n      seen[nums[i]] = i;\n    }\n    return [];\n  }\n}",
+        "Scala": "import scala.collection.mutable\n\nobject Solution {\n  def twoSum(nums: Array[Int], target: Int): Array[Int] = {\n    val seen = mutable.HashMap.empty[Int, Int]\n    for (i <- nums.indices) {\n      val need = target - nums(i)\n      seen.get(need) match {\n        case Some(j) => return Array(j, i)\n        case None    => seen(nums(i)) = i\n      }\n    }\n    Array.emptyIntArray\n  }\n}",
+        "Elixir": "defmodule Solution do\n  @spec two_sum(nums :: [integer], target :: integer) :: [integer]\n  def two_sum(nums, target) do\n    Enum.with_index(nums)\n    |> Enum.reduce_while(%{}, fn {num, i}, seen ->\n      case Map.get(seen, target - num) do\n        nil -> {:cont, Map.put(seen, num, i)}\n        prev -> {:halt, [prev, i]}\n      end\n    end)\n  end\nend",
+        "Erlang": "-spec two_sum(Nums :: [integer()], Target :: integer()) -> [integer()].\ntwo_sum(Nums, Target) ->\n  two_sum(Nums, Target, 0, #{}).\n\ntwo_sum([H | T], Target, I, Seen) ->\n  case maps:find(Target - H, Seen) of\n    {ok, Prev} -> [Prev, I];\n    error -> two_sum(T, Target, I + 1, maps:put(H, I, Seen))\n  end.",
+        "Racket": "(define/contract (two-sum nums target)\n  (-> (listof exact-integer?) exact-integer? (listof exact-integer?))\n  (let loop ([rest nums] [i 0] [seen (hash)])\n    (if (null? rest)\n        '()\n        (let* ([x (car rest)]\n               [need (- target x)]\n               [prev (hash-ref seen need #f)])\n          (if prev\n              (list prev i)\n              (loop (cdr rest) (+ i 1) (hash-set seen x i)))))))"
+      }
+    }
+  ],
+  "tests": [
+    { "name": "Example 1", "args": [[4, 9, 1, 7], 10], "expected": [1, 2], "unorderedArray": true },
+    { "name": "Example 2 (duplicates + negative)", "args": [[-3, 5, 5, 12], 10], "expected": [1, 2], "unorderedArray": true },
+    { "name": "Zero sum pair", "args": [[0, 4, 3, 0], 0], "expected": [0, 3], "unorderedArray": true },
+    { "name": "Two elements only", "args": [[8, -2], 6], "expected": [0, 1], "unorderedArray": true }
+  ],
+  "javaDriver": "import java.util.Arrays;\npublic class Main {\n  static void check(int[] actual, int[] exp, String name) {\n    int[] a = Arrays.copyOf(actual, actual.length); Arrays.sort(a);\n    int[] e = Arrays.copyOf(exp, exp.length); Arrays.sort(e);\n    if (!Arrays.equals(a, e)) throw new AssertionError(name + \": got \" + Arrays.toString(actual));\n  }\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    check(s.twoSum(new int[]{4,9,1,7}, 10), new int[]{1,2}, \"Ex1\");\n    check(s.twoSum(new int[]{-3,5,5,12}, 10), new int[]{1,2}, \"Ex2\");\n    check(s.twoSum(new int[]{0,4,3,0}, 0), new int[]{0,3}, \"Zero\");\n    check(s.twoSum(new int[]{8,-2}, 6), new int[]{0,1}, \"Two\");\n  }\n}",
+  "phpDriver": "$s = new Solution();\n$cases = [\n  [[4,9,1,7], 10, [1,2]],\n  [[-3,5,5,12], 10, [1,2]],\n  [[0,4,3,0], 0, [0,3]],\n  [[8,-2], 6, [0,1]]\n];\nforeach ($cases as $c) {\n  $a = $s->twoSum($c[0], $c[1]); sort($a); $e = $c[2]; sort($e);\n  if ($a !== $e) { fwrite(STDERR, \"FAIL\"); exit(1); }\n}",
+  "csharpDriver": "using System;\npublic class Runner {\n  static void Check(int[] a, int[] e) {\n    Array.Sort(a); Array.Sort(e);\n    if (a.Length != e.Length || a[0] != e[0] || a[1] != e[1]) throw new Exception(\"Mismatch\");\n  }\n  public static void Main() {\n    var s = new Solution();\n    Check(s.TwoSum(new int[]{4,9,1,7}, 10), new int[]{1,2});\n    Check(s.TwoSum(new int[]{-3,5,5,12}, 10), new int[]{1,2});\n    Check(s.TwoSum(new int[]{0,4,3,0}, 0), new int[]{0,3});\n    Check(s.TwoSum(new int[]{8,-2}, 6), new int[]{0,1});\n  }\n}"
+}

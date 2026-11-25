@@ -1,0 +1,162 @@
+{
+  "number": 7,
+  "slug": "reverse-integer",
+  "title": "Reverse Integer",
+  "difficulty": "Medium",
+  "topics": ["Math"],
+  "access": "Free",
+  "url": "https://leetcode.com/problems/reverse-integer/",
+  "jsFunctionName": "reverse",
+  "pyMethodName": "reverse",
+  "verification": {
+    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "untestedLanguages": []
+  },
+  "understand": {
+    "question": "Given a signed 32-bit integer, how do we flip its digits backwards while keeping its minus sign and returning 0 if the flipped value overflows 32 bits?",
+    "plainExplanation": "Peel the last digit off x using remainder (% 10) and push it onto the back of rev by multiplying rev by 10 and adding that digit. Before multiplying by 10, check whether rev is about to exceed the 32-bit signed integer limits [-2^31, 2^31 - 1].",
+    "inputMeaning": "A signed 32-bit integer x in [-2,147,483,648, 2,147,483,647].",
+    "outputMeaning": "The digit-reversed integer, or 0 if reversing x falls outside [-2,147,483,648, 2,147,483,647].",
+    "rules": [
+      "Trailing zeros disappear when reversed (for example, 420 reverses to 24).",
+      "Negative numbers stay negative (-420 reverses to -24).",
+      "If the reversed integer cannot fit in signed 32 bits [-2147483648, 2147483647], return 0."
+    ],
+    "terms": [
+      {
+        "term": "Signed 32-Bit Range",
+        "definition": "Integers from INT_MIN (-2,147,483,648) up to INT_MAX (2,147,483,647)."
+      },
+      {
+        "term": "Truncated Modulo / Division",
+        "definition": "Integer division toward zero (so -12 / 10 = -1 and -12 % 10 = -2 in C/Java/JS, whereas Python's // floors toward -infinity)."
+      }
+    ],
+    "example1": {
+      "input": "x = -420",
+      "output": "-24",
+      "whyValid": "Popping digits from right to left yields 0, then 2, then 4 while preserving the negative sign, producing -24.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          { "index": 0, "value": "-", "state": "window", "label": "sign" },
+          { "index": 1, "value": "4", "state": "match", "label": "last popped" },
+          { "index": 2, "value": "2", "state": "match", "label": "2nd popped" },
+          { "index": 3, "value": "0", "state": "skip", "label": "drops leading 0" }
+        ],
+        "caption": "Reading digits right-to-left gives -024 -> -24."
+      }
+    },
+    "example2": {
+      "input": "x = 1534236469",
+      "output": "0",
+      "whyEdgeCase": "Reversing 1,534,236,469 gives 9,646,324,351, which exceeds INT_MAX (2,147,483,647), so we must detect overflow BEFORE multiplying rev * 10 and return 0."
+    }
+  },
+  "dryRun": {
+    "approachId": "pop-push-guard",
+    "algorithmName": "Digit Pop & Push with Pre-Overflow Guard",
+    "steps": [
+      {
+        "title": "Pop 0 from -420",
+        "description": "Extract sign (-1) and work with remaining = 420. Pop digit = 0, remaining = 42, rev = 0 * 10 + 0 = 0.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": 4, "state": "default" },
+            { "index": 1, "value": 2, "state": "default" },
+            { "index": 2, "value": 0, "state": "active", "label": "pop" }
+          ],
+          "aux": { "title": "State", "entries": [{ "key": "sign", "value": -1 }, { "key": "remaining", "value": 42 }, { "key": "rev", "value": 0 }] },
+          "caption": "Digit 0 dropped cleanly because rev starts at 0."
+        }
+      },
+      {
+        "title": "Pop 2, then pop 4",
+        "description": "Pop 2 -> rev = 2, remaining = 4. Pop 4 -> 2 <= 214748364 (safe!) -> rev = 24, remaining = 0. Multiply by sign (-1) -> -24.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": 4, "state": "match", "label": "pop" },
+            { "index": 1, "value": 2, "state": "match" },
+            { "index": 2, "value": 0, "state": "skip" }
+          ],
+          "aux": { "title": "Final State", "entries": [{ "key": "remaining", "value": 0 }, { "key": "result", "value": -24, "highlight": true }] },
+          "caption": "Apply sign -> return -24."
+        }
+      }
+    ]
+  },
+  "approaches": [
+    {
+      "id": "pop-push-guard",
+      "name": "Math Pop & Push with 32-bit Overflow Guard",
+      "recommended": true,
+      "recommendedTradeOff": "Uses pure integer arithmetic in O(log10 |x|) time and O(1) space, strictly staying within 32-bit integer arithmetic without allocating strings or 64-bit types.",
+      "coreIdeaSummary": "Repeatedly pop x % 10 and check rev against INT_MAX / 10 before rev * 10 + digit.",
+      "coreIdea": "Pop digits one by one with % 10 and / 10. Before updating rev = rev * 10 + pop, verify that rev will not overflow [INT_MIN, INT_MAX].",
+      "steps": [
+        "Set rev = 0, INT_MAX = 2147483647, INT_MIN = -2147483648.",
+        "While x != 0: pop = remainder toward zero, x = truncated quotient x / 10.",
+        "If rev > INT_MAX / 10 or (rev == INT_MAX / 10 and pop > 7), return 0.",
+        "If rev < INT_MIN / 10 or (rev == INT_MIN / 10 and pop < -8), return 0.",
+        "Set rev = rev * 10 + pop and continue; return rev."
+      ],
+      "whyItWorks": "Because INT_MAX = 2147483647 ends in 7 and INT_MIN = -2147483648 ends in -8, comparing rev against +/-214748364 catches every overflow one step before multiplication overflows.",
+      "whenToUse": "Default optimal solution, especially in strict 32-bit environments.",
+      "complexity": {
+        "time": "O(log10 |x|)",
+        "space": "O(1)",
+        "variables": "x = input integer (at most 10 digits for 32-bit)",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public int reverse(int x) {\n        int rev = 0;\n        while (x != 0) {\n            int pop = x % 10;\n            x /= 10;\n            if (rev > Integer.MAX_VALUE / 10 || (rev == Integer.MAX_VALUE / 10 && pop > 7)) return 0;\n            if (rev < Integer.MIN_VALUE / 10 || (rev == Integer.MIN_VALUE / 10 && pop < -8)) return 0;\n            rev = rev * 10 + pop;\n        }\n        return rev;\n    }\n}",
+        "Python3": "class Solution:\n    def reverse(self, x: int) -> int:\n        sign = -1 if x < 0 else 1\n        x = abs(x)\n        rev = 0\n        limit = (2**31 - 1) if sign == 1 else 2**31\n        while x:\n            pop = x % 10\n            x //= 10\n            if rev > (limit - pop) // 10:\n                return 0\n            rev = rev * 10 + pop\n        return sign * rev",
+        "Python": "class Solution(object):\n    def reverse(self, x):\n        sign = -1 if x < 0 else 1\n        x = abs(x)\n        rev = 0\n        limit = (2**31 - 1) if sign == 1 else 2**31\n        while x:\n            pop = x % 10\n            x //= 10\n            if rev > (limit - pop) // 10:\n                return 0\n            rev = rev * 10 + pop\n        return sign * rev",
+        "JavaScript": "function reverse(x) {\n  const INT_MAX = 2147483647, INT_MIN = -2147483648;\n  let rev = 0;\n  while (x !== 0) {\n    const pop = x % 10;\n    x = Math.trunc(x / 10);\n    if (rev > Math.trunc(INT_MAX / 10) || (rev === Math.trunc(INT_MAX / 10) && pop > 7)) return 0;\n    if (rev < Math.trunc(INT_MIN / 10) || (rev === Math.trunc(INT_MIN / 10) && pop < -8)) return 0;\n    rev = rev * 10 + pop;\n  }\n  return rev;\n}",
+        "TypeScript": "function reverse(x: number): number {\n  const INT_MAX = 2147483647, INT_MIN = -2147483648;\n  let rev = 0;\n  while (x !== 0) {\n    const pop = x % 10;\n    x = Math.trunc(x / 10);\n    if (rev > Math.trunc(INT_MAX / 10) || (rev === Math.trunc(INT_MAX / 10) && pop > 7)) return 0;\n    if (rev < Math.trunc(INT_MIN / 10) || (rev === Math.trunc(INT_MIN / 10) && pop < -8)) return 0;\n    rev = rev * 10 + pop;\n  }\n  return rev;\n}",
+        "C#": "public class Solution {\n    public int Reverse(int x) {\n        int rev = 0;\n        while (x != 0) {\n            int pop = x % 10;\n            x /= 10;\n            if (rev > int.MaxValue / 10 || (rev == int.MaxValue / 10 && pop > 7)) return 0;\n            if (rev < int.MinValue / 10 || (rev == int.MinValue / 10 && pop < -8)) return 0;\n            rev = rev * 10 + pop;\n        }\n        return rev;\n    }\n}",
+        "PHP": "class Solution {\n    function reverse($x) {\n        $intMax = 2147483647; $intMin = -2147483648;\n        $rev = 0;\n        while ($x !== 0) {\n            $pop = $x % 10;\n            $x = intdiv($x, 10);\n            if ($rev > intdiv($intMax, 10) || ($rev === intdiv($intMax, 10) && $pop > 7)) return 0;\n            if ($rev < intdiv($intMin, 10) || ($rev === intdiv($intMin, 10) && $pop < -8)) return 0;\n            $rev = $rev * 10 + $pop;\n        }\n        return $rev;\n    }\n}"
+      }
+    },
+    {
+      "id": "string-reverse",
+      "name": "String Reversal with Bounds Check",
+      "recommended": false,
+      "coreIdeaSummary": "Convert |x| to a string, reverse its characters, parse back, and clamp to 32-bit bounds.",
+      "coreIdea": "Handle the sign separately, reverse the decimal digit string, parse it safely (using 64-bit / float / big-int), and return 0 if out of [-2^31, 2^31 - 1].",
+      "steps": [
+        "Record sign = -1 if x < 0 else 1.",
+        "Convert |x| to string, reverse characters, and parse integer val = sign * int(reversedStr).",
+        "If val < -2^31 or val > 2^31 - 1, return 0; else return val."
+      ],
+      "whyItWorks": "String reversal handles trailing zeros automatically when parsed back to an integer.",
+      "whenToUse": "Quick to write in languages with arbitrary-precision ints, though slower and uses extra string memory.",
+      "complexity": {
+        "time": "O(log10 |x|)",
+        "space": "O(log10 |x|)",
+        "variables": "x = input integer",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public int reverse(int x) {\n        long sign = x < 0 ? -1 : 1;\n        String digits = new StringBuilder(String.valueOf(Math.abs((long) x))).reverse().toString();\n        long val = sign * Long.parseLong(digits);\n        return (val < Integer.MIN_VALUE || val > Integer.MAX_VALUE) ? 0 : (int) val;\n    }\n}",
+        "Python3": "class Solution:\n    def reverse(self, x: int) -> int:\n        sign = -1 if x < 0 else 1\n        val = sign * int(str(abs(x))[::-1])\n        return val if -2**31 <= val <= 2**31 - 1 else 0",
+        "Python": "class Solution(object):\n    def reverse(self, x):\n        sign = -1 if x < 0 else 1\n        val = sign * int(str(abs(x))[::-1])\n        return val if -(2**31) <= val <= 2**31 - 1 else 0",
+        "JavaScript": "function reverse(x) {\n  const sign = x < 0 ? -1 : 1;\n  const val = sign * Number(String(Math.abs(x)).split(\"\").reverse().join(\"\"));\n  return val < -2147483648 || val > 2147483647 ? 0 : val;\n}",
+        "TypeScript": "function reverse(x: number): number {\n  const sign = x < 0 ? -1 : 1;\n  const val = sign * Number(String(Math.abs(x)).split(\"\").reverse().join(\"\"));\n  return val < -2147483648 || val > 2147483647 ? 0 : val;\n}",
+        "C#": "using System;\n\npublic class Solution {\n    public int Reverse(int x) {\n        long sign = x < 0 ? -1 : 1;\n        char[] arr = Math.Abs((long)x).ToString().ToCharArray();\n        Array.Reverse(arr);\n        long val = sign * long.Parse(new string(arr));\n        return (val < int.MinValue || val > int.MaxValue) ? 0 : (int)val;\n    }\n}",
+        "PHP": "class Solution {\n    function reverse($x) {\n        $sign = $x < 0 ? -1 : 1;\n        $val = $sign * intval(strrev((string)abs($x)));\n        return ($val < -2147483648 || $val > 2147483647) ? 0 : $val;\n    }\n}"
+      }
+    }
+  ],
+  "tests": [
+    { "name": "Example 1", "args": [-420], "expected": -24 },
+    { "name": "Example 2 (overflow)", "args": [1534236469], "expected": 0 },
+    { "name": "Zero", "args": [0], "expected": 0 },
+    { "name": "Negative overflow", "args": [-2147483648], "expected": 0 }
+  ],
+  "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (s.reverse(-420) != -24) throw new AssertionError();\n    if (s.reverse(1534236469) != 0) throw new AssertionError();\n    if (s.reverse(0) != 0) throw new AssertionError();\n    if (s.reverse(-2147483648) != 0) throw new AssertionError();\n  }\n}",
+  "phpDriver": "$s = new Solution();\nif ($s->reverse(-420) !== -24) exit(1);\nif ($s->reverse(1534236469) !== 0) exit(1);\nif ($s->reverse(0) !== 0) exit(1);\nif ($s->reverse(-2147483648) !== 0) exit(1);",
+  "csharpDriver": "using System;\npublic class Runner {\n  public static void Main() {\n    var s = new Solution();\n    if (s.Reverse(-420) != -24) throw new Exception();\n    if (s.Reverse(1534236469) != 0) throw new Exception();\n    if (s.Reverse(0) != 0) throw new Exception();\n    if (s.Reverse(-2147483648) != 0) throw new Exception();\n  }\n}"
+}

@@ -1,0 +1,252 @@
+{
+  "number": 5,
+  "slug": "longest-palindromic-substring",
+  "title": "Longest Palindromic Substring",
+  "difficulty": "Medium",
+  "topics": ["Two Pointers", "String", "Dynamic Programming"],
+  "access": "Free",
+  "url": "https://leetcode.com/problems/longest-palindromic-substring/",
+  "jsFunctionName": "longestPalindrome",
+  "pyMethodName": "longestPalindrome",
+  "verification": {
+    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "untestedLanguages": []
+  },
+  "understand": {
+    "question": "Given a string, what is the longest contiguous slice that reads the exact same forwards and backwards?",
+    "plainExplanation": "Every palindrome mirrors itself around a middle point: either one center letter (like 'racecar', centered at 'e') or the gap between two matching middle letters (like 'noon', centered between the two 'o's). Finding the longest palindrome means finding the widest mirror.",
+    "inputMeaning": "A non-empty string s of length 1 or more.",
+    "outputMeaning": "Any single substring of s with maximum length that is a palindrome.",
+    "rules": [
+      "Both odd-length palindromes (centered on one character) and even-length palindromes (centered between two characters) are valid.",
+      "A single character by itself is always a palindrome of length 1.",
+      "If multiple palindromes tie for longest length, returning any one of them is valid."
+    ],
+    "terms": [
+      {
+        "term": "Palindrome",
+        "definition": "A string that stays identical when reversed, such as \"level\" or \"aa\"."
+      },
+      {
+        "term": "Center",
+        "definition": "The middle position(s) from which symmetric characters expand outward: (i, i) for odd lengths and (i, i+1) for even lengths."
+      }
+    ],
+    "example1": {
+      "input": "s = \"xabay\"",
+      "output": "\"aba\"",
+      "whyValid": "Expanding around center index 2 ('b') sees s[1] == 'a' and s[3] == 'a', giving \"aba\" (length 3). Expanding further sees 'x' != 'y' and stops.",
+      "diagram": {
+        "type": "two-pointers",
+        "items": [
+          { "index": 0, "value": "x", "state": "skip" },
+          { "index": 1, "value": "a", "state": "match" },
+          { "index": 2, "value": "b", "state": "match", "label": "center" },
+          { "index": 3, "value": "a", "state": "match" },
+          { "index": 4, "value": "y", "state": "skip" }
+        ],
+        "pointers": [
+          { "index": 1, "name": "L" },
+          { "index": 3, "name": "R" }
+        ],
+        "caption": "\"aba\" mirrors cleanly around index 2."
+      }
+    },
+    "example2": {
+      "input": "s = \"noon\"",
+      "output": "\"noon\"",
+      "whyEdgeCase": "Even-length palindrome! There is no single middle character — the center sits between indices 1 and 2 ('o' and 'o'), so checking only odd centers (i, i) would miss it."
+    }
+  },
+  "dryRun": {
+    "approachId": "expand-center",
+    "algorithmName": "Expand Around Center",
+    "steps": [
+      {
+        "title": "Start at center i = 0 ('x')",
+        "description": "Odd center (0,0) gives \"x\" (len 1). Even center (0,1) fails ('x' != 'a'). Best so far: [0..0] = \"x\".",
+        "state": {
+          "type": "two-pointers",
+          "items": [
+            { "index": 0, "value": "x", "state": "active" },
+            { "index": 1, "value": "a", "state": "default" },
+            { "index": 2, "value": "b", "state": "default" },
+            { "index": 3, "value": "a", "state": "default" },
+            { "index": 4, "value": "y", "state": "default" }
+          ],
+          "pointers": [{ "index": 0, "name": "L=R" }],
+          "aux": { "title": "Best Slice", "entries": [{ "key": "best", "value": "\"x\" (len 1)" }] },
+          "caption": "Center 0 gives length 1."
+        }
+      },
+      {
+        "title": "Center i = 2 ('b'): expand to [1..3] = \"aba\"",
+        "description": "Start with L=2, R=2 ('b'). Step outward to L=1, R=3: s[1] == s[3] ('a' == 'a'), so expand again! Next step L=0, R=4 fails ('x' != 'y'). Best updates to \"aba\" (len 3).",
+        "state": {
+          "type": "two-pointers",
+          "items": [
+            { "index": 0, "value": "x", "state": "skip" },
+            { "index": 1, "value": "a", "state": "match" },
+            { "index": 2, "value": "b", "state": "match" },
+            { "index": 3, "value": "a", "state": "match" },
+            { "index": 4, "value": "y", "state": "skip" }
+          ],
+          "pointers": [
+            { "index": 1, "name": "L" },
+            { "index": 3, "name": "R" }
+          ],
+          "aux": { "title": "Best Slice", "entries": [{ "key": "best", "value": "\"aba\" (len 3)", "highlight": true }] },
+          "caption": "Found length-3 palindrome \"aba\"!"
+        }
+      },
+      {
+        "title": "Finish centers i = 3, 4 and return \"aba\"",
+        "description": "Centers 3 and 4 only produce length-1 palindromes. Return s.slice(1, 4) = \"aba\".",
+        "state": {
+          "type": "two-pointers",
+          "items": [
+            { "index": 0, "value": "x", "state": "default" },
+            { "index": 1, "value": "a", "state": "match" },
+            { "index": 2, "value": "b", "state": "match" },
+            { "index": 3, "value": "a", "state": "match" },
+            { "index": 4, "value": "y", "state": "default" }
+          ],
+          "pointers": [
+            { "index": 1, "name": "bestStart" },
+            { "index": 3, "name": "bestEnd" }
+          ],
+          "aux": { "title": "Final Result", "entries": [{ "key": "output", "value": "\"aba\"", "highlight": true }] },
+          "caption": "Final answer: \"aba\"."
+        }
+      }
+    ]
+  },
+  "approaches": [
+    {
+      "id": "brute-force",
+      "name": "Brute Force Substring Verification",
+      "recommended": false,
+      "coreIdeaSummary": "Check every substring s[i..j] with two pointers.",
+      "coreIdea": "Enumerate every substring (i, j) and scan inward from i and j to verify whether it is a palindrome.",
+      "steps": [
+        "Track bestStart = 0, bestLen = 1.",
+        "For every pair i <= j where j - i + 1 > bestLen, test if s[i..j] is a palindrome.",
+        "Update bestStart and bestLen whenever a longer palindrome is found."
+      ],
+      "whyItWorks": "All substrings of s are checked directly from longest/candidate bounds.",
+      "whenToUse": "Baseline verification on short strings.",
+      "complexity": {
+        "time": "O(n^3)",
+        "space": "O(1)",
+        "variables": "n = length of s",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public String longestPalindrome(String s) {\n        int bestStart = 0, bestLen = 1, n = s.length();\n        for (int i = 0; i < n; i++) {\n            for (int j = i + bestLen; j < n; j++) {\n                int l = i, r = j;\n                boolean ok = true;\n                while (l < r) { if (s.charAt(l++) != s.charAt(r--)) { ok = false; break; } }\n                if (ok) { bestStart = i; bestLen = j - i + 1; }\n            }\n        }\n        return s.substring(bestStart, bestStart + bestLen);\n    }\n}",
+        "Python3": "class Solution:\n    def longestPalindrome(self, s: str) -> str:\n        best_start, best_len, n = 0, 1, len(s)\n        for i in range(n):\n            for j in range(i + best_len, n):\n                sub = s[i:j + 1]\n                if sub == sub[::-1]:\n                    best_start, best_len = i, j - i + 1\n        return s[best_start:best_start + best_len]",
+        "Python": "class Solution(object):\n    def longestPalindrome(self, s):\n        best_start, best_len, n = 0, 1, len(s)\n        for i in range(n):\n            for j in range(i + best_len, n):\n                sub = s[i:j + 1]\n                if sub == sub[::-1]:\n                    best_start, best_len = i, j - i + 1\n        return s[best_start:best_start + best_len]",
+        "JavaScript": "function longestPalindrome(s) {\n  let bestStart = 0, bestLen = 1;\n  for (let i = 0; i < s.length; i++) {\n    for (let j = i + bestLen; j < s.length; j++) {\n      let l = i, r = j, ok = true;\n      while (l < r) if (s[l++] !== s[r--]) { ok = false; break; }\n      if (ok) { bestStart = i; bestLen = j - i + 1; }\n    }\n  }\n  return s.slice(bestStart, bestStart + bestLen);\n}",
+        "TypeScript": "function longestPalindrome(s: string): string {\n  let bestStart = 0, bestLen = 1;\n  for (let i = 0; i < s.length; i++) {\n    for (let j = i + bestLen; j < s.length; j++) {\n      let l = i, r = j, ok = true;\n      while (l < r) if (s[l++] !== s[r--]) { ok = false; break; }\n      if (ok) { bestStart = i; bestLen = j - i + 1; }\n    }\n  }\n  return s.slice(bestStart, bestStart + bestLen);\n}",
+        "C#": "public class Solution {\n    public string LongestPalindrome(string s) {\n        int bestStart = 0, bestLen = 1, n = s.Length;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + bestLen; j < n; j++) {\n                int l = i, r = j; bool ok = true;\n                while (l < r) if (s[l++] != s[r--]) { ok = false; break; }\n                if (ok) { bestStart = i; bestLen = j - i + 1; }\n            }\n        }\n        return s.Substring(bestStart, bestLen);\n    }\n}",
+        "PHP": "class Solution {\n    function longestPalindrome($s) {\n        $bestStart = 0; $bestLen = 1; $n = strlen($s);\n        for ($i = 0; $i < $n; $i++) {\n            for ($j = $i + $bestLen; $j < $n; $j++) {\n                $l = $i; $r = $j; $ok = true;\n                while ($l < $r) { if ($s[$l++] !== $s[$r--]) { $ok = false; break; } }\n                if ($ok) { $bestStart = $i; $bestLen = $j - $i + 1; }\n            }\n        }\n        return substr($s, $bestStart, $bestLen);\n    }\n}"
+      }
+    },
+    {
+      "id": "dp-2d",
+      "name": "2D Dynamic Programming Table",
+      "recommended": false,
+      "coreIdeaSummary": "dp[i][j] is true when s[i] == s[j] and the inner slice s[i+1..j-1] is a palindrome.",
+      "coreIdea": "Fill a boolean table dp[i][j] by increasing substring length so inner slices are known before outer slices.",
+      "steps": [
+        "Set dp[i][i] = true for all i.",
+        "For length L from 2 to n, check s[i] == s[j] and (L == 2 or dp[i+1][j-1]).",
+        "Record the longest [i..j] where dp[i][j] is true."
+      ],
+      "whyItWorks": "A slice s[i..j] is palindromic if and only if its endpoints match and its interior s[i+1..j-1] is palindromic.",
+      "whenToUse": "Useful when also answering repeated substring-palindrome queries in O(1).",
+      "complexity": {
+        "time": "O(n^2)",
+        "space": "O(n^2)",
+        "variables": "n = length of s",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public String longestPalindrome(String s) {\n        int n = s.length(), start = 0, maxLen = 1;\n        boolean[][] dp = new boolean[n][n];\n        for (int i = n - 1; i >= 0; i--) {\n            for (int j = i; j < n; j++) {\n                if (s.charAt(i) == s.charAt(j) && (j - i <= 2 || dp[i + 1][j - 1])) {\n                    dp[i][j] = true;\n                    if (j - i + 1 > maxLen) { start = i; maxLen = j - i + 1; }\n                }\n            }\n        }\n        return s.substring(start, start + maxLen);\n    }\n}",
+        "Python3": "class Solution:\n    def longestPalindrome(self, s: str) -> str:\n        n = len(s)\n        dp = [[False] * n for _ in range(n)]\n        start, max_len = 0, 1\n        for i in range(n - 1, -1, -1):\n            for j in range(i, n):\n                if s[i] == s[j] and (j - i <= 2 or dp[i + 1][j - 1]):\n                    dp[i][j] = True\n                    if j - i + 1 > max_len:\n                        start, max_len = i, j - i + 1\n        return s[start:start + max_len]",
+        "Python": "class Solution(object):\n    def longestPalindrome(self, s):\n        n = len(s)\n        dp = [[False] * n for _ in range(n)]\n        start, max_len = 0, 1\n        for i in range(n - 1, -1, -1):\n            for j in range(i, n):\n                if s[i] == s[j] and (j - i <= 2 or dp[i + 1][j - 1]):\n                    dp[i][j] = True\n                    if j - i + 1 > max_len:\n                        start, max_len = i, j - i + 1\n        return s[start:start + max_len]",
+        "JavaScript": "function longestPalindrome(s) {\n  const n = s.length;\n  const dp = Array.from({ length: n }, () => new Uint8Array(n));\n  let start = 0, maxLen = 1;\n  for (let i = n - 1; i >= 0; i--) {\n    for (let j = i; j < n; j++) {\n      if (s[i] === s[j] && (j - i <= 2 || dp[i + 1][j - 1])) {\n        dp[i][j] = 1;\n        if (j - i + 1 > maxLen) { start = i; maxLen = j - i + 1; }\n      }\n    }\n  }\n  return s.slice(start, start + maxLen);\n}",
+        "TypeScript": "function longestPalindrome(s: string): string {\n  const n = s.length;\n  const dp = Array.from({ length: n }, () => new Uint8Array(n));\n  let start = 0, maxLen = 1;\n  for (let i = n - 1; i >= 0; i--) {\n    for (let j = i; j < n; j++) {\n      if (s[i] === s[j] && (j - i <= 2 || dp[i + 1][j - 1])) {\n        dp[i][j] = 1;\n        if (j - i + 1 > maxLen) { start = i; maxLen = j - i + 1; }\n      }\n    }\n  }\n  return s.slice(start, start + maxLen);\n}",
+        "C#": "public class Solution {\n    public string LongestPalindrome(string s) {\n        int n = s.Length, start = 0, maxLen = 1;\n        bool[,] dp = new bool[n, n];\n        for (int i = n - 1; i >= 0; i--) {\n            for (int j = i; j < n; j++) {\n                if (s[i] == s[j] && (j - i <= 2 || dp[i + 1, j - 1])) {\n                    dp[i, j] = true;\n                    if (j - i + 1 > maxLen) { start = i; maxLen = j - i + 1; }\n                }\n            }\n        }\n        return s.Substring(start, maxLen);\n    }\n}",
+        "PHP": "class Solution {\n    function longestPalindrome($s) {\n        $n = strlen($s); $start = 0; $maxLen = 1;\n        $dp = array_fill(0, $n, array_fill(0, $n, false));\n        for ($i = $n - 1; $i >= 0; $i--) {\n            for ($j = $i; $j < $n; $j++) {\n                if ($s[$i] === $s[$j] && ($j - $i <= 2 || $dp[$i + 1][$j - 1])) {\n                    $dp[$i][$j] = true;\n                    if ($j - $i + 1 > $maxLen) { $start = $i; $maxLen = $j - $i + 1; }\n                }\n            }\n        }\n        return substr($s, $start, $maxLen);\n    }\n}"
+      }
+    },
+    {
+      "id": "expand-center",
+      "name": "Expand Around Center",
+      "recommended": true,
+      "recommendedTradeOff": "Matches 2D DP's O(n^2) time while eliminating the entire O(n^2) table down to O(1) auxiliary space with clean, minimal code.",
+      "coreIdeaSummary": "Expand outward from each of the 2n - 1 odd and even centers.",
+      "coreIdea": "For every index i, expand two pointers outward from (i, i) for odd palindromes and (i, i + 1) for even palindromes while characters match.",
+      "steps": [
+        "Initialize bestStart = 0, bestLen = 1.",
+        "Define expand(l, r) that widens while l >= 0, r < n, and s[l] == s[r], returning the valid length.",
+        "For each i from 0 to n - 1, take the wider of expand(i, i) and expand(i, i + 1) and update bestStart / bestLen."
+      ],
+      "whyItWorks": "Every palindrome has a unique center among the 2n - 1 possible centers, and expanding outward only visits matching pairs.",
+      "whenToUse": "Best practical default for string lengths up to a few thousand characters.",
+      "complexity": {
+        "time": "O(n^2)",
+        "space": "O(1)",
+        "variables": "n = length of s",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public String longestPalindrome(String s) {\n        int start = 0, end = 0;\n        for (int i = 0; i < s.length(); i++) {\n            int len1 = expand(s, i, i);\n            int len2 = expand(s, i, i + 1);\n            int len = Math.max(len1, len2);\n            if (len > end - start + 1) {\n                start = i - (len - 1) / 2;\n                end = i + len / 2;\n            }\n        }\n        return s.substring(start, end + 1);\n    }\n    private int expand(String s, int l, int r) {\n        while (l >= 0 && r < s.length() && s.charAt(l) == s.charAt(r)) { l--; r++; }\n        return r - l - 1;\n    }\n}",
+        "Python3": "class Solution:\n    def longestPalindrome(self, s: str) -> str:\n        start, end = 0, 0\n        def expand(l: int, r: int) -> int:\n            while l >= 0 and r < len(s) and s[l] == s[r]:\n                l -= 1; r += 1\n            return r - l - 1\n        for i in range(len(s)):\n            best = max(expand(i, i), expand(i, i + 1))\n            if best > end - start + 1:\n                start = i - (best - 1) // 2\n                end = i + best // 2\n        return s[start:end + 1]",
+        "Python": "class Solution(object):\n    def longestPalindrome(self, s):\n        start, end = 0, 0\n        def expand(l, r):\n            while l >= 0 and r < len(s) and s[l] == s[r]:\n                l -= 1; r += 1\n            return r - l - 1\n        for i in range(len(s)):\n            best = max(expand(i, i), expand(i, i + 1))\n            if best > end - start + 1:\n                start = i - (best - 1) // 2\n                end = i + best // 2\n        return s[start:end + 1]",
+        "JavaScript": "function longestPalindrome(s) {\n  let start = 0, end = 0;\n  const expand = (l, r) => {\n    while (l >= 0 && r < s.length && s[l] === s[r]) { l--; r++; }\n    return r - l - 1;\n  };\n  for (let i = 0; i < s.length; i++) {\n    const best = Math.max(expand(i, i), expand(i, i + 1));\n    if (best > end - start + 1) {\n      start = i - Math.floor((best - 1) / 2);\n      end = i + Math.floor(best / 2);\n    }\n  }\n  return s.slice(start, end + 1);\n}",
+        "TypeScript": "function longestPalindrome(s: string): string {\n  let start = 0, end = 0;\n  const expand = (l: number, r: number): number => {\n    while (l >= 0 && r < s.length && s[l] === s[r]) { l--; r++; }\n    return r - l - 1;\n  };\n  for (let i = 0; i < s.length; i++) {\n    const best = Math.max(expand(i, i), expand(i, i + 1));\n    if (best > end - start + 1) {\n      start = i - Math.floor((best - 1) / 2);\n      end = i + Math.floor(best / 2);\n    }\n  }\n  return s.slice(start, end + 1);\n}",
+        "C#": "using System;\n\npublic class Solution {\n    public string LongestPalindrome(string s) {\n        int start = 0, end = 0;\n        for (int i = 0; i < s.Length; i++) {\n            int best = Math.Max(Expand(s, i, i), Expand(s, i, i + 1));\n            if (best > end - start + 1) {\n                start = i - (best - 1) / 2;\n                end = i + best / 2;\n            }\n        }\n        return s.Substring(start, end - start + 1);\n    }\n    private int Expand(string s, int l, int r) {\n        while (l >= 0 && r < s.Length && s[l] == s[r]) { l--; r++; }\n        return r - l - 1;\n    }\n}",
+        "PHP": "class Solution {\n    function longestPalindrome($s) {\n        $start = 0; $end = 0; $n = strlen($s);\n        for ($i = 0; $i < $n; $i++) {\n            $best = max($this->expand($s, $i, $i), $this->expand($s, $i, $i + 1));\n            if ($best > $end - $start + 1) {\n                $start = $i - intdiv($best - 1, 2);\n                $end = $i + intdiv($best, 2);\n            }\n        }\n        return substr($s, $start, $end - $start + 1);\n    }\n    private function expand($s, $l, $r) {\n        $n = strlen($s);\n        while ($l >= 0 && $r < $n && $s[$l] === $s[$r]) { $l--; $r++; }\n        return $r - $l - 1;\n    }\n}"
+      }
+    },
+    {
+      "id": "manacher",
+      "name": "Manacher's Linear-Time Algorithm",
+      "recommended": false,
+      "coreIdeaSummary": "Insert '#' separators and reuse mirror radii inside the rightmost known palindrome.",
+      "coreIdea": "Transform s into '#a#b#a#' so all palindromes have odd length. Track the palindrome with the rightmost reach R and reuse mirrored radii before expanding.",
+      "steps": [
+        "Build transformed string T with '#' between characters and sentinels '^' and '$'.",
+        "Maintain center C and right boundary R of the rightmost palindrome.",
+        "Initialize p[i] = (i < R) ? min(R - i, p[2*C - i]) : 0, then expand around i and update C, R when i + p[i] > R."
+      ],
+      "whyItWorks": "Every expansion step that succeeds strictly advances R; since R moves right at most 2n times, total work is O(n).",
+      "whenToUse": "When n is very large (e.g., >= 10^5) and true linear O(n) worst-case time is required.",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "variables": "n = length of s",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public String longestPalindrome(String s) {\n        StringBuilder sb = new StringBuilder(\"^\");\n        for (int i = 0; i < s.length(); i++) sb.append('#').append(s.charAt(i));\n        sb.append(\"#$\");\n        String t = sb.toString();\n        int[] p = new int[t.length()];\n        int c = 0, r = 0, bestLen = 0, bestCenter = 0;\n        for (int i = 1; i < t.length() - 1; i++) {\n            if (i < r) p[i] = Math.min(r - i, p[2 * c - i]);\n            while (t.charAt(i + 1 + p[i]) == t.charAt(i - 1 - p[i])) p[i]++;\n            if (i + p[i] > r) { c = i; r = i + p[i]; }\n            if (p[i] > bestLen) { bestLen = p[i]; bestCenter = i; }\n        }\n        int start = (bestCenter - bestLen) / 2;\n        return s.substring(start, start + bestLen);\n    }\n}",
+        "Python3": "class Solution:\n    def longestPalindrome(self, s: str) -> str:\n        t = '^#' + '#'.join(s) + '#$'\n        p = [0] * len(t)\n        c = r = best_len = best_center = 0\n        for i in range(1, len(t) - 1):\n            if i < r:\n                p[i] = min(r - i, p[2 * c - i])\n            while t[i + 1 + p[i]] == t[i - 1 - p[i]]:\n                p[i] += 1\n            if i + p[i] > r:\n                c, r = i, i + p[i]\n            if p[i] > best_len:\n                best_len, best_center = p[i], i\n        start = (best_center - best_len) // 2\n        return s[start:start + best_len]",
+        "Python": "class Solution(object):\n    def longestPalindrome(self, s):\n        t = '^#' + '#'.join(s) + '#$'\n        p = [0] * len(t)\n        c = r = best_len = best_center = 0\n        for i in range(1, len(t) - 1):\n            if i < r:\n                p[i] = min(r - i, p[2 * c - i])\n            while t[i + 1 + p[i]] == t[i - 1 - p[i]]:\n                p[i] += 1\n            if i + p[i] > r:\n                c, r = i, i + p[i]\n            if p[i] > best_len:\n                best_len, best_center = p[i], i\n        start = (best_center - best_len) // 2\n        return s[start:start + best_len]",
+        "JavaScript": "function longestPalindrome(s) {\n  const t = \"^#\" + s.split(\"\").join(\"#\") + \"#$\";\n  const p = new Int32Array(t.length);\n  let c = 0, r = 0, bestLen = 0, bestCenter = 0;\n  for (let i = 1; i < t.length - 1; i++) {\n    if (i < r) p[i] = Math.min(r - i, p[2 * c - i]);\n    while (t[i + 1 + p[i]] === t[i - 1 - p[i]]) p[i]++;\n    if (i + p[i] > r) { c = i; r = i + p[i]; }\n    if (p[i] > bestLen) { bestLen = p[i]; bestCenter = i; }\n  }\n  const start = Math.floor((bestCenter - bestLen) / 2);\n  return s.slice(start, start + bestLen);\n}",
+        "TypeScript": "function longestPalindrome(s: string): string {\n  const t = \"^#\" + s.split(\"\").join(\"#\") + \"#$\";\n  const p = new Int32Array(t.length);\n  let c = 0, r = 0, bestLen = 0, bestCenter = 0;\n  for (let i = 1; i < t.length - 1; i++) {\n    if (i < r) p[i] = Math.min(r - i, p[2 * c - i]);\n    while (t[i + 1 + p[i]] === t[i - 1 - p[i]]) p[i]++;\n    if (i + p[i] > r) { c = i; r = i + p[i]; }\n    if (p[i] > bestLen) { bestLen = p[i]; bestCenter = i; }\n  }\n  const start = Math.floor((bestCenter - bestLen) / 2);\n  return s.slice(start, start + bestLen);\n}",
+        "C#": "using System;\nusing System.Text;\n\npublic class Solution {\n    public string LongestPalindrome(string s) {\n        var sb = new StringBuilder(\"^\");\n        for (int i = 0; i < s.Length; i++) { sb.Append('#'); sb.Append(s[i]); }\n        sb.Append(\"#$\");\n        string t = sb.ToString();\n        int[] p = new int[t.Length];\n        int c = 0, r = 0, bestLen = 0, bestCenter = 0;\n        for (int i = 1; i < t.Length - 1; i++) {\n            if (i < r) p[i] = Math.Min(r - i, p[2 * c - i]);\n            while (t[i + 1 + p[i]] == t[i - 1 - p[i]]) p[i]++;\n            if (i + p[i] > r) { c = i; r = i + p[i]; }\n            if (p[i] > bestLen) { bestLen = p[i]; bestCenter = i; }\n        }\n        int start = (bestCenter - bestLen) / 2;\n        return s.Substring(start, bestLen);\n    }\n}",
+        "PHP": "class Solution {\n    function longestPalindrome($s) {\n        $t = \"^#\" . implode(\"#\", str_split($s)) . \"#$\";\n        $n = strlen($t);\n        $p = array_fill(0, $n, 0);\n        $c = 0; $r = 0; $bestLen = 0; $bestCenter = 0;\n        for ($i = 1; $i < $n - 1; $i++) {\n            if ($i < $r) $p[$i] = min($r - $i, $p[2 * $c - $i]);\n            while ($t[$i + 1 + $p[$i]] === $t[$i - 1 - $p[$i]]) $p[$i]++;\n            if ($i + $p[$i] > $r) { $c = $i; $r = $i + $p[$i]; }\n            if ($p[$i] > $bestLen) { $bestLen = $p[$i]; $bestCenter = $i; }\n        }\n        $start = intdiv($bestCenter - $bestLen, 2);\n        return substr($s, $start, $bestLen);\n    }\n}"
+      }
+    }
+  ],
+  "tests": [
+    { "name": "Example 1", "args": ["xabay"], "expected": "aba" },
+    { "name": "Example 2 (even)", "args": ["noon"], "expected": "noon" },
+    { "name": "Single char", "args": ["q"], "expected": "q" },
+    { "name": "All equal", "args": ["aaaa"], "expected": "aaaa" }
+  ],
+  "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (!s.longestPalindrome(\"xabay\").equals(\"aba\")) throw new AssertionError(\"Ex1\");\n    if (!s.longestPalindrome(\"noon\").equals(\"noon\")) throw new AssertionError(\"Ex2\");\n    if (!s.longestPalindrome(\"q\").equals(\"q\")) throw new AssertionError(\"One\");\n    if (!s.longestPalindrome(\"aaaa\").equals(\"aaaa\")) throw new AssertionError(\"All\");\n  }\n}",
+  "phpDriver": "$s = new Solution();\nif ($s->longestPalindrome(\"xabay\") !== \"aba\") exit(1);\nif ($s->longestPalindrome(\"noon\") !== \"noon\") exit(1);\nif ($s->longestPalindrome(\"q\") !== \"q\") exit(1);\nif ($s->longestPalindrome(\"aaaa\") !== \"aaaa\") exit(1);",
+  "csharpDriver": "using System;\npublic class Runner {\n  public static void Main() {\n    var s = new Solution();\n    if (s.LongestPalindrome(\"xabay\") != \"aba\") throw new Exception();\n    if (s.LongestPalindrome(\"noon\") != \"noon\") throw new Exception();\n    if (s.LongestPalindrome(\"q\") != \"q\") throw new Exception();\n    if (s.LongestPalindrome(\"aaaa\") != \"aaaa\") throw new Exception();\n  }\n}"
+}

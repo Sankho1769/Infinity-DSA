@@ -1,0 +1,160 @@
+{
+  "number": 6,
+  "slug": "zigzag-conversion",
+  "title": "Zigzag Conversion",
+  "difficulty": "Medium",
+  "topics": ["String"],
+  "access": "Free",
+  "url": "https://leetcode.com/problems/zigzag-conversion/",
+  "jsFunctionName": "convert",
+  "pyMethodName": "convert",
+  "verification": {
+    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "untestedLanguages": []
+  },
+  "understand": {
+    "question": "If you write a string's characters down and diagonally up across numRows horizontal rows in a zigzag wave, what string do you get when reading row by row from top to bottom?",
+    "plainExplanation": "Imagine writing letters onto lined notebook paper with numRows lines: go straight down from line 0 to the bottom line, bounce diagonally back up to line 0, and repeat. Then read line 0 from left to right, followed by line 1, and so on.",
+    "inputMeaning": "A string s and a positive integer numRows (>= 1).",
+    "outputMeaning": "The concatenated string formed by reading each row left-to-right from row 0 down to row numRows - 1.",
+    "rules": [
+      "If numRows == 1 or numRows >= s.length, there is no zigzag bounce — return s unchanged.",
+      "Do NOT emit spaces between diagonal letters; each row simply collects its characters in order.",
+      "Direction flips only when reaching row 0 (start moving down) or row numRows - 1 (start moving up)."
+    ],
+    "terms": [
+      {
+        "term": "Row Bucket",
+        "definition": "A string buffer dedicated to one horizontal line (0 .. numRows - 1) that collects letters in the exact order they land on that row."
+      },
+      {
+        "term": "Cycle Length",
+        "definition": "The number of characters in one full down-and-up wave: 2 * (numRows - 1) when numRows > 1."
+      }
+    ],
+    "example1": {
+      "input": "s = \"INFINITY\", numRows = 3",
+      "output": "\"IIIFNTNY\"",
+      "whyValid": "Writing \"INFINITY\" across 3 rows places indices 0:'I'->r0, 1:'N'->r1, 2:'F'->r2, 3:'I'->r1, 4:'N'->r0, 5:'I'->r1, 6:'T'->r2, 7:'Y'->r1. Reading row 0 (\"IN\"), row 1 (\"NIIY\"), and row 2 (\"FT\") yields \"INNIIYFT\".",
+      "diagram": {
+        "type": "grid",
+        "rows": [
+          [{ "value": "I", "state": "match" }, { "value": "" }, { "value": "N", "state": "match" }, { "value": "" }],
+          [{ "value": "N", "state": "active" }, { "value": "I", "state": "active" }, { "value": "I", "state": "active" }, { "value": "Y", "state": "active" }],
+          [{ "value": "F" }, { "value": "" }, { "value": "T" }, { "value": "" }]
+        ],
+        "caption": "Row 0: IN, Row 1: NIIY, Row 2: FT -> \"INNIIYFT\"."
+      }
+    },
+    "example2": {
+      "input": "s = \"AB\", numRows = 1",
+      "output": "\"AB\"",
+      "whyEdgeCase": "When numRows == 1, cycle length 2 * (numRows - 1) is 0! Any formula dividing or stepping by cycle length would loop infinitely unless numRows == 1 returns s early."
+    }
+  },
+  "dryRun": {
+    "approachId": "row-simulation",
+    "algorithmName": "Row-by-Row Direction Simulation",
+    "steps": [
+      {
+        "title": "Place 'I', 'N', 'F' moving down rows 0 -> 1 -> 2",
+        "description": "Start at row = 0, step = +1. Append 'I' to row 0, 'N' to row 1, 'F' to row 2. Hitting bottom row 2 flips step to -1.",
+        "state": {
+          "type": "grid",
+          "rows": [
+            [{ "value": "I", "state": "match" }, { "value": "" }, { "value": "" }, { "value": "" }],
+            [{ "value": "N", "state": "match" }, { "value": "" }, { "value": "" }, { "value": "" }],
+            [{ "value": "F", "state": "active" }, { "value": "" }, { "value": "" }, { "value": "" }]
+          ],
+          "aux": { "title": "Row Buffers", "entries": [{ "key": "r0", "value": "I" }, { "key": "r1", "value": "N" }, { "key": "r2", "value": "F" }] },
+          "caption": "Reached bottom row 2; bounce direction upward."
+        }
+      },
+      {
+        "title": "Place 'I', 'N' bouncing up to row 0, then 'I', 'T', 'Y'",
+        "description": "Step up to row 1 ('I') and row 0 ('N'), flip down to row 1 ('I'), row 2 ('T'), and back up to row 1 ('Y').",
+        "state": {
+          "type": "grid",
+          "rows": [
+            [{ "value": "I", "state": "match" }, { "value": "" }, { "value": "N", "state": "match" }, { "value": "" }],
+            [{ "value": "N", "state": "match" }, { "value": "I", "state": "match" }, { "value": "I", "state": "match" }, { "value": "Y", "state": "active" }],
+            [{ "value": "F", "state": "match" }, { "value": "" }, { "value": "T", "state": "match" }, { "value": "" }]
+          ],
+          "aux": { "title": "Row Buffers", "entries": [{ "key": "r0", "value": "IN" }, { "key": "r1", "value": "NIIY" }, { "key": "r2", "value": "FT" }] },
+          "caption": "Join rows 0 + 1 + 2 = \"INNIIYFT\"."
+        }
+      }
+    ]
+  },
+  "approaches": [
+    {
+      "id": "row-simulation",
+      "name": "Row-by-Row Simulation with Direction Flag",
+      "recommended": true,
+      "recommendedTradeOff": "Visits each character once in O(n) time without needing 2D blank cells or tricky index arithmetic.",
+      "coreIdeaSummary": "Keep one buffer per row and bounce a row cursor between 0 and numRows - 1.",
+      "coreIdea": "Maintain an array of numRows string builders. Append each character to rows[curRow], flipping direction at row 0 and row numRows - 1.",
+      "steps": [
+        "If numRows == 1 or numRows >= len(s), return s.",
+        "Create numRows empty row buffers and set row = 0, dir = -1.",
+        "For each char ch: if row == 0 or row == numRows - 1, negate dir; append ch to rows[row]; set row += dir.",
+        "Join all row buffers and return."
+      ],
+      "whyItWorks": "Negating dir at both endpoints makes row oscillate cleanly: 0, 1, ..., numRows-1, numRows-2, ..., 0.",
+      "whenToUse": "Default clean, bug-resistant solution.",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "variables": "n = length of s",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public String convert(String s, int numRows) {\n        if (numRows == 1 || numRows >= s.length()) return s;\n        StringBuilder[] rows = new StringBuilder[numRows];\n        for (int i = 0; i < numRows; i++) rows[i] = new StringBuilder();\n        int row = 0, dir = -1;\n        for (int i = 0; i < s.length(); i++) {\n            if (row == 0 || row == numRows - 1) dir = -dir;\n            rows[row].append(s.charAt(i));\n            row += dir;\n        }\n        StringBuilder out = new StringBuilder(s.length());\n        for (StringBuilder rb : rows) out.append(rb);\n        return out.toString();\n    }\n}",
+        "Python3": "class Solution:\n    def convert(self, s: str, numRows: int) -> str:\n        if numRows == 1 or numRows >= len(s):\n            return s\n        rows = [[] for _ in range(numRows)]\n        row, step = 0, -1\n        for ch in s:\n            if row == 0 or row == numRows - 1:\n                step = -step\n            rows[row].append(ch)\n            row += step\n        return ''.join(''.join(r) for r in rows)",
+        "Python": "class Solution(object):\n    def convert(self, s, numRows):\n        if numRows == 1 or numRows >= len(s):\n            return s\n        rows = [[] for _ in range(numRows)]\n        row, step = 0, -1\n        for ch in s:\n            if row == 0 or row == numRows - 1:\n                step = -step\n            rows[row].append(ch)\n            row += step\n        return ''.join(''.join(r) for r in rows)",
+        "JavaScript": "function convert(s, numRows) {\n  if (numRows === 1 || numRows >= s.length) return s;\n  const rows = Array.from({ length: numRows }, () => \"\");\n  let row = 0, dir = -1;\n  for (const ch of s) {\n    if (row === 0 || row === numRows - 1) dir = -dir;\n    rows[row] += ch;\n    row += dir;\n  }\n  return rows.join(\"\");\n}",
+        "TypeScript": "function convert(s: string, numRows: number): string {\n  if (numRows === 1 || numRows >= s.length) return s;\n  const rows: string[] = Array.from({ length: numRows }, () => \"\");\n  let row = 0, dir = -1;\n  for (const ch of s) {\n    if (row === 0 || row === numRows - 1) dir = -dir;\n    rows[row] += ch;\n    row += dir;\n  }\n  return rows.join(\"\");\n}",
+        "C#": "using System.Text;\n\npublic class Solution {\n    public string Convert(string s, int numRows) {\n        if (numRows == 1 || numRows >= s.Length) return s;\n        StringBuilder[] rows = new StringBuilder[numRows];\n        for (int i = 0; i < numRows; i++) rows[i] = new StringBuilder();\n        int row = 0, dir = -1;\n        foreach (char ch in s) {\n            if (row == 0 || row == numRows - 1) dir = -dir;\n            rows[row].Append(ch);\n            row += dir;\n        }\n        StringBuilder res = new StringBuilder(s.Length);\n        foreach (var rb in rows) res.Append(rb);\n        return res.ToString();\n    }\n}",
+        "PHP": "class Solution {\n    function convert($s, $numRows) {\n        if ($numRows === 1 || $numRows >= strlen($s)) return $s;\n        $rows = array_fill(0, $numRows, \"\");\n        $row = 0; $dir = -1; $n = strlen($s);\n        for ($i = 0; $i < $n; $i++) {\n            if ($row === 0 || $row === $numRows - 1) $dir = -$dir;\n            $rows[$row] .= $s[$i];\n            $row += $dir;\n        }\n        return implode(\"\", $rows);\n    }\n}"
+      }
+    },
+    {
+      "id": "cycle-jump",
+      "name": "Direct Cycle Index Jumping",
+      "recommended": false,
+      "coreIdeaSummary": "Visit characters directly in output row order using cycle = 2 * (numRows - 1).",
+      "coreIdea": "Each row repeats every cycle = 2 * (numRows - 1) indices. Interior rows (0 < r < numRows - 1) have one extra diagonal index at j + cycle - 2 * r.",
+      "steps": [
+        "If numRows == 1, return s.",
+        "Set cycle = 2 * (numRows - 1).",
+        "For row r from 0 to numRows - 1, step j = r, r + cycle, ...: append s[j], and if 0 < r < numRows - 1 and j + cycle - 2*r < n, also append s[j + cycle - 2*r]."
+      ],
+      "whyItWorks": "Inside each cycle of length 2*(numRows - 1), the vertical column puts row r at offset r and the upward diagonal puts row r at offset cycle - r.",
+      "whenToUse": "When you want zero intermediate row buffers (only output storage).",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1) auxiliary (O(n) for output string)",
+        "variables": "n = length of s",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public String convert(String s, int numRows) {\n        if (numRows == 1 || numRows >= s.length()) return s;\n        int n = s.length(), cycle = 2 * (numRows - 1);\n        StringBuilder out = new StringBuilder(n);\n        for (int r = 0; r < numRows; r++) {\n            for (int j = r; j < n; j += cycle) {\n                out.append(s.charAt(j));\n                int diag = j + cycle - 2 * r;\n                if (r > 0 && r < numRows - 1 && diag < n) out.append(s.charAt(diag));\n            }\n        }\n        return out.toString();\n    }\n}",
+        "Python3": "class Solution:\n    def convert(self, s: str, numRows: int) -> str:\n        if numRows == 1 or numRows >= len(s):\n            return s\n        n = len(s)\n        cycle = 2 * (numRows - 1)\n        out = []\n        for r in range(numRows):\n            for j in range(r, n, cycle):\n                out.append(s[j])\n                diag = j + cycle - 2 * r\n                if 0 < r < numRows - 1 and diag < n:\n                    out.append(s[diag])\n        return ''.join(out)",
+        "Python": "class Solution(object):\n    def convert(self, s, numRows):\n        if numRows == 1 or numRows >= len(s):\n            return s\n        n = len(s)\n        cycle = 2 * (numRows - 1)\n        out = []\n        for r in range(numRows):\n            for j in range(r, n, cycle):\n                out.append(s[j])\n                diag = j + cycle - 2 * r\n                if 0 < r < numRows - 1 and diag < n:\n                    out.append(s[diag])\n        return ''.join(out)",
+        "JavaScript": "function convert(s, numRows) {\n  if (numRows === 1 || numRows >= s.length) return s;\n  const n = s.length, cycle = 2 * (numRows - 1);\n  let out = \"\";\n  for (let r = 0; r < numRows; r++) {\n    for (let j = r; j < n; j += cycle) {\n      out += s[j];\n      const diag = j + cycle - 2 * r;\n      if (r > 0 && r < numRows - 1 && diag < n) out += s[diag];\n    }\n  }\n  return out;\n}",
+        "TypeScript": "function convert(s: string, numRows: number): string {\n  if (numRows === 1 || numRows >= s.length) return s;\n  const n = s.length, cycle = 2 * (numRows - 1);\n  let out = \"\";\n  for (let r = 0; r < numRows; r++) {\n    for (let j = r; j < n; j += cycle) {\n      out += s[j];\n      const diag = j + cycle - 2 * r;\n      if (r > 0 && r < numRows - 1 && diag < n) out += s[diag];\n    }\n  }\n  return out;\n}",
+        "C#": "using System.Text;\n\npublic class Solution {\n    public string Convert(string s, int numRows) {\n        if (numRows == 1 || numRows >= s.Length) return s;\n        int n = s.Length, cycle = 2 * (numRows - 1);\n        StringBuilder outSb = new StringBuilder(n);\n        for (int r = 0; r < numRows; r++) {\n            for (int j = r; j < n; j += cycle) {\n                outSb.Append(s[j]);\n                int diag = j + cycle - 2 * r;\n                if (r > 0 && r < numRows - 1 && diag < n) outSb.Append(s[diag]);\n            }\n        }\n        return outSb.ToString();\n    }\n}",
+        "PHP": "class Solution {\n    function convert($s, $numRows) {\n        $n = strlen($s);\n        if ($numRows === 1 || $numRows >= $n) return $s;\n        $cycle = 2 * ($numRows - 1); $out = \"\";\n        for ($r = 0; $r < $numRows; $r++) {\n            for ($j = $r; $j < $n; $j += $cycle) {\n                $out .= $s[$j];\n                $diag = $j + $cycle - 2 * $r;\n                if ($r > 0 && $r < $numRows - 1 && $diag < $n) $out .= $s[$diag];\n            }\n        }\n        return $out;\n    }\n}"
+      }
+    }
+  ],
+  "tests": [
+    { "name": "Example 1", "args": ["INFINITY", 3], "expected": "INNIIYFT" },
+    { "name": "Example 2 (numRows=1)", "args": ["AB", 1], "expected": "AB" },
+    { "name": "4 rows", "args": ["PAYPALISHIRING", 4], "expected": "PINALSIGYAHRPI" },
+    { "name": "numRows > len", "args": ["HI", 5], "expected": "HI" }
+  ],
+  "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (!s.convert(\"INFINITY\", 3).equals(\"INNIIYFT\")) throw new AssertionError(\"Ex1\");\n    if (!s.convert(\"AB\", 1).equals(\"AB\")) throw new AssertionError(\"Ex2\");\n    if (!s.convert(\"PAYPALISHIRING\", 4).equals(\"PINALSIGYAHRPI\")) throw new AssertionError(\"Ex3\");\n    if (!s.convert(\"HI\", 5).equals(\"HI\")) throw new AssertionError(\"Ex4\");\n  }\n}",
+  "phpDriver": "$s = new Solution();\nif ($s->convert(\"INFINITY\", 3) !== \"INNIIYFT\") exit(1);\nif ($s->convert(\"AB\", 1) !== \"AB\") exit(1);\nif ($s->convert(\"PAYPALISHIRING\", 4) !== \"PINALSIGYAHRPI\") exit(1);\nif ($s->convert(\"HI\", 5) !== \"HI\") exit(1);",
+  "csharpDriver": "using System;\npublic class Runner {\n  public static void Main() {\n    var s = new Solution();\n    if (s.Convert(\"INFINITY\", 3) != \"INNIIYFT\") throw new Exception();\n    if (s.Convert(\"AB\", 1) != \"AB\") throw new Exception();\n    if (s.Convert(\"PAYPALISHIRING\", 4) != \"PINALSIGYAHRPI\") throw new Exception();\n    if (s.Convert(\"HI\", 5) != \"HI\") throw new Exception();\n  }\n}"
+}

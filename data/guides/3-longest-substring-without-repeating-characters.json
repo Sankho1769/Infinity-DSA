@@ -1,0 +1,292 @@
+{
+  "number": 3,
+  "slug": "longest-substring-without-repeating-characters",
+  "title": "Longest Substring Without Repeating Characters",
+  "difficulty": "Medium",
+  "topics": ["Hash Table", "String", "Sliding Window"],
+  "access": "Free",
+  "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+  "jsFunctionName": "lengthOfLongestSubstring",
+  "pyMethodName": "lengthOfLongestSubstring",
+  "verification": {
+    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "untestedLanguages": []
+  },
+  "understand": {
+    "question": "Given a text string, what is the length of the longest unbroken stretch of characters in which every character appears at most once?",
+    "plainExplanation": "Imagine highlighting a contiguous snippet of letters with a marker. You want your highlight to be as wide as possible, but the moment a character would appear twice inside the highlight, you must shrink the left side past its earlier copy.",
+    "inputMeaning": "A string s made of English letters, digits, symbols, or spaces (including an empty string \"\").",
+    "outputMeaning": "An integer equal to the maximum length of any valid substring with all unique characters.",
+    "rules": [
+      "A substring must be contiguous (you cannot delete characters from the middle).",
+      "Case matters ('a' and 'A' are different characters), and spaces/symbols count as characters.",
+      "An empty string \"\" has a longest unique substring of length 0."
+    ],
+    "terms": [
+      {
+        "term": "Substring",
+        "definition": "A contiguous slice s[left..right] of consecutive characters from s."
+      },
+      {
+        "term": "Sliding Window",
+        "definition": "Two pointers [left, right] that expand right to include new items and advance left only when a rule (here: uniqueness) is broken."
+      },
+      {
+        "term": "Last-Seen Index",
+        "definition": "A map storing the most recent position where each character appeared so left can jump past duplicates in one step."
+      }
+    ],
+    "example1": {
+      "input": "s = \"cadbzabcd\"",
+      "output": "5",
+      "whyValid": "The substring \"cadbz\" (indices 0..4) has 5 distinct characters. When index 5 ('a') arrives, 'a' repeats from index 1, so left slides to 2 (\"dbza\"), and later reaches \"zabcd\" (also length 5), so the maximum length is 5.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          { "index": 0, "value": "c", "state": "match" },
+          { "index": 1, "value": "a", "state": "match" },
+          { "index": 2, "value": "d", "state": "match" },
+          { "index": 3, "value": "b", "state": "match" },
+          { "index": 4, "value": "z", "state": "match" },
+          { "index": 5, "value": "a", "state": "skip" },
+          { "index": 6, "value": "b", "state": "default" },
+          { "index": 7, "value": "c", "state": "default" },
+          { "index": 8, "value": "d", "state": "default" }
+        ],
+        "pointers": [
+          { "index": 0, "name": "L" },
+          { "index": 4, "name": "R" }
+        ],
+        "caption": "Window \"cadbz\" (indices 0..4) has 5 all-unique characters."
+      }
+    },
+    "example2": {
+      "input": "s = \"abba\"",
+      "output": "2",
+      "whyEdgeCase": "Trap for naive index jumps! When right reaches the second 'a' at index 3, the old 'a' was at index 0, which is ALREADY behind left = 2. Never move left backwards: always use left = max(left, lastSeen[ch] + 1)."
+    }
+  },
+  "dryRun": {
+    "approachId": "sliding-window-map",
+    "algorithmName": "Sliding Window with Last-Seen Map",
+    "steps": [
+      {
+        "title": "Indices 0..4: expand across unique letters 'c','a','d','b','z'",
+        "description": "None of c, a, d, b, z is in our active window [0..4]. Record each index in lastSeen and update maxLen = 5.",
+        "state": {
+          "type": "hash",
+          "items": [
+            { "index": 0, "value": "c", "state": "match" },
+            { "index": 1, "value": "a", "state": "match" },
+            { "index": 2, "value": "d", "state": "match" },
+            { "index": 3, "value": "b", "state": "match" },
+            { "index": 4, "value": "z", "state": "match" },
+            { "index": 5, "value": "a", "state": "default" },
+            { "index": 6, "value": "b", "state": "default" },
+            { "index": 7, "value": "c", "state": "default" },
+            { "index": 8, "value": "d", "state": "default" }
+          ],
+          "pointers": [
+            { "index": 0, "name": "L" },
+            { "index": 4, "name": "R" }
+          ],
+          "aux": {
+            "title": "Window & Last-Seen Map",
+            "entries": [
+              { "key": "maxLen", "value": 5, "highlight": true },
+              { "key": "c:0, a:1, d:2, b:3, z:4", "value": "" }
+            ]
+          },
+          "caption": "Window length = 4 - 0 + 1 = 5."
+        }
+      },
+      {
+        "title": "Index 5 ('a'): duplicate inside window -> jump L to 2",
+        "description": "lastSeen['a'] is 1 (>= L = 0). Move L to 1 + 1 = 2 so the old 'a' leaves the window. Update lastSeen['a'] = 5. Window is \"dbza\" (length 4).",
+        "state": {
+          "type": "hash",
+          "items": [
+            { "index": 0, "value": "c", "state": "skip" },
+            { "index": 1, "value": "a", "state": "skip" },
+            { "index": 2, "value": "d", "state": "window" },
+            { "index": 3, "value": "b", "state": "window" },
+            { "index": 4, "value": "z", "state": "window" },
+            { "index": 5, "value": "a", "state": "active" },
+            { "index": 6, "value": "b", "state": "default" },
+            { "index": 7, "value": "c", "state": "default" },
+            { "index": 8, "value": "d", "state": "default" }
+          ],
+          "pointers": [
+            { "index": 2, "name": "L" },
+            { "index": 5, "name": "R" }
+          ],
+          "aux": {
+            "title": "Window & Last-Seen Map",
+            "entries": [
+              { "key": "maxLen", "value": 5 },
+              { "key": "a", "value": "updated -> 5", "highlight": true }
+            ]
+          },
+          "caption": "Window [2..5] = \"dbza\", length 4."
+        }
+      },
+      {
+        "title": "Indices 6..8 ('b', 'c', 'd'): slide past 'b', ignore stale 'c', 'd'",
+        "description": "At R=6 ('b'), lastSeen['b']=3 >= L=2 so L jumps to 4. At R=7 ('c') and R=8 ('d'), their old indices (0 and 2) are < L=4 so L stays at 4! Window \"zabcd\" reaches length 5. Return 5.",
+        "state": {
+          "type": "hash",
+          "items": [
+            { "index": 0, "value": "c", "state": "skip" },
+            { "index": 1, "value": "a", "state": "skip" },
+            { "index": 2, "value": "d", "state": "skip" },
+            { "index": 3, "value": "b", "state": "skip" },
+            { "index": 4, "value": "z", "state": "match" },
+            { "index": 5, "value": "a", "state": "match" },
+            { "index": 6, "value": "b", "state": "match" },
+            { "index": 7, "value": "c", "state": "match" },
+            { "index": 8, "value": "d", "state": "match" }
+          ],
+          "pointers": [
+            { "index": 4, "name": "L" },
+            { "index": 8, "name": "R" }
+          ],
+          "aux": {
+            "title": "Final Result",
+            "entries": [
+              { "key": "maxLen", "value": 5, "highlight": true }
+            ]
+          },
+          "caption": "Window [4..8] = \"zabcd\" also has length 5. Final answer: 5."
+        }
+      }
+    ]
+  },
+  "approaches": [
+    {
+      "id": "brute-force",
+      "name": "Brute Force with Character Set",
+      "recommended": false,
+      "coreIdeaSummary": "Start from each index i and extend right until a repeat occurs.",
+      "coreIdea": "For every starting index i, grow the substring rightwards using a set until encountering a repeated character.",
+      "steps": [
+        "Initialize best = 0.",
+        "For each start index i, create an empty seen set.",
+        "Loop j from i to n - 1: if s[j] is in seen, break; else insert s[j] and update best."
+      ],
+      "whyItWorks": "Checking every possible start index and stopping on the first duplicate examines every valid unique substring.",
+      "whenToUse": "Only for tiny strings or baseline verification.",
+      "complexity": {
+        "time": "O(n * min(n, sigma))",
+        "space": "O(min(n, sigma))",
+        "variables": "n = string length, sigma = character alphabet size",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "import java.util.HashSet;\nimport java.util.Set;\n\nclass Solution {\n    public int lengthOfLongestSubstring(String s) {\n        int best = 0;\n        for (int i = 0; i < s.length(); i++) {\n            Set<Character> seen = new HashSet<>();\n            for (int j = i; j < s.length(); j++) {\n                if (!seen.add(s.charAt(j))) break;\n                best = Math.max(best, j - i + 1);\n            }\n        }\n        return best;\n    }\n}",
+        "Python3": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        best = 0\n        n = len(s)\n        for i in range(n):\n            seen = set()\n            for j in range(i, n):\n                if s[j] in seen:\n                    break\n                seen.add(s[j])\n                best = max(best, j - i + 1)\n        return best",
+        "Python": "class Solution(object):\n    def lengthOfLongestSubstring(self, s):\n        best = 0\n        n = len(s)\n        for i in range(n):\n            seen = set()\n            for j in range(i, n):\n                if s[j] in seen:\n                    break\n                seen.add(s[j])\n                if j - i + 1 > best:\n                    best = j - i + 1\n        return best",
+        "JavaScript": "function lengthOfLongestSubstring(s) {\n  let best = 0;\n  for (let i = 0; i < s.length; i++) {\n    const seen = new Set();\n    for (let j = i; j < s.length; j++) {\n      if (seen.has(s[j])) break;\n      seen.add(s[j]);\n      best = Math.max(best, j - i + 1);\n    }\n  }\n  return best;\n}",
+        "TypeScript": "function lengthOfLongestSubstring(s: string): number {\n  let best = 0;\n  for (let i = 0; i < s.length; i++) {\n    const seen = new Set<string>();\n    for (let j = i; j < s.length; j++) {\n      if (seen.has(s[j])) break;\n      seen.add(s[j]);\n      best = Math.max(best, j - i + 1);\n    }\n  }\n  return best;\n}",
+        "C#": "using System;\nusing System.Collections.Generic;\n\npublic class Solution {\n    public int LengthOfLongestSubstring(string s) {\n        int best = 0;\n        for (int i = 0; i < s.Length; i++) {\n            var seen = new HashSet<char>();\n            for (int j = i; j < s.Length; j++) {\n                if (!seen.Add(s[j])) break;\n                best = Math.Max(best, j - i + 1);\n            }\n        }\n        return best;\n    }\n}",
+        "PHP": "class Solution {\n    function lengthOfLongestSubstring($s) {\n        $best = 0; $n = strlen($s);\n        for ($i = 0; $i < $n; $i++) {\n            $seen = [];\n            for ($j = $i; $j < $n; $j++) {\n                $ch = $s[$j];\n                if (isset($seen[$ch])) break;\n                $seen[$ch] = true;\n                $best = max($best, $j - $i + 1);\n            }\n        }\n        return $best;\n    }\n}"
+      }
+    },
+    {
+      "id": "sliding-window-set",
+      "name": "Sliding Window with Active Set",
+      "recommended": false,
+      "coreIdeaSummary": "Shrink left one step at a time while s[right] is in the active set.",
+      "coreIdea": "Maintain a set of characters inside [left..right]. Before adding s[right], advance left and remove s[left] until s[right] is no longer present.",
+      "steps": [
+        "Initialize left = 0, best = 0, and an empty set active.",
+        "For right from 0 to n - 1: while s[right] is in active, remove s[left] and increment left.",
+        "Add s[right] to active and update best = max(best, right - left + 1)."
+      ],
+      "whyItWorks": "Each character is inserted once and removed at most once, so left and right together make at most 2n moves.",
+      "whenToUse": "Easy-to-adapt template for sliding window problems with frequency constraints.",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(min(n, sigma))",
+        "variables": "n = string length, sigma = alphabet size",
+        "boundType": "Expected (hash set)"
+      },
+      "code": {
+        "Java": "import java.util.HashSet;\nimport java.util.Set;\n\nclass Solution {\n    public int lengthOfLongestSubstring(String s) {\n        Set<Character> active = new HashSet<>();\n        int left = 0, best = 0;\n        for (int right = 0; right < s.length(); right++) {\n            char c = s.charAt(right);\n            while (active.contains(c)) {\n                active.remove(s.charAt(left++));\n            }\n            active.add(c);\n            best = Math.max(best, right - left + 1);\n        }\n        return best;\n    }\n}",
+        "Python3": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        active = set()\n        left = 0\n        best = 0\n        for right, ch in enumerate(s):\n            while ch in active:\n                active.remove(s[left])\n                left += 1\n            active.add(ch)\n            best = max(best, right - left + 1)\n        return best",
+        "Python": "class Solution(object):\n    def lengthOfLongestSubstring(self, s):\n        active = set()\n        left = 0\n        best = 0\n        for right, ch in enumerate(s):\n            while ch in active:\n                active.remove(s[left])\n                left += 1\n            active.add(ch)\n            if right - left + 1 > best:\n                best = right - left + 1\n        return best",
+        "JavaScript": "function lengthOfLongestSubstring(s) {\n  const active = new Set();\n  let left = 0, best = 0;\n  for (let right = 0; right < s.length; right++) {\n    const c = s[right];\n    while (active.has(c)) {\n      active.delete(s[left++]);\n    }\n    active.add(c);\n    best = Math.max(best, right - left + 1);\n  }\n  return best;\n}",
+        "TypeScript": "function lengthOfLongestSubstring(s: string): number {\n  const active = new Set<string>();\n  let left = 0, best = 0;\n  for (let right = 0; right < s.length; right++) {\n    const c = s[right];\n    while (active.has(c)) {\n      active.delete(s[left++]);\n    }\n    active.add(c);\n    best = Math.max(best, right - left + 1);\n  }\n  return best;\n}",
+        "C#": "using System;\nusing System.Collections.Generic;\n\npublic class Solution {\n    public int LengthOfLongestSubstring(string s) {\n        var active = new HashSet<char>();\n        int left = 0, best = 0;\n        for (int right = 0; right < s.Length; right++) {\n            char c = s[right];\n            while (active.Contains(c)) {\n                active.Remove(s[left++]);\n            }\n            active.Add(c);\n            best = Math.Max(best, right - left + 1);\n        }\n        return best;\n    }\n}",
+        "PHP": "class Solution {\n    function lengthOfLongestSubstring($s) {\n        $active = [];\n        $left = 0; $best = 0; $n = strlen($s);\n        for ($right = 0; $right < $n; $right++) {\n            $c = $s[$right];\n            while (isset($active[$c])) {\n                unset($active[$s[$left]]);\n                $left++;\n            }\n            $active[$c] = true;\n            $best = max($best, $right - $left + 1);\n        }\n        return $best;\n    }\n}"
+      }
+    },
+    {
+      "id": "sliding-window-map",
+      "name": "Sliding Window with Last-Seen Map",
+      "recommended": true,
+      "recommendedTradeOff": "Visits each index strictly once by jumping left directly past the previous occurrence instead of deleting elements step by step.",
+      "coreIdeaSummary": "Store each character's latest index and jump left = max(left, lastSeen[ch] + 1).",
+      "coreIdea": "Track the last index where every character appeared. When s[right] was seen at prev >= left, move left directly to prev + 1.",
+      "steps": [
+        "Initialize map lastSeen = {}, left = 0, best = 0.",
+        "For each right from 0 to n - 1: if s[right] is in lastSeen and lastSeen[s[right]] >= left, set left = lastSeen[s[right]] + 1.",
+        "Store lastSeen[s[right]] = right and update best = max(best, right - left + 1)."
+      ],
+      "whyItWorks": "Taking max(left, prev + 1) keeps left monotonic so stale characters from before the current window are safely ignored without removing them.",
+      "whenToUse": "Default optimal solution for general Unicode or ASCII strings.",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(min(n, sigma))",
+        "variables": "n = string length, sigma = alphabet size",
+        "boundType": "Expected (hash map)"
+      },
+      "code": {
+        "Java": "import java.util.HashMap;\nimport java.util.Map;\n\nclass Solution {\n    public int lengthOfLongestSubstring(String s) {\n        Map<Character, Integer> lastSeen = new HashMap<>();\n        int left = 0, best = 0;\n        for (int right = 0; right < s.length(); right++) {\n            char c = s.charAt(right);\n            Integer prev = lastSeen.get(c);\n            if (prev != null && prev >= left) {\n                left = prev + 1;\n            }\n            lastSeen.put(c, right);\n            best = Math.max(best, right - left + 1);\n        }\n        return best;\n    }\n}",
+        "Python3": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        last_seen: Dict[str, int] = {}\n        left = 0\n        best = 0\n        for right, ch in enumerate(s):\n            if ch in last_seen and last_seen[ch] >= left:\n                left = last_seen[ch] + 1\n            last_seen[ch] = right\n            best = max(best, right - left + 1)\n        return best",
+        "Python": "class Solution(object):\n    def lengthOfLongestSubstring(self, s):\n        last_seen = {}\n        left = 0\n        best = 0\n        for right, ch in enumerate(s):\n            if ch in last_seen and last_seen[ch] >= left:\n                left = last_seen[ch] + 1\n            last_seen[ch] = right\n            if right - left + 1 > best:\n                best = right - left + 1\n        return best",
+        "JavaScript": "function lengthOfLongestSubstring(s) {\n  const lastSeen = new Map();\n  let left = 0, best = 0;\n  for (let right = 0; right < s.length; right++) {\n    const c = s[right];\n    const prev = lastSeen.get(c);\n    if (prev !== undefined && prev >= left) {\n      left = prev + 1;\n    }\n    lastSeen.set(c, right);\n    best = Math.max(best, right - left + 1);\n  }\n  return best;\n}",
+        "TypeScript": "function lengthOfLongestSubstring(s: string): number {\n  const lastSeen = new Map<string, number>();\n  let left = 0, best = 0;\n  for (let right = 0; right < s.length; right++) {\n    const c = s[right];\n    const prev = lastSeen.get(c);\n    if (prev !== undefined && prev >= left) {\n      left = prev + 1;\n    }\n    lastSeen.set(c, right);\n    best = Math.max(best, right - left + 1);\n  }\n  return best;\n}",
+        "C#": "using System;\nusing System.Collections.Generic;\n\npublic class Solution {\n    public int LengthOfLongestSubstring(string s) {\n        var lastSeen = new Dictionary<char, int>();\n        int left = 0, best = 0;\n        for (int right = 0; right < s.Length; right++) {\n            char c = s[right];\n            int prev;\n            if (lastSeen.TryGetValue(c, out prev) && prev >= left) {\n                left = prev + 1;\n            }\n            lastSeen[c] = right;\n            best = Math.Max(best, right - left + 1);\n        }\n        return best;\n    }\n}",
+        "PHP": "class Solution {\n    function lengthOfLongestSubstring($s) {\n        $lastSeen = [];\n        $left = 0; $best = 0; $n = strlen($s);\n        for ($right = 0; $right < $n; $right++) {\n            $c = $s[$right];\n            if (isset($lastSeen[$c]) && $lastSeen[$c] >= $left) {\n                $left = $lastSeen[$c] + 1;\n            }\n            $lastSeen[$c] = $right;\n            $best = max($best, $right - $left + 1);\n        }\n        return $best;\n    }\n}"
+      }
+    },
+    {
+      "id": "ascii-table",
+      "name": "Fixed 128-Slot ASCII Array",
+      "recommended": false,
+      "coreIdeaSummary": "Replace the hash map with a 128-element integer array for ASCII inputs.",
+      "coreIdea": "For standard ASCII strings, use a fixed int[128] array initialized to -1 to achieve worst-case O(1) lookup without hashing.",
+      "steps": [
+        "Initialize int[128] lastSeen filled with -1, left = 0, best = 0.",
+        "For each character code code = ord(s[right]), set left = max(left, lastSeen[code] + 1).",
+        "Set lastSeen[code] = right and update best = max(best, right - left + 1)."
+      ],
+      "whyItWorks": "Since ASCII codes fall in 0..127, direct array indexing avoids hash collisions and dynamic allocation.",
+      "whenToUse": "When inputs are guaranteed to be ASCII and strict worst-case O(n) time / O(1) fixed table space is desired.",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1) (fixed 128-entry table for ASCII)",
+        "variables": "n = string length",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "import java.util.Arrays;\n\nclass Solution {\n    public int lengthOfLongestSubstring(String s) {\n        int[] last = new int[128];\n        Arrays.fill(last, -1);\n        int left = 0, best = 0;\n        for (int right = 0; right < s.length(); right++) {\n            int code = s.charAt(right);\n            if (last[code] >= left) left = last[code] + 1;\n            last[code] = right;\n            best = Math.max(best, right - left + 1);\n        }\n        return best;\n    }\n}",
+        "Python3": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        last = [-1] * 128\n        left = 0\n        best = 0\n        for right, ch in enumerate(s):\n            code = ord(ch)\n            if last[code] >= left:\n                left = last[code] + 1\n            last[code] = right\n            best = max(best, right - left + 1)\n        return best",
+        "Python": "class Solution(object):\n    def lengthOfLongestSubstring(self, s):\n        last = [-1] * 128\n        left = 0\n        best = 0\n        for right, ch in enumerate(s):\n            code = ord(ch)\n            if last[code] >= left:\n                left = last[code] + 1\n            last[code] = right\n            if right - left + 1 > best:\n                best = right - left + 1\n        return best",
+        "JavaScript": "function lengthOfLongestSubstring(s) {\n  const last = new Int32Array(128).fill(-1);\n  let left = 0, best = 0;\n  for (let right = 0; right < s.length; right++) {\n    const code = s.charCodeAt(right);\n    if (last[code] >= left) left = last[code] + 1;\n    last[code] = right;\n    best = Math.max(best, right - left + 1);\n  }\n  return best;\n}",
+        "TypeScript": "function lengthOfLongestSubstring(s: string): number {\n  const last = new Int32Array(128).fill(-1);\n  let left = 0, best = 0;\n  for (let right = 0; right < s.length; right++) {\n    const code = s.charCodeAt(right);\n    if (last[code] >= left) left = last[code] + 1;\n    last[code] = right;\n    best = Math.max(best, right - left + 1);\n  }\n  return best;\n}",
+        "C#": "using System;\n\npublic class Solution {\n    public int LengthOfLongestSubstring(string s) {\n        int[] last = new int[128];\n        for (int i = 0; i < 128; i++) last[i] = -1;\n        int left = 0, best = 0;\n        for (int right = 0; right < s.Length; right++) {\n            int code = s[right];\n            if (last[code] >= left) left = last[code] + 1;\n            last[code] = right;\n            best = Math.Max(best, right - left + 1);\n        }\n        return best;\n    }\n}",
+        "PHP": "class Solution {\n    function lengthOfLongestSubstring($s) {\n        $last = array_fill(0, 128, -1);\n        $left = 0; $best = 0; $n = strlen($s);\n        for ($right = 0; $right < $n; $right++) {\n            $code = ord($s[$right]);\n            if ($last[$code] >= $left) $left = $last[$code] + 1;\n            $last[$code] = $right;\n            $best = max($best, $right - $left + 1);\n        }\n        return $best;\n    }\n}"
+      }
+    }
+  ],
+  "tests": [
+    { "name": "Example 1", "args": ["cadbzabcd"], "expected": 5 },
+    { "name": "Example 2 (abba trap)", "args": ["abba"], "expected": 2 },
+    { "name": "Empty string", "args": [""], "expected": 0 },
+    { "name": "All identical", "args": ["zzzzz"], "expected": 1 }
+  ],
+  "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (s.lengthOfLongestSubstring(\"cadbzabcd\") != 5) throw new AssertionError(\"Ex1\");\n    if (s.lengthOfLongestSubstring(\"abba\") != 2) throw new AssertionError(\"Ex2\");\n    if (s.lengthOfLongestSubstring(\"\") != 0) throw new AssertionError(\"Empty\");\n    if (s.lengthOfLongestSubstring(\"zzzzz\") != 1) throw new AssertionError(\"Same\");\n  }\n}",
+  "phpDriver": "$s = new Solution();\nif ($s->lengthOfLongestSubstring(\"cadbzabcd\") !== 5) exit(1);\nif ($s->lengthOfLongestSubstring(\"abba\") !== 2) exit(1);\nif ($s->lengthOfLongestSubstring(\"\") !== 0) exit(1);\nif ($s->lengthOfLongestSubstring(\"zzzzz\") !== 1) exit(1);",
+  "csharpDriver": "using System;\npublic class Runner {\n  public static void Main() {\n    var s = new Solution();\n    if (s.LengthOfLongestSubstring(\"cadbzabcd\") != 5) throw new Exception(\"Ex1\");\n    if (s.LengthOfLongestSubstring(\"abba\") != 2) throw new Exception(\"Ex2\");\n    if (s.LengthOfLongestSubstring(\"\") != 0) throw new Exception(\"Empty\");\n    if (s.LengthOfLongestSubstring(\"zzzzz\") != 1) throw new Exception(\"Same\");\n  }\n}"
+}

@@ -1,0 +1,178 @@
+{
+  "number": 8,
+  "slug": "string-to-integer-atoi",
+  "title": "String to Integer (atoi)",
+  "difficulty": "Medium",
+  "topics": ["String"],
+  "access": "Free",
+  "url": "https://leetcode.com/problems/string-to-integer-atoi/",
+  "jsFunctionName": "myAtoi",
+  "pyMethodName": "myAtoi",
+  "verification": {
+    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "untestedLanguages": []
+  },
+  "understand": {
+    "question": "Given a messy text string, how do we parse a leading signed integer while skipping leading spaces, reading at most one '+' or '-', stopping at the first non-digit, and clamping to 32-bit bounds?",
+    "plainExplanation": "Think of a strict form-field parser walking left to right: first ignore leading spaces, then check for a single optional '+' or '-', then consume consecutive digits 0-9 until a non-digit appears, and finally clamp huge numbers to [-2^31, 2^31 - 1].",
+    "inputMeaning": "Any string s containing spaces, signs, digits, or letters.",
+    "outputMeaning": "The parsed integer clamped into [-2,147,483,648, 2,147,483,647], or 0 if no valid digits start after spaces/sign.",
+    "rules": [
+      "Only leading spaces (' ') are skipped — once a sign or digit starts, spaces stop parsing too.",
+      "Only one optional '+' or '-' is allowed; two signs like '+-4' stops immediately and returns 0.",
+      "Unlike Reverse Integer (#7), out-of-range values are CLAMPED to INT_MIN or INT_MAX rather than returning 0."
+    ],
+    "terms": [
+      {
+        "term": "Clamping",
+        "definition": "Capping a value at the nearest boundary: anything > 2,147,483,647 becomes 2,147,483,647, and anything < -2,147,483,648 becomes -2,147,483,648."
+      },
+      {
+        "term": "DFA (Deterministic Finite Automaton)",
+        "definition": "A small state machine (start -> signed -> in_number -> end) where each character type triggers a predictable transition."
+      }
+    ],
+    "example1": {
+      "input": "s = \"   -042abc\"",
+      "output": "-42",
+      "whyValid": "Skip the 3 leading spaces, read '-' (sign = -1), skip/absorb leading 0, read '4' and '2' (value = 42), then stop as soon as 'a' appears. Final answer: -42.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          { "index": 0, "value": " ", "state": "skip", "label": "space" },
+          { "index": 1, "value": " ", "state": "skip", "label": "space" },
+          { "index": 2, "value": " ", "state": "skip", "label": "space" },
+          { "index": 3, "value": "-", "state": "window", "label": "sign=-1" },
+          { "index": 4, "value": "0", "state": "match", "label": "digit" },
+          { "index": 5, "value": "4", "state": "match", "label": "digit" },
+          { "index": 6, "value": "2", "state": "match", "label": "digit" },
+          { "index": 7, "value": "a", "state": "skip", "label": "stop!" }
+        ],
+        "pointers": [{ "index": 7, "name": "halt" }],
+        "caption": "Result after stopping at 'a': -42."
+      }
+    },
+    "example2": {
+      "input": "s = \"-91283472332\"",
+      "output": "-2147483648",
+      "whyEdgeCase": "Massive negative number! Instead of wrapping around or returning 0, myAtoi must clamp at INT_MIN (-2,147,483,648)."
+    }
+  },
+  "dryRun": {
+    "approachId": "single-pass-scan",
+    "algorithmName": "Single-Pass Scanner with Clamping Guard",
+    "steps": [
+      {
+        "title": "Skip leading whitespace (indices 0..2)",
+        "description": "Advance pointer i past all leading ' ' characters until landing on '-' at index 3.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": "_", "state": "skip" },
+            { "index": 1, "value": "_", "state": "skip" },
+            { "index": 2, "value": "_", "state": "skip" },
+            { "index": 3, "value": "-", "state": "active" },
+            { "index": 4, "value": "0", "state": "default" },
+            { "index": 5, "value": "4", "state": "default" },
+            { "index": 6, "value": "2", "state": "default" },
+            { "index": 7, "value": "a", "state": "default" }
+          ],
+          "pointers": [{ "index": 3, "name": "i" }],
+          "aux": { "title": "Parser State", "entries": [{ "key": "sign", "value": 1 }, { "key": "acc", "value": 0 }] },
+          "caption": "Spaces skipped; ready to check optional sign."
+        }
+      },
+      {
+        "title": "Consume sign '-' and digits 0, 4, 2",
+        "description": "Read '-' so sign = -1 and i = 4. Then read '0' -> acc = 0, '4' -> acc = 4, '2' -> acc = 42. All are safely below INT_MAX / 10.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": "_", "state": "skip" },
+            { "index": 1, "value": "_", "state": "skip" },
+            { "index": 2, "value": "_", "state": "skip" },
+            { "index": 3, "value": "-", "state": "window" },
+            { "index": 4, "value": "0", "state": "match" },
+            { "index": 5, "value": "4", "state": "match" },
+            { "index": 6, "value": "2", "state": "match" },
+            { "index": 7, "value": "a", "state": "active" }
+          ],
+          "pointers": [{ "index": 7, "name": "i" }],
+          "aux": { "title": "Parser State", "entries": [{ "key": "sign", "value": -1 }, { "key": "acc", "value": 42, "highlight": true }] },
+          "caption": "'a' is not a digit: stop and return -42."
+        }
+      }
+    ]
+  },
+  "approaches": [
+    {
+      "id": "single-pass-scan",
+      "name": "Single-Pass Pointer Scan with Pre-Overflow Guard",
+      "recommended": true,
+      "recommendedTradeOff": "Scans left-to-right in O(n) time and O(1) space while catching 32-bit overflow before multiplication so it works identically in 32-bit and 64-bit languages.",
+      "coreIdeaSummary": "Advance one index through spaces -> optional sign -> digits, clamping before overflow.",
+      "coreIdea": "Walk index i sequentially: first skip spaces, then read at most one sign, then accumulate digits checking acc > floor((INT_MAX - digit) / 10).",
+      "steps": [
+        "Advance i while i < n and s[i] == ' '.",
+        "Check s[i] for '+' or '-' to set sign (+1 or -1) and advance i by 1.",
+        "While i < n and s[i] is '0'..'9': if acc > (INT_MAX - d) / 10, return (sign == 1 ? INT_MAX : INT_MIN); else acc = acc * 10 + d.",
+        "Return sign * acc."
+      ],
+      "whyItWorks": "Checking acc > (2147483647 - d) / 10 guarantees acc * 10 + d never overflows 32 bits; if acc reaches 214748364 with d = 8 or 9 when sign == -1, returning INT_MIN (-2147483648) is exact!",
+      "whenToUse": "Default clean production implementation.",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "variables": "n = length of s",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public int myAtoi(String s) {\n        int n = s.length(), i = 0, sign = 1, acc = 0;\n        while (i < n && s.charAt(i) == ' ') i++;\n        if (i < n && (s.charAt(i) == '+' || s.charAt(i) == '-')) {\n            sign = (s.charAt(i++) == '-') ? -1 : 1;\n        }\n        while (i < n && Character.isDigit(s.charAt(i))) {\n            int d = s.charAt(i++) - '0';\n            if (acc > (Integer.MAX_VALUE - d) / 10) {\n                return (sign == 1) ? Integer.MAX_VALUE : Integer.MIN_VALUE;\n            }\n            acc = acc * 10 + d;\n        }\n        return sign * acc;\n    }\n}",
+        "Python3": "class Solution:\n    def myAtoi(self, s: str) -> int:\n        n, i, sign, acc = len(s), 0, 1, 0\n        INT_MAX, INT_MIN = 2**31 - 1, -(2**31)\n        while i < n and s[i] == ' ':\n            i += 1\n        if i < n and s[i] in ('+', '-'):\n            sign = -1 if s[i] == '-' else 1\n            i += 1\n        while i < n and '0' <= s[i] <= '9':\n            d = ord(s[i]) - ord('0')\n            if acc > (INT_MAX - d) // 10:\n                return INT_MAX if sign == 1 else INT_MIN\n            acc = acc * 10 + d\n            i += 1\n        return sign * acc",
+        "Python": "class Solution(object):\n    def myAtoi(self, s):\n        n, i, sign, acc = len(s), 0, 1, 0\n        INT_MAX, INT_MIN = 2**31 - 1, -(2**31)\n        while i < n and s[i] == ' ':\n            i += 1\n        if i < n and s[i] in ('+', '-'):\n            sign = -1 if s[i] == '-' else 1\n            i += 1\n        while i < n and '0' <= s[i] <= '9':\n            d = ord(s[i]) - ord('0')\n            if acc > (INT_MAX - d) // 10:\n                return INT_MAX if sign == 1 else INT_MIN\n            acc = acc * 10 + d\n            i += 1\n        return sign * acc",
+        "JavaScript": "function myAtoi(s) {\n  const INT_MAX = 2147483647, INT_MIN = -2147483648;\n  let i = 0, sign = 1, acc = 0;\n  while (i < s.length && s[i] === ' ') i++;\n  if (i < s.length && (s[i] === '+' || s[i] === '-')) {\n    sign = s[i++] === '-' ? -1 : 1;\n  }\n  while (i < s.length && s[i] >= '0' && s[i] <= '9') {\n    const d = s.charCodeAt(i++) - 48;\n    if (acc > Math.floor((INT_MAX - d) / 10)) {\n      return sign === 1 ? INT_MAX : INT_MIN;\n    }\n    acc = acc * 10 + d;\n  }\n  return sign * acc;\n}",
+        "TypeScript": "function myAtoi(s: string): number {\n  const INT_MAX = 2147483647, INT_MIN = -2147483648;\n  let i = 0, sign = 1, acc = 0;\n  while (i < s.length && s[i] === ' ') i++;\n  if (i < s.length && (s[i] === '+' || s[i] === '-')) {\n    sign = s[i++] === '-' ? -1 : 1;\n  }\n  while (i < s.length && s[i] >= '0' && s[i] <= '9') {\n    const d = s.charCodeAt(i++) - 48;\n    if (acc > Math.floor((INT_MAX - d) / 10)) {\n      return sign === 1 ? INT_MAX : INT_MIN;\n    }\n    acc = acc * 10 + d;\n  }\n  return sign * acc;\n}",
+        "C#": "public class Solution {\n    public int MyAtoi(string s) {\n        int n = s.Length, i = 0, sign = 1, acc = 0;\n        while (i < n && s[i] == ' ') i++;\n        if (i < n && (s[i] == '+' || s[i] == '-')) {\n            sign = (s[i++] == '-') ? -1 : 1;\n        }\n        while (i < n && s[i] >= '0' && s[i] <= '9') {\n            int d = s[i++] - '0';\n            if (acc > (int.MaxValue - d) / 10) {\n                return (sign == 1) ? int.MaxValue : int.MinValue;\n            }\n            acc = acc * 10 + d;\n        }\n        return sign * acc;\n    }\n}",
+        "PHP": "class Solution {\n    function myAtoi($s) {\n        $intMax = 2147483647; $intMin = -2147483648;\n        $n = strlen($s); $i = 0; $sign = 1; $acc = 0;\n        while ($i < $n && $s[$i] === ' ') $i++;\n        if ($i < $n && ($s[$i] === '+' || $s[$i] === '-')) {\n            $sign = ($s[$i++] === '-') ? -1 : 1;\n        }\n        while ($i < $n && $s[$i] >= '0' && $s[$i] <= '9') {\n            $d = ord($s[$i++]) - 48;\n            if ($acc > intdiv($intMax - $d, 10)) {\n                return ($sign === 1) ? $intMax : $intMin;\n            }\n            $acc = $acc * 10 + $d;\n        }\n        return $sign * $acc;\n    }\n}"
+      }
+    },
+    {
+      "id": "dfa-machine",
+      "name": "Explicit Deterministic Finite Automaton (DFA)",
+      "recommended": false,
+      "coreIdeaSummary": "Model parsing as formal state transitions: START -> SIGNED / IN_NUMBER -> END.",
+      "coreIdea": "Define explicit states and a transition table mapping (currentState, charKind) to nextState so every edge case is handled cleanly by table lookup.",
+      "steps": [
+        "Define states: 0=START, 1=SIGNED, 2=IN_NUMBER, 3=END.",
+        "Classify each character into space, sign, digit, or other.",
+        "Transition using the DFA table; on SIGNED update sign, on IN_NUMBER accumulate + clamp, on END break immediately."
+      ],
+      "whyItWorks": "Separating state transitions from value accumulation prevents accidental fall-through bugs like accepting a second sign.",
+      "whenToUse": "Great when writing industrial parsers with many character classes or explaining finite-state machines.",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "variables": "n = length of s",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public int myAtoi(String s) {\n        int[][] table = {{0,1,2,3},{3,3,2,3},{3,3,2,3},{3,3,3,3}};\n        int state = 0, sign = 1, acc = 0;\n        for (int i = 0; i < s.length(); i++) {\n            char c = s.charAt(i);\n            int col = (c == ' ') ? 0 : (c == '+' || c == '-') ? 1 : Character.isDigit(c) ? 2 : 3;\n            state = table[state][col];\n            if (state == 3) break;\n            if (state == 1 && c == '-') sign = -1;\n            if (state == 2) {\n                int d = c - '0';\n                if (acc > (Integer.MAX_VALUE - d) / 10) return sign == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE;\n                acc = acc * 10 + d;\n            }\n        }\n        return sign * acc;\n    }\n}",
+        "Python3": "class Solution:\n    def myAtoi(self, s: str) -> int:\n        table = [[0,1,2,3],[3,3,2,3],[3,3,2,3],[3,3,3,3]]\n        state, sign, acc = 0, 1, 0\n        INT_MAX, INT_MIN = 2**31 - 1, -(2**31)\n        for c in s:\n            col = 0 if c == ' ' else 1 if c in '+-' else 2 if '0' <= c <= '9' else 3\n            state = table[state][col]\n            if state == 3:\n                break\n            if state == 1 and c == '-':\n                sign = -1\n            elif state == 2:\n                d = ord(c) - 48\n                if acc > (INT_MAX - d) // 10:\n                    return INT_MAX if sign == 1 else INT_MIN\n                acc = acc * 10 + d\n        return sign * acc",
+        "Python": "class Solution(object):\n    def myAtoi(self, s):\n        table = [[0,1,2,3],[3,3,2,3],[3,3,2,3],[3,3,3,3]]\n        state, sign, acc = 0, 1, 0\n        INT_MAX, INT_MIN = 2**31 - 1, -(2**31)\n        for c in s:\n            col = 0 if c == ' ' else 1 if c in '+-' else 2 if '0' <= c <= '9' else 3\n            state = table[state][col]\n            if state == 3:\n                break\n            if state == 1 and c == '-':\n                sign = -1\n            elif state == 2:\n                d = ord(c) - 48\n                if acc > (INT_MAX - d) // 10:\n                    return INT_MAX if sign == 1 else INT_MIN\n                acc = acc * 10 + d\n        return sign * acc",
+        "JavaScript": "function myAtoi(s) {\n  const table = [[0,1,2,3],[3,3,2,3],[3,3,2,3],[3,3,3,3]];\n  const INT_MAX = 2147483647, INT_MIN = -2147483648;\n  let state = 0, sign = 1, acc = 0;\n  for (const c of s) {\n    const col = c === ' ' ? 0 : (c === '+' || c === '-') ? 1 : (c >= '0' && c <= '9') ? 2 : 3;\n    state = table[state][col];\n    if (state === 3) break;\n    if (state === 1 && c === '-') sign = -1;\n    if (state === 2) {\n      const d = c.charCodeAt(0) - 48;\n      if (acc > Math.floor((INT_MAX - d) / 10)) return sign === 1 ? INT_MAX : INT_MIN;\n      acc = acc * 10 + d;\n    }\n  }\n  return sign * acc;\n}",
+        "TypeScript": "function myAtoi(s: string): number {\n  const table = [[0,1,2,3],[3,3,2,3],[3,3,2,3],[3,3,3,3]];\n  const INT_MAX = 2147483647, INT_MIN = -2147483648;\n  let state = 0, sign = 1, acc = 0;\n  for (const c of s) {\n    const col = c === ' ' ? 0 : (c === '+' || c === '-') ? 1 : (c >= '0' && c <= '9') ? 2 : 3;\n    state = table[state][col];\n    if (state === 3) break;\n    if (state === 1 && c === '-') sign = -1;\n    if (state === 2) {\n      const d = c.charCodeAt(0) - 48;\n      if (acc > Math.floor((INT_MAX - d) / 10)) return sign === 1 ? INT_MAX : INT_MIN;\n      acc = acc * 10 + d;\n    }\n  }\n  return sign * acc;\n}",
+        "C#": "public class Solution {\n    public int MyAtoi(string s) {\n        int[,] table = {{0,1,2,3},{3,3,2,3},{3,3,2,3},{3,3,3,3}};\n        int state = 0, sign = 1, acc = 0;\n        foreach (char c in s) {\n            int col = (c == ' ') ? 0 : (c == '+' || c == '-') ? 1 : (c >= '0' && c <= '9') ? 2 : 3;\n            state = table[state, col];\n            if (state == 3) break;\n            if (state == 1 && c == '-') sign = -1;\n            if (state == 2) {\n                int d = c - '0';\n                if (acc > (int.MaxValue - d) / 10) return sign == 1 ? int.MaxValue : int.MinValue;\n                acc = acc * 10 + d;\n            }\n        }\n        return sign * acc;\n    }\n}",
+        "PHP": "class Solution {\n    function myAtoi($s) {\n        $table = [[0,1,2,3],[3,3,2,3],[3,3,2,3],[3,3,3,3]];\n        $intMax = 2147483647; $intMin = -2147483648;\n        $state = 0; $sign = 1; $acc = 0; $n = strlen($s);\n        for ($i = 0; $i < $n; $i++) {\n            $c = $s[$i];\n            $col = ($c === ' ') ? 0 : (($c === '+' || $c === '-') ? 1 : (($c >= '0' && $c <= '9') ? 2 : 3));\n            $state = $table[$state][$col];\n            if ($state === 3) break;\n            if ($state === 1 && $c === '-') $sign = -1;\n            if ($state === 2) {\n                $d = ord($c) - 48;\n                if ($acc > intdiv($intMax - $d, 10)) return ($sign === 1) ? $intMax : $intMin;\n                $acc = $acc * 10 + $d;\n            }\n        }\n        return $sign * $acc;\n    }\n}"
+      }
+    }
+  ],
+  "tests": [
+    { "name": "Example 1", "args": ["   -042abc"], "expected": -42 },
+    { "name": "Example 2 (clamp min)", "args": ["-91283472332"], "expected": -2147483648 },
+    { "name": "Double sign", "args": ["+-12"], "expected": 0 },
+    { "name": "Clamp max", "args": ["9999999999"], "expected": 2147483647 }
+  ],
+  "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (s.myAtoi(\"   -042abc\") != -42) throw new AssertionError();\n    if (s.myAtoi(\"-91283472332\") != -2147483648) throw new AssertionError();\n    if (s.myAtoi(\"+-12\") != 0) throw new AssertionError();\n    if (s.myAtoi(\"9999999999\") != 2147483647) throw new AssertionError();\n  }\n}",
+  "phpDriver": "$s = new Solution();\nif ($s->myAtoi(\"   -042abc\") !== -42) exit(1);\nif ($s->myAtoi(\"-91283472332\") !== -2147483648) exit(1);\nif ($s->myAtoi(\"+-12\") !== 0) exit(1);\nif ($s->myAtoi(\"9999999999\") !== 2147483647) exit(1);",
+  "csharpDriver": "using System;\npublic class Runner {\n  public static void Main() {\n    var s = new Solution();\n    if (s.MyAtoi(\"   -042abc\") != -42) throw new Exception();\n    if (s.MyAtoi(\"-91283472332\") != -2147483648) throw new Exception();\n    if (s.MyAtoi(\"+-12\") != 0) throw new Exception();\n    if (s.MyAtoi(\"9999999999\") != 2147483647) throw new Exception();\n  }\n}"
+}

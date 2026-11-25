@@ -1,0 +1,237 @@
+{
+  "number": 2,
+  "slug": "add-two-numbers",
+  "title": "Add Two Numbers",
+  "difficulty": "Medium",
+  "topics": ["Linked List", "Math", "Recursion"],
+  "access": "Free",
+  "url": "https://leetcode.com/problems/add-two-numbers/",
+  "jsFunctionName": "addTwoNumbers",
+  "pyMethodName": "addTwoNumbers",
+  "runtimeHelpers": "linked_list",
+  "verification": {
+    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "untestedLanguages": []
+  },
+  "understand": {
+    "question": "Two whole numbers are stored backwards in linked lists (ones digit first). How do we add them together and return their sum as a linked list in the same backwards order?",
+    "plainExplanation": "Normally when you add two numbers on paper, you start at the rightmost (ones) column and carry any overflow left to the tens column. Because these linked lists already put the ones digit at the head, walking forward from the head is literally doing column-by-column addition from right to left!",
+    "inputMeaning": "Two non-empty singly linked lists l1 and l2, where each node stores a single digit 0..9 in reverse digit order.",
+    "outputMeaning": "The head node of a new singly linked list holding the sum's digits in the same reverse order.",
+    "rules": [
+      "The two lists may have different lengths (for example, adding a 3-digit number and a 2-digit number).",
+      "When a column sum is 10 or more, keep total % 10 in the current node and pass carry = Math.floor(total / 10) to the next position.",
+      "Do not forget a leftover carry after both lists finish (for example, 95 + 8 produces an extra 1 node at the end)."
+    ],
+    "terms": [
+      {
+        "term": "Node",
+        "definition": "A small container holding one value (val) and a pointer (next) to the following container, or null at the end."
+      },
+      {
+        "term": "Dummy Head",
+        "definition": "A temporary placeholder node placed before the real answer list so appending the first digit needs no special-case check."
+      },
+      {
+        "term": "Carry",
+        "definition": "The tens digit (0 or 1 when adding two digits plus a prior carry) forwarded to the next higher place value."
+      }
+    ],
+    "example1": {
+      "input": "l1 = [5, 2, 3] (represents 325), l2 = [7, 4] (represents 47)",
+      "output": "[2, 7, 3] (represents 372)",
+      "whyValid": "Ones place: 5 + 7 = 12 -> digit 2, carry 1. Tens place: 2 + 4 + 1 = 7 -> digit 7, carry 0. Hundreds place: 3 + 0 + 0 = 3 -> digit 3. Result list is 2 -> 7 -> 3.",
+      "diagram": {
+        "type": "linked-list",
+        "nodes": [
+          { "id": "r0", "value": 2, "state": "match", "label": "(5+7)%10" },
+          { "id": "r1", "value": 7, "state": "match", "label": "2+4+1" },
+          { "id": "r2", "value": 3, "state": "match", "label": "3+0+0" }
+        ],
+        "pointers": [{ "nodeId": "r0", "name": "head" }],
+        "aux": {
+          "title": "Column Math",
+          "entries": [
+            { "key": "325 + 47", "value": "372", "highlight": true }
+          ]
+        },
+        "caption": "Result list 2 -> 7 -> 3 represents 372."
+      }
+    },
+    "example2": {
+      "input": "l1 = [9, 9], l2 = [1]",
+      "output": "[0, 0, 1]",
+      "whyEdgeCase": "Different lengths plus cascading carry past the end! 99 + 1 = 100, so even after both lists end, carry = 1 must still create a final node."
+    }
+  },
+  "dryRun": {
+    "approachId": "iterative-dummy",
+    "algorithmName": "Iterative Addition with Dummy Head",
+    "steps": [
+      {
+        "title": "Start at ones column with carry = 0",
+        "description": "Create dummy -> null. Read l1 = 5 and l2 = 7. Sum = 5 + 7 + 0 = 12 -> append node(2) and set carry = 1.",
+        "state": {
+          "type": "linked-list",
+          "nodes": [{ "id": "n0", "value": 2, "state": "active", "label": "ones" }],
+          "pointers": [{ "nodeId": "n0", "name": "tail" }],
+          "aux": {
+            "title": "Step 1 State",
+            "entries": [
+              { "key": "l1.val", "value": 5 },
+              { "key": "l2.val", "value": 7 },
+              { "key": "sum", "value": 12 },
+              { "key": "carry", "value": 1, "highlight": true }
+            ]
+          },
+          "caption": "Appended 2; carry = 1 passes to tens place."
+        }
+      },
+      {
+        "title": "Tens column: 2 + 4 + carry(1) = 7",
+        "description": "Advance l1 to 2 and l2 to 4. Sum = 2 + 4 + 1 = 7 -> append node(7) and set carry = 0.",
+        "state": {
+          "type": "linked-list",
+          "nodes": [
+            { "id": "n0", "value": 2, "state": "match", "label": "ones" },
+            { "id": "n1", "value": 7, "state": "active", "label": "tens" }
+          ],
+          "pointers": [{ "nodeId": "n1", "name": "tail" }],
+          "aux": {
+            "title": "Step 2 State",
+            "entries": [
+              { "key": "l1.val", "value": 2 },
+              { "key": "l2.val", "value": 4 },
+              { "key": "sum", "value": 7 },
+              { "key": "carry", "value": 0 }
+            ]
+          },
+          "caption": "Appended 7; l2 is now exhausted."
+        }
+      },
+      {
+        "title": "Hundreds column: 3 + 0 + 0 = 3",
+        "description": "l2 is null so treat its digit as 0. Sum = 3 + 0 + 0 = 3 -> append node(3), carry = 0. Both lists and carry are done; return dummy.next.",
+        "state": {
+          "type": "linked-list",
+          "nodes": [
+            { "id": "n0", "value": 2, "state": "match", "label": "ones" },
+            { "id": "n1", "value": 7, "state": "match", "label": "tens" },
+            { "id": "n2", "value": 3, "state": "match", "label": "hundreds" }
+          ],
+          "pointers": [{ "nodeId": "n0", "name": "return" }],
+          "aux": {
+            "title": "Final State",
+            "entries": [
+              { "key": "carry", "value": 0 },
+              { "key": "result", "value": "[2, 7, 3]", "highlight": true }
+            ]
+          },
+          "caption": "Return 2 -> 7 -> 3."
+        }
+      }
+    ]
+  },
+  "approaches": [
+    {
+      "id": "iterative-dummy",
+      "name": "Iterative Digit-by-Digit with Dummy Head",
+      "recommended": true,
+      "recommendedTradeOff": "Processes both lists in a single O(max(m, n)) pass using O(1) extra workspace (excluding the output list) and avoids recursion stack overhead.",
+      "coreIdeaSummary": "Walk both lists together while carry > 0, building digits behind a dummy head.",
+      "coreIdea": "Keep looping while l1 != null OR l2 != null OR carry != 0. Treat any exhausted list as 0, append total % 10, and update carry = floor(total / 10).",
+      "steps": [
+        "Create a dummy node and set tail = dummy, carry = 0.",
+        "While l1, l2, or carry is non-zero, sum available digits plus carry.",
+        "Attach a new node with value sum % 10 to tail.next and advance tail, l1, and l2.",
+        "Return dummy.next."
+      ],
+      "whyItWorks": "The loop condition (l1 || l2 || carry) handles unequal lengths and trailing carries uniformly in one place without extra cleanup loops.",
+      "whenToUse": "Default production solution for linked-list addition.",
+      "complexity": {
+        "time": "O(max(m, n))",
+        "space": "O(1) auxiliary (O(max(m, n)) for the output list)",
+        "variables": "m = length of l1, n = length of l2",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {\n        ListNode dummy = new ListNode(0);\n        ListNode tail = dummy;\n        int carry = 0;\n        while (l1 != null || l2 != null || carry != 0) {\n            int x = (l1 != null) ? l1.val : 0;\n            int y = (l2 != null) ? l2.val : 0;\n            int sum = x + y + carry;\n            carry = sum / 10;\n            tail.next = new ListNode(sum % 10);\n            tail = tail.next;\n            if (l1 != null) l1 = l1.next;\n            if (l2 != null) l2 = l2.next;\n        }\n        return dummy.next;\n    }\n}",
+        "Python3": "class Solution:\n    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:\n        dummy = ListNode(0)\n        tail = dummy\n        carry = 0\n        while l1 or l2 or carry:\n            x = l1.val if l1 else 0\n            y = l2.val if l2 else 0\n            total = x + y + carry\n            carry = total // 10\n            tail.next = ListNode(total % 10)\n            tail = tail.next\n            l1 = l1.next if l1 else None\n            l2 = l2.next if l2 else None\n        return dummy.next",
+        "Python": "class Solution(object):\n    def addTwoNumbers(self, l1, l2):\n        dummy = ListNode(0)\n        tail = dummy\n        carry = 0\n        while l1 is not None or l2 is not None or carry != 0:\n            x = l1.val if l1 is not None else 0\n            y = l2.val if l2 is not None else 0\n            total = x + y + carry\n            carry = total // 10\n            tail.next = ListNode(total % 10)\n            tail = tail.next\n            l1 = l1.next if l1 is not None else None\n            l2 = l2.next if l2 is not None else None\n        return dummy.next",
+        "JavaScript": "function addTwoNumbers(l1, l2) {\n  const dummy = new ListNode(0);\n  let tail = dummy;\n  let carry = 0;\n  while (l1 !== null || l2 !== null || carry !== 0) {\n    const x = l1 ? l1.val : 0;\n    const y = l2 ? l2.val : 0;\n    const sum = x + y + carry;\n    carry = Math.floor(sum / 10);\n    tail.next = new ListNode(sum % 10);\n    tail = tail.next;\n    if (l1) l1 = l1.next;\n    if (l2) l2 = l2.next;\n  }\n  return dummy.next;\n}",
+        "TypeScript": "function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {\n  const dummy = new ListNode(0);\n  let tail = dummy;\n  let carry = 0;\n  while (l1 !== null || l2 !== null || carry !== 0) {\n    const x = l1 ? l1.val : 0;\n    const y = l2 ? l2.val : 0;\n    const sum = x + y + carry;\n    carry = Math.floor(sum / 10);\n    tail.next = new ListNode(sum % 10);\n    tail = tail.next;\n    if (l1) l1 = l1.next;\n    if (l2) l2 = l2.next;\n  }\n  return dummy.next;\n}",
+        "C#": "public class Solution {\n    public ListNode AddTwoNumbers(ListNode l1, ListNode l2) {\n        ListNode dummy = new ListNode(0);\n        ListNode tail = dummy;\n        int carry = 0;\n        while (l1 != null || l2 != null || carry != 0) {\n            int x = l1 != null ? l1.val : 0;\n            int y = l2 != null ? l2.val : 0;\n            int sum = x + y + carry;\n            carry = sum / 10;\n            tail.next = new ListNode(sum % 10);\n            tail = tail.next;\n            if (l1 != null) l1 = l1.next;\n            if (l2 != null) l2 = l2.next;\n        }\n        return dummy.next;\n    }\n}",
+        "PHP": "class Solution {\n    function addTwoNumbers($l1, $l2) {\n        $dummy = new ListNode(0);\n        $tail = $dummy;\n        $carry = 0;\n        while ($l1 !== null || $l2 !== null || $carry !== 0) {\n            $x = $l1 !== null ? $l1->val : 0;\n            $y = $l2 !== null ? $l2->val : 0;\n            $sum = $x + $y + $carry;\n            $carry = intdiv($sum, 10);\n            $tail->next = new ListNode($sum % 10);\n            $tail = $tail->next;\n            if ($l1 !== null) $l1 = $l1->next;\n            if ($l2 !== null) $l2 = $l2->next;\n        }\n        return $dummy->next;\n    }\n}"
+      }
+    },
+    {
+      "id": "recursive-carry",
+      "name": "Recursive Carry Propagation",
+      "recommended": false,
+      "coreIdeaSummary": "Recursively build each digit node and pass the carry down to the next node.",
+      "coreIdea": "Define add(l1, l2, carry) which computes one node for the current place value and recursively attaches add(l1.next, l2.next, nextCarry).",
+      "steps": [
+        "Base case: if l1 == null && l2 == null && carry == 0, return null.",
+        "Compute sum = (l1 ? l1.val : 0) + (l2 ? l2.val : 0) + carry.",
+        "Create node(sum % 10) and set node.next = add(l1?.next, l2?.next, sum / 10).",
+        "Return node."
+      ],
+      "whyItWorks": "Each recursive frame computes one column and delegates the remaining higher-order digits plus carry to the next call.",
+      "whenToUse": "Elegant when recursion depth max(m, n) is small and functional style is preferred.",
+      "complexity": {
+        "time": "O(max(m, n))",
+        "space": "O(max(m, n))",
+        "variables": "m = length of l1, n = length of l2 (call stack depth)",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {\n        return add(l1, l2, 0);\n    }\n    private ListNode add(ListNode l1, ListNode l2, int carry) {\n        if (l1 == null && l2 == null && carry == 0) return null;\n        int sum = (l1 != null ? l1.val : 0) + (l2 != null ? l2.val : 0) + carry;\n        ListNode node = new ListNode(sum % 10);\n        node.next = add(l1 != null ? l1.next : null, l2 != null ? l2.next : null, sum / 10);\n        return node;\n    }\n}",
+        "Python3": "class Solution:\n    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:\n        def add(a: Optional[ListNode], b: Optional[ListNode], carry: int) -> Optional[ListNode]:\n            if not a and not b and carry == 0:\n                return None\n            total = (a.val if a else 0) + (b.val if b else 0) + carry\n            node = ListNode(total % 10)\n            node.next = add(a.next if a else None, b.next if b else None, total // 10)\n            return node\n        return add(l1, l2, 0)",
+        "Python": "class Solution(object):\n    def addTwoNumbers(self, l1, l2):\n        def add(a, b, carry):\n            if a is None and b is None and carry == 0:\n                return None\n            total = (a.val if a is not None else 0) + (b.val if b is not None else 0) + carry\n            node = ListNode(total % 10)\n            node.next = add(a.next if a is not None else None, b.next if b is not None else None, total // 10)\n            return node\n        return add(l1, l2, 0)",
+        "JavaScript": "function addTwoNumbers(l1, l2) {\n  function add(a, b, carry) {\n    if (!a && !b && carry === 0) return null;\n    const sum = (a ? a.val : 0) + (b ? b.val : 0) + carry;\n    const node = new ListNode(sum % 10);\n    node.next = add(a ? a.next : null, b ? b.next : null, Math.floor(sum / 10));\n    return node;\n  }\n  return add(l1, l2, 0);\n}",
+        "TypeScript": "function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {\n  function add(a: ListNode | null, b: ListNode | null, carry: number): ListNode | null {\n    if (!a && !b && carry === 0) return null;\n    const sum = (a ? a.val : 0) + (b ? b.val : 0) + carry;\n    const node = new ListNode(sum % 10);\n    node.next = add(a ? a.next : null, b ? b.next : null, Math.floor(sum / 10));\n    return node;\n  }\n  return add(l1, l2, 0);\n}",
+        "C#": "public class Solution {\n    public ListNode AddTwoNumbers(ListNode l1, ListNode l2) {\n        return Add(l1, l2, 0);\n    }\n    private ListNode Add(ListNode a, ListNode b, int carry) {\n        if (a == null && b == null && carry == 0) return null;\n        int sum = (a != null ? a.val : 0) + (b != null ? b.val : 0) + carry;\n        ListNode node = new ListNode(sum % 10);\n        node.next = Add(a != null ? a.next : null, b != null ? b.next : null, sum / 10);\n        return node;\n    }\n}",
+        "PHP": "class Solution {\n    function addTwoNumbers($l1, $l2) {\n        return $this->add($l1, $l2, 0);\n    }\n    private function add($a, $b, $carry) {\n        if ($a === null && $b === null && $carry === 0) return null;\n        $sum = ($a !== null ? $a->val : 0) + ($b !== null ? $b->val : 0) + $carry;\n        $node = new ListNode($sum % 10);\n        $node->next = $this->add($a !== null ? $a->next : null, $b !== null ? $b->next : null, intdiv($sum, 10));\n        return $node;\n    }\n}"
+      }
+    },
+    {
+      "id": "in-place-reuse",
+      "name": "In-Place Modification of l1",
+      "recommended": false,
+      "coreIdeaSummary": "Overwrite l1's nodes directly, splicing l2 or a new carry node if l1 ends early.",
+      "coreIdea": "Update l1 node values in place while walking both lists. Whenever l1 runs out before l2, link l2's remaining chain onto l1 and keep propagating carry.",
+      "steps": [
+        "Save head = l1 and track prev = null.",
+        "Walk while l1 != null || l2 != null: if l1 is null, attach l2 to prev.next and set l1 = l2, l2 = null.",
+        "Compute sum = l1.val + (l2 ? l2.val : 0) + carry, store sum % 10 in l1.val, and update carry.",
+        "If carry > 0 at the end, append one new ListNode(carry) to prev.next."
+      ],
+      "whyItWorks": "Reuses existing list nodes so only at most one new node (for a final carry) is ever allocated.",
+      "whenToUse": "Only when mutating the input list l1 is explicitly permitted and minimizing heap allocations is critical.",
+      "complexity": {
+        "time": "O(max(m, n))",
+        "space": "O(1)",
+        "variables": "m = length of l1, n = length of l2",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {\n        ListNode head = l1, prev = null;\n        int carry = 0;\n        while (l1 != null || l2 != null) {\n            if (l1 == null) {\n                prev.next = l2;\n                l1 = l2;\n                l2 = null;\n            }\n            int sum = l1.val + (l2 != null ? l2.val : 0) + carry;\n            l1.val = sum % 10;\n            carry = sum / 10;\n            prev = l1;\n            l1 = l1.next;\n            if (l2 != null) l2 = l2.next;\n        }\n        if (carry > 0) prev.next = new ListNode(carry);\n        return head;\n    }\n}",
+        "Python3": "class Solution:\n    def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:\n        head, prev, carry = l1, None, 0\n        while l1 or l2:\n            if l1 is None:\n                prev.next = l2\n                l1 = l2\n                l2 = None\n            total = l1.val + (l2.val if l2 else 0) + carry\n            l1.val = total % 10\n            carry = total // 10\n            prev = l1\n            l1 = l1.next\n            if l2:\n                l2 = l2.next\n        if carry:\n            prev.next = ListNode(carry)\n        return head",
+        "Python": "class Solution(object):\n    def addTwoNumbers(self, l1, l2):\n        head, prev, carry = l1, None, 0\n        while l1 is not None or l2 is not None:\n            if l1 is None:\n                prev.next = l2\n                l1 = l2\n                l2 = None\n            total = l1.val + (l2.val if l2 is not None else 0) + carry\n            l1.val = total % 10\n            carry = total // 10\n            prev = l1\n            l1 = l1.next\n            if l2 is not None:\n                l2 = l2.next\n        if carry:\n            prev.next = ListNode(carry)\n        return head",
+        "JavaScript": "function addTwoNumbers(l1, l2) {\n  const head = l1;\n  let prev = null;\n  let carry = 0;\n  while (l1 !== null || l2 !== null) {\n    if (l1 === null) {\n      prev.next = l2;\n      l1 = l2;\n      l2 = null;\n    }\n    const sum = l1.val + (l2 ? l2.val : 0) + carry;\n    l1.val = sum % 10;\n    carry = Math.floor(sum / 10);\n    prev = l1;\n    l1 = l1.next;\n    if (l2) l2 = l2.next;\n  }\n  if (carry > 0) prev.next = new ListNode(carry);\n  return head;\n}",
+        "TypeScript": "function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {\n  const head = l1;\n  let prev: ListNode | null = null;\n  let carry = 0;\n  while (l1 !== null || l2 !== null) {\n    if (l1 === null && prev !== null) {\n      prev.next = l2;\n      l1 = l2;\n      l2 = null;\n    }\n    if (!l1) break;\n    const sum = l1.val + (l2 ? l2.val : 0) + carry;\n    l1.val = sum % 10;\n    carry = Math.floor(sum / 10);\n    prev = l1;\n    l1 = l1.next;\n    if (l2) l2 = l2.next;\n  }\n  if (carry > 0 && prev !== null) prev.next = new ListNode(carry);\n  return head;\n}",
+        "C#": "public class Solution {\n    public ListNode AddTwoNumbers(ListNode l1, ListNode l2) {\n        ListNode head = l1, prev = null;\n        int carry = 0;\n        while (l1 != null || l2 != null) {\n            if (l1 == null) {\n                prev.next = l2;\n                l1 = l2;\n                l2 = null;\n            }\n            int sum = l1.val + (l2 != null ? l2.val : 0) + carry;\n            l1.val = sum % 10;\n            carry = sum / 10;\n            prev = l1;\n            l1 = l1.next;\n            if (l2 != null) l2 = l2.next;\n        }\n        if (carry > 0) prev.next = new ListNode(carry);\n        return head;\n    }\n}",
+        "PHP": "class Solution {\n    function addTwoNumbers($l1, $l2) {\n        $head = $l1; $prev = null; $carry = 0;\n        while ($l1 !== null || $l2 !== null) {\n            if ($l1 === null) {\n                $prev->next = $l2;\n                $l1 = $l2;\n                $l2 = null;\n            }\n            $sum = $l1->val + ($l2 !== null ? $l2->val : 0) + $carry;\n            $l1->val = $sum % 10;\n            $carry = intdiv($sum, 10);\n            $prev = $l1;\n            $l1 = $l1->next;\n            if ($l2 !== null) $l2 = $l2->next;\n        }\n        if ($carry > 0) $prev->next = new ListNode($carry);\n        return $head;\n    }\n}"
+      }
+    }
+  ],
+  "tests": [
+    { "name": "Example 1 (325 + 47)", "args": [[5, 2, 3], [7, 4]], "expected": [2, 7, 3] },
+    { "name": "Example 2 (99 + 1)", "args": [[9, 9], [1]], "expected": [0, 0, 1] },
+    { "name": "Zeros (0 + 0)", "args": [[0], [0]], "expected": [0] },
+    { "name": "Carry chain (999 + 99)", "args": [[9, 9, 9], [9, 9]], "expected": [8, 9, 0, 1] }
+  ],
+  "javaDriver": "import java.util.*;\nclass ListNode { int val; ListNode next; ListNode(int v){val=v;} }\npublic class Main {\n  static ListNode mk(int[] a){ ListNode d=new ListNode(0),c=d; for(int x:a){c.next=new ListNode(x);c=c.next;} return d.next; }\n  static int[] arr(ListNode n){ List<Integer> l=new ArrayList<>(); while(n!=null){l.add(n.val);n=n.next;} return l.stream().mapToInt(i->i).toArray(); }\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (!Arrays.equals(arr(s.addTwoNumbers(mk(new int[]{5,2,3}), mk(new int[]{7,4}))), new int[]{2,7,3})) throw new AssertionError(\"Ex1\");\n    if (!Arrays.equals(arr(s.addTwoNumbers(mk(new int[]{9,9}), mk(new int[]{1}))), new int[]{0,0,1})) throw new AssertionError(\"Ex2\");\n    if (!Arrays.equals(arr(s.addTwoNumbers(mk(new int[]{0}), mk(new int[]{0}))), new int[]{0})) throw new AssertionError(\"Zero\");\n    if (!Arrays.equals(arr(s.addTwoNumbers(mk(new int[]{9,9,9}), mk(new int[]{9,9}))), new int[]{8,9,0,1})) throw new AssertionError(\"Carry\");\n  }\n}",
+  "phpDriver": "class ListNode { public $val = 0; public $next = null; function __construct($v = 0, $n = null) { $this->val = $v; $this->next = $n; } }\nfunction mk($a) { $d = new ListNode(0); $c = $d; foreach ($a as $x) { $c->next = new ListNode($x); $c = $c->next; } return $d->next; }\nfunction arr($n) { $o = []; while ($n !== null) { $o[] = $n->val; $n = $n->next; } return $o; }\n$s = new Solution();\nif (arr($s->addTwoNumbers(mk([5,2,3]), mk([7,4]))) !== [2,7,3]) exit(1);\nif (arr($s->addTwoNumbers(mk([9,9]), mk([1]))) !== [0,0,1]) exit(1);\nif (arr($s->addTwoNumbers(mk([0]), mk([0]))) !== [0]) exit(1);\nif (arr($s->addTwoNumbers(mk([9,9,9]), mk([9,9]))) !== [8,9,0,1]) exit(1);",
+  "csharpDriver": "using System;\nusing System.Collections.Generic;\npublic class ListNode { public int val; public ListNode next; public ListNode(int v=0, ListNode n=null){val=v;next=n;} }\npublic class Runner {\n  static ListNode Mk(int[] a){ var d=new ListNode(0); var c=d; foreach(int x in a){c.next=new ListNode(x);c=c.next;} return d.next; }\n  static int[] Arr(ListNode n){ var l=new List<int>(); while(n!=null){l.Add(n.val);n=n.next;} return l.ToArray(); }\n  static void Eq(int[] a, int[] b){ if(a.Length!=b.Length) throw new Exception(); for(int i=0;i<a.Length;i++) if(a[i]!=b[i]) throw new Exception(); }\n  public static void Main() {\n    var s = new Solution();\n    Eq(Arr(s.AddTwoNumbers(Mk(new int[]{5,2,3}), Mk(new int[]{7,4}))), new int[]{2,7,3});\n    Eq(Arr(s.AddTwoNumbers(Mk(new int[]{9,9}), Mk(new int[]{1}))), new int[]{0,0,1});\n    Eq(Arr(s.AddTwoNumbers(Mk(new int[]{0}), Mk(new int[]{0}))), new int[]{0});\n    Eq(Arr(s.AddTwoNumbers(Mk(new int[]{9,9,9}), Mk(new int[]{9,9}))), new int[]{8,9,0,1});\n  }\n}"
+}

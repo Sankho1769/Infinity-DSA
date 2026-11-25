@@ -1,0 +1,364 @@
+{
+  "number": 53,
+  "slug": "maximum-subarray",
+  "title": "Maximum Subarray",
+  "difficulty": "Medium",
+  "topics": ["Array", "Divide and Conquer", "Dynamic Programming"],
+  "access": "Free",
+  "url": "https://leetcode.com/problems/maximum-subarray/",
+  "jsFunctionName": "maxSubArray",
+  "pyMethodName": "maxSubArray",
+  "verification": {
+    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "untestedLanguages": ["C++", "C", "Go", "Kotlin", "Swift", "Rust", "Ruby", "Dart", "Scala", "Elixir", "Erlang", "Racket"]
+  },
+  "understand": {
+    "question": "Given an array of integers (which may include negatives and zero), what is the largest total sum you can get from a non-empty contiguous slice?",
+    "plainExplanation": "Think of daily profit-and-loss numbers for a shop. You want to pick one unbroken stretch of consecutive days (at least one day long) whose combined profit is as large as possible.",
+    "inputMeaning": "A non-empty integer array nums (for example [-2, 5, -1, 4, -6, 2]).",
+    "outputMeaning": "A single integer: the maximum sum of any contiguous subarray of length >= 1.",
+    "rules": [
+      "The chosen elements must be contiguous (adjacent in the original array without skipping elements in the middle).",
+      "The subarray must be non-empty (at least one element must be selected, even if every number in the array is negative).",
+      "You only return the maximum sum value, not the slice indices."
+    ],
+    "terms": [
+      {
+        "term": "Subarray",
+        "definition": "A contiguous slice nums[left..right] with 0 <= left <= right < n. Unlike a subsequence, you cannot skip elements inside the slice."
+      },
+      {
+        "term": "Local Best (currentSum)",
+        "definition": "The largest sum of a subarray that MUST end at the current index i."
+      },
+      {
+        "term": "Global Best (bestSum)",
+        "definition": "The largest subarray sum seen across all ending indices processed so far."
+      }
+    ],
+    "example1": {
+      "input": "nums = [-2, 5, -1, 4, -6, 2]",
+      "output": "8",
+      "whyValid": "The contiguous slice [5, -1, 4] from index 1 through index 3 sums to 5 + (-1) + 4 = 8. Including index 0 (-2) lowers it to 6, and extending to index 4 (-6) drops it to 2.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          { "index": 0, "value": -2, "state": "skip" },
+          { "index": 1, "value": 5, "state": "match", "label": "start" },
+          { "index": 2, "value": -1, "state": "match", "label": "bridge" },
+          { "index": 3, "value": 4, "state": "match", "label": "end" },
+          { "index": 4, "value": -6, "state": "skip" },
+          { "index": 5, "value": 2, "state": "default" }
+        ],
+        "pointers": [
+          { "index": 1, "name": "L" },
+          { "index": 3, "name": "R" }
+        ],
+        "caption": "Best contiguous subarray [5, -1, 4] has sum 8."
+      }
+    },
+    "example2": {
+      "input": "nums = [-7, -2, -9, -4]",
+      "output": "-2",
+      "whyEdgeCase": "All numbers are negative! Because the subarray must be non-empty, you cannot return 0 by picking nothing. The least-negative single element [-2] gives the maximum sum -2."
+    }
+  },
+  "dryRun": {
+    "approachId": "kadane",
+    "algorithmName": "Kadane's Algorithm",
+    "steps": [
+      {
+        "title": "Start at index 0 with nums[0]",
+        "description": "Initialize currentSum = -2 and bestSum = -2 using the first element (never 0, so all-negative inputs work).",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": -2, "state": "active" },
+            { "index": 1, "value": 5, "state": "default" },
+            { "index": 2, "value": -1, "state": "default" },
+            { "index": 3, "value": 4, "state": "default" },
+            { "index": 4, "value": -6, "state": "default" },
+            { "index": 5, "value": 2, "state": "default" }
+          ],
+          "pointers": [{ "index": 0, "name": "i" }],
+          "aux": {
+            "title": "Kadane State",
+            "entries": [
+              { "key": "currentSum", "value": -2 },
+              { "key": "bestSum", "value": -2, "highlight": true }
+            ]
+          },
+          "caption": "Initial window is [-2]."
+        }
+      },
+      {
+        "title": "Index 1 (value 5): restart fresh at 5",
+        "description": "Extending the previous sum (-2 + 5 = 3) is worse than starting fresh at 5! So currentSum = max(5, 3) = 5, and bestSum updates to 5.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": -2, "state": "skip" },
+            { "index": 1, "value": 5, "state": "match" },
+            { "index": 2, "value": -1, "state": "default" },
+            { "index": 3, "value": 4, "state": "default" },
+            { "index": 4, "value": -6, "state": "default" },
+            { "index": 5, "value": 2, "state": "default" }
+          ],
+          "pointers": [{ "index": 1, "name": "i" }],
+          "aux": {
+            "title": "Kadane State",
+            "entries": [
+              { "key": "currentSum", "value": 5 },
+              { "key": "bestSum", "value": 5, "highlight": true }
+            ]
+          },
+          "caption": "Drop negative prefix [-2]; start fresh at index 1."
+        }
+      },
+      {
+        "title": "Index 2 (value -1): extend positive prefix",
+        "description": "Extending gives 5 + (-1) = 4, which beats starting at -1 alone. Keep currentSum = 4; bestSum stays 5.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": -2, "state": "skip" },
+            { "index": 1, "value": 5, "state": "window" },
+            { "index": 2, "value": -1, "state": "active" },
+            { "index": 3, "value": 4, "state": "default" },
+            { "index": 4, "value": -6, "state": "default" },
+            { "index": 5, "value": 2, "state": "default" }
+          ],
+          "pointers": [{ "index": 2, "name": "i" }],
+          "aux": {
+            "title": "Kadane State",
+            "entries": [
+              { "key": "currentSum", "value": 4 },
+              { "key": "bestSum", "value": 5 }
+            ]
+          },
+          "caption": "Keep carrying +4 forward into index 3."
+        }
+      },
+      {
+        "title": "Index 3 (value 4): new peak sum 8!",
+        "description": "Extending gives 4 + 4 = 8 (beating 4 alone). currentSum = 8 and bestSum improves to 8.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": -2, "state": "skip" },
+            { "index": 1, "value": 5, "state": "match" },
+            { "index": 2, "value": -1, "state": "match" },
+            { "index": 3, "value": 4, "state": "match" },
+            { "index": 4, "value": -6, "state": "default" },
+            { "index": 5, "value": 2, "state": "default" }
+          ],
+          "pointers": [{ "index": 3, "name": "i" }],
+          "aux": {
+            "title": "Kadane State",
+            "entries": [
+              { "key": "currentSum", "value": 8 },
+              { "key": "bestSum", "value": 8, "highlight": true }
+            ]
+          },
+          "caption": "Slice [5, -1, 4] sets bestSum = 8."
+        }
+      },
+      {
+        "title": "Indices 4 & 5 (-6 then +2): finish scan",
+        "description": "At index 4 (-6), currentSum = max(-6, 8 - 6) = 2. At index 5 (+2), currentSum = max(2, 2 + 2) = 4. Neither beats bestSum = 8, so return 8.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": -2, "state": "skip" },
+            { "index": 1, "value": 5, "state": "match" },
+            { "index": 2, "value": -1, "state": "match" },
+            { "index": 3, "value": 4, "state": "match" },
+            { "index": 4, "value": -6, "state": "window" },
+            { "index": 5, "value": 2, "state": "active" }
+          ],
+          "pointers": [{ "index": 5, "name": "i" }],
+          "aux": {
+            "title": "Kadane Final State",
+            "entries": [
+              { "key": "currentSum", "value": 4 },
+              { "key": "bestSum", "value": 8, "highlight": true }
+            ]
+          },
+          "caption": "Final answer: 8."
+        }
+      }
+    ]
+  },
+  "approaches": [
+    {
+      "id": "brute-force",
+      "name": "Brute Force Running Sum",
+      "recommended": false,
+      "coreIdeaSummary": "Try every starting index i and accumulate sums forward to j.",
+      "coreIdea": "Fix every starting index i, maintain a running sum as ending index j moves right, and track the global maximum.",
+      "steps": [
+        "Initialize bestSum = nums[0].",
+        "For each start index i from 0 to n - 1, reset running = 0.",
+        "For each end index j from i to n - 1, add nums[j] to running and update bestSum = max(bestSum, running)."
+      ],
+      "whyItWorks": "Every non-empty subarray is uniquely identified by its pair (i, j) with 0 <= i <= j < n, so checking all of them guarantees finding the maximum.",
+      "whenToUse": "Good baseline to verify small inputs against faster algorithms.",
+      "complexity": {
+        "time": "O(n^2)",
+        "space": "O(1)",
+        "variables": "n = length of nums",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public int maxSubArray(int[] nums) {\n        int best = nums[0];\n        for (int i = 0; i < nums.length; i++) {\n            int running = 0;\n            for (int j = i; j < nums.length; j++) {\n                running += nums[j];\n                if (running > best) best = running;\n            }\n        }\n        return best;\n    }\n}",
+        "Python3": "class Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        best = nums[0]\n        n = len(nums)\n        for i in range(n):\n            running = 0\n            for j in range(i, n):\n                running += nums[j]\n                if running > best:\n                    best = running\n        return best",
+        "Python": "class Solution(object):\n    def maxSubArray(self, nums):\n        best = nums[0]\n        n = len(nums)\n        for i in range(n):\n            running = 0\n            for j in range(i, n):\n                running += nums[j]\n                if running > best:\n                    best = running\n        return best",
+        "JavaScript": "function maxSubArray(nums) {\n  let best = nums[0];\n  for (let i = 0; i < nums.length; i++) {\n    let running = 0;\n    for (let j = i; j < nums.length; j++) {\n      running += nums[j];\n      if (running > best) best = running;\n    }\n  }\n  return best;\n}",
+        "TypeScript": "function maxSubArray(nums: number[]): number {\n  let best = nums[0];\n  for (let i = 0; i < nums.length; i++) {\n    let running = 0;\n    for (let j = i; j < nums.length; j++) {\n      running += nums[j];\n      if (running > best) best = running;\n    }\n  }\n  return best;\n}",
+        "C#": "public class Solution {\n    public int MaxSubArray(int[] nums) {\n        int best = nums[0];\n        for (int i = 0; i < nums.Length; i++) {\n            int running = 0;\n            for (int j = i; j < nums.Length; j++) {\n                running += nums[j];\n                if (running > best) best = running;\n            }\n        }\n        return best;\n    }\n}",
+        "PHP": "class Solution {\n    function maxSubArray($nums) {\n        $best = $nums[0];\n        $n = count($nums);\n        for ($i = 0; $i < $n; $i++) {\n            $running = 0;\n            for ($j = $i; $j < $n; $j++) {\n                $running += $nums[$j];\n                if ($running > $best) $best = $running;\n            }\n        }\n        return $best;\n    }\n}"
+      }
+    },
+    {
+      "id": "prefix-min",
+      "name": "Prefix Sum + Minimum Prefix Tracking",
+      "recommended": false,
+      "coreIdeaSummary": "Maximize prefixSum[j] - min(prefixSum[i]) for i < j.",
+      "coreIdea": "Any subarray sum nums[i..j] equals prefixSum - previousPrefixSum. Tracking the smallest prefix sum seen before the current position lets us compute the best subarray ending here in O(1).",
+      "steps": [
+        "Initialize prefix = 0, minPrefix = 0, and best = nums[0].",
+        "For each value x in nums, add x to prefix.",
+        "Update best = max(best, prefix - minPrefix).",
+        "Then update minPrefix = min(minPrefix, prefix)."
+      ],
+      "whyItWorks": "Subtracting the lowest earlier prefix sum maximizes prefix - earlierPrefix, while updating minPrefix AFTER evaluating best ensures the chosen subarray is non-empty.",
+      "whenToUse": "Great when bridging prefix-sum problems (like Best Time to Buy and Sell Stock or Subarray Sum variations).",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "variables": "n = length of nums",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public int maxSubArray(int[] nums) {\n        int prefix = 0, minPrefix = 0, best = nums[0];\n        for (int x : nums) {\n            prefix += x;\n            best = Math.max(best, prefix - minPrefix);\n            minPrefix = Math.min(minPrefix, prefix);\n        }\n        return best;\n    }\n}",
+        "Python3": "class Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        prefix = 0\n        min_prefix = 0\n        best = nums[0]\n        for x in nums:\n            prefix += x\n            best = max(best, prefix - min_prefix)\n            min_prefix = min(min_prefix, prefix)\n        return best",
+        "Python": "class Solution(object):\n    def maxSubArray(self, nums):\n        prefix = 0\n        min_prefix = 0\n        best = nums[0]\n        for x in nums:\n            prefix += x\n            best = max(best, prefix - min_prefix)\n            min_prefix = min(min_prefix, prefix)\n        return best",
+        "JavaScript": "function maxSubArray(nums) {\n  let prefix = 0;\n  let minPrefix = 0;\n  let best = nums[0];\n  for (const x of nums) {\n    prefix += x;\n    best = Math.max(best, prefix - minPrefix);\n    minPrefix = Math.min(minPrefix, prefix);\n  }\n  return best;\n}",
+        "TypeScript": "function maxSubArray(nums: number[]): number {\n  let prefix = 0;\n  let minPrefix = 0;\n  let best = nums[0];\n  for (const x of nums) {\n    prefix += x;\n    best = Math.max(best, prefix - minPrefix);\n    minPrefix = Math.min(minPrefix, prefix);\n  }\n  return best;\n}",
+        "C#": "using System;\n\npublic class Solution {\n    public int MaxSubArray(int[] nums) {\n        int prefix = 0, minPrefix = 0, best = nums[0];\n        foreach (int x in nums) {\n            prefix += x;\n            best = Math.Max(best, prefix - minPrefix);\n            minPrefix = Math.Min(minPrefix, prefix);\n        }\n        return best;\n    }\n}",
+        "PHP": "class Solution {\n    function maxSubArray($nums) {\n        $prefix = 0;\n        $minPrefix = 0;\n        $best = $nums[0];\n        foreach ($nums as $x) {\n            $prefix += $x;\n            $best = max($best, $prefix - $minPrefix);\n            $minPrefix = min($minPrefix, $prefix);\n        }\n        return $best;\n    }\n}"
+      }
+    },
+    {
+      "id": "divide-and-conquer",
+      "name": "Divide and Conquer",
+      "recommended": false,
+      "coreIdeaSummary": "Split at mid and take max(leftBest, rightBest, bestCrossingMid).",
+      "coreIdea": "Recursively split the array into left and right halves. The best subarray lies entirely in the left half, entirely in the right half, or crosses the midpoint.",
+      "steps": [
+        "Base case: if left == right, return nums[left].",
+        "Recursively compute leftBest on [left..mid] and rightBest on [mid+1..right].",
+        "Scan left from mid down to left to find maxLeftSuffix; scan right from mid+1 up to right to find maxRightPrefix.",
+        "Return max(leftBest, rightBest, maxLeftSuffix + maxRightPrefix)."
+      ],
+      "whyItWorks": "Every subarray in [left..right] either skips the boundary between mid and mid+1 or spans across it, and the best crossing slice must combine the best suffix ending at mid with the best prefix starting at mid+1.",
+      "whenToUse": "Required if a follow-up asks for a divide-and-conquer solution or when extending to Segment Tree range-max-subarray queries.",
+      "complexity": {
+        "time": "O(n log n)",
+        "space": "O(log n)",
+        "variables": "n = length of nums (recursion stack depth is log2 n)",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public int maxSubArray(int[] nums) {\n        return solve(nums, 0, nums.length - 1);\n    }\n    private int solve(int[] nums, int left, int right) {\n        if (left == right) return nums[left];\n        int mid = left + (right - left) / 2;\n        int leftBest = solve(nums, left, mid);\n        int rightBest = solve(nums, mid + 1, right);\n        int sum = 0, maxLeft = Integer.MIN_VALUE;\n        for (int i = mid; i >= left; i--) {\n            sum += nums[i];\n            if (sum > maxLeft) maxLeft = sum;\n        }\n        sum = 0; int maxRight = Integer.MIN_VALUE;\n        for (int i = mid + 1; i <= right; i++) {\n            sum += nums[i];\n            if (sum > maxRight) maxRight = sum;\n        }\n        return Math.max(Math.max(leftBest, rightBest), maxLeft + maxRight);\n    }\n}",
+        "Python3": "class Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        def solve(left: int, right: int) -> int:\n            if left == right:\n                return nums[left]\n            mid = (left + right) // 2\n            left_best = solve(left, mid)\n            right_best = solve(mid + 1, right)\n            s = 0\n            max_left = float('-inf')\n            for i in range(mid, left - 1, -1):\n                s += nums[i]\n                max_left = max(max_left, s)\n            s = 0\n            max_right = float('-inf')\n            for i in range(mid + 1, right + 1):\n                s += nums[i]\n                max_right = max(max_right, s)\n            return max(left_best, right_best, max_left + max_right)\n        return solve(0, len(nums) - 1)",
+        "Python": "class Solution(object):\n    def maxSubArray(self, nums):\n        def solve(left, right):\n            if left == right:\n                return nums[left]\n            mid = (left + right) // 2\n            left_best = solve(left, mid)\n            right_best = solve(mid + 1, right)\n            s = 0\n            max_left = float('-inf')\n            for i in range(mid, left - 1, -1):\n                s += nums[i]\n                if s > max_left:\n                    max_left = s\n            s = 0\n            max_right = float('-inf')\n            for i in range(mid + 1, right + 1):\n                s += nums[i]\n                if s > max_right:\n                    max_right = s\n            return max(left_best, right_best, max_left + max_right)\n        return solve(0, len(nums) - 1)",
+        "JavaScript": "function maxSubArray(nums) {\n  function solve(left, right) {\n    if (left === right) return nums[left];\n    const mid = (left + right) >> 1;\n    const leftBest = solve(left, mid);\n    const rightBest = solve(mid + 1, right);\n    let s = 0;\n    let maxLeft = -Infinity;\n    for (let i = mid; i >= left; i--) {\n      s += nums[i];\n      if (s > maxLeft) maxLeft = s;\n    }\n    s = 0;\n    let maxRight = -Infinity;\n    for (let i = mid + 1; i <= right; i++) {\n      s += nums[i];\n      if (s > maxRight) maxRight = s;\n    }\n    return Math.max(leftBest, rightBest, maxLeft + maxRight);\n  }\n  return solve(0, nums.length - 1);\n}",
+        "TypeScript": "function maxSubArray(nums: number[]): number {\n  function solve(left: number, right: number): number {\n    if (left === right) return nums[left];\n    const mid = (left + right) >> 1;\n    const leftBest = solve(left, mid);\n    const rightBest = solve(mid + 1, right);\n    let s = 0;\n    let maxLeft = -Infinity;\n    for (let i = mid; i >= left; i--) {\n      s += nums[i];\n      if (s > maxLeft) maxLeft = s;\n    }\n    s = 0;\n    let maxRight = -Infinity;\n    for (let i = mid + 1; i <= right; i++) {\n      s += nums[i];\n      if (s > maxRight) maxRight = s;\n    }\n    return Math.max(leftBest, rightBest, maxLeft + maxRight);\n  }\n  return solve(0, nums.length - 1);\n}",
+        "C#": "using System;\n\npublic class Solution {\n    public int MaxSubArray(int[] nums) {\n        return Solve(nums, 0, nums.Length - 1);\n    }\n    private int Solve(int[] nums, int left, int right) {\n        if (left == right) return nums[left];\n        int mid = left + (right - left) / 2;\n        int leftBest = Solve(nums, left, mid);\n        int rightBest = Solve(nums, mid + 1, right);\n        int s = 0, maxLeft = int.MinValue;\n        for (int i = mid; i >= left; i--) {\n            s += nums[i];\n            if (s > maxLeft) maxLeft = s;\n        }\n        s = 0; int maxRight = int.MinValue;\n        for (int i = mid + 1; i <= right; i++) {\n            s += nums[i];\n            if (s > maxRight) maxRight = s;\n        }\n        return Math.Max(Math.Max(leftBest, rightBest), maxLeft + maxRight);\n    }\n}",
+        "PHP": "class Solution {\n    function maxSubArray($nums) {\n        return $this->solve($nums, 0, count($nums) - 1);\n    }\n    private function solve(&$nums, $left, $right) {\n        if ($left === $right) return $nums[$left];\n        $mid = intdiv($left + $right, 2);\n        $leftBest = $this->solve($nums, $left, $mid);\n        $rightBest = $this->solve($nums, $mid + 1, $right);\n        $s = 0; $maxLeft = PHP_INT_MIN;\n        for ($i = $mid; $i >= $left; $i--) {\n            $s += $nums[$i];\n            if ($s > $maxLeft) $maxLeft = $s;\n        }\n        $s = 0; $maxRight = PHP_INT_MIN;\n        for ($i = $mid + 1; $i <= $right; $i++) {\n            $s += $nums[$i];\n            if ($s > $maxRight) $maxRight = $s;\n        }\n        return max($leftBest, $rightBest, $maxLeft + $maxRight);\n    }\n}"
+      }
+    },
+    {
+      "id": "dp-table",
+      "name": "Tabulated Dynamic Programming (dp[i])",
+      "recommended": false,
+      "coreIdeaSummary": "Store dp[i] = best subarray sum ending exactly at index i.",
+      "coreIdea": "Define dp[i] as the maximum subarray sum that ends at index i. Each entry depends solely on dp[i - 1] and nums[i].",
+      "steps": [
+        "Allocate dp of size n with dp[0] = nums[0] and best = dp[0].",
+        "For i from 1 to n - 1, compute dp[i] = max(nums[i], dp[i - 1] + nums[i]).",
+        "Update best = max(best, dp[i]) and return best."
+      ],
+      "whyItWorks": "Any subarray ending at i either contains only nums[i] or appends nums[i] to a subarray ending at i - 1. Taking max(nums[i], dp[i - 1] + nums[i]) captures the optimal choice.",
+      "whenToUse": "Helpful when learning the DP recurrence before compressing dp[] into a single variable.",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(n)",
+        "variables": "n = length of nums",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public int maxSubArray(int[] nums) {\n        int n = nums.length;\n        int[] dp = new int[n];\n        dp[0] = nums[0];\n        int best = dp[0];\n        for (int i = 1; i < n; i++) {\n            dp[i] = Math.max(nums[i], dp[i - 1] + nums[i]);\n            if (dp[i] > best) best = dp[i];\n        }\n        return best;\n    }\n}",
+        "Python3": "class Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        dp = [0] * len(nums)\n        dp[0] = nums[0]\n        best = dp[0]\n        for i in range(1, len(nums)):\n            dp[i] = max(nums[i], dp[i - 1] + nums[i])\n            if dp[i] > best:\n                best = dp[i]\n        return best",
+        "Python": "class Solution(object):\n    def maxSubArray(self, nums):\n        dp = [0] * len(nums)\n        dp[0] = nums[0]\n        best = dp[0]\n        for i in range(1, len(nums)):\n            dp[i] = max(nums[i], dp[i - 1] + nums[i])\n            if dp[i] > best:\n                best = dp[i]\n        return best",
+        "JavaScript": "function maxSubArray(nums) {\n  const dp = new Array(nums.length);\n  dp[0] = nums[0];\n  let best = dp[0];\n  for (let i = 1; i < nums.length; i++) {\n    dp[i] = Math.max(nums[i], dp[i - 1] + nums[i]);\n    if (dp[i] > best) best = dp[i];\n  }\n  return best;\n}",
+        "TypeScript": "function maxSubArray(nums: number[]): number {\n  const dp: number[] = new Array(nums.length);\n  dp[0] = nums[0];\n  let best = dp[0];\n  for (let i = 1; i < nums.length; i++) {\n    dp[i] = Math.max(nums[i], dp[i - 1] + nums[i]);\n    if (dp[i] > best) best = dp[i];\n  }\n  return best;\n}",
+        "C#": "using System;\n\npublic class Solution {\n    public int MaxSubArray(int[] nums) {\n        int[] dp = new int[nums.Length];\n        dp[0] = nums[0];\n        int best = dp[0];\n        for (int i = 1; i < nums.Length; i++) {\n            dp[i] = Math.Max(nums[i], dp[i - 1] + nums[i]);\n            if (dp[i] > best) best = dp[i];\n        }\n        return best;\n    }\n}",
+        "PHP": "class Solution {\n    function maxSubArray($nums) {\n        $n = count($nums);\n        $dp = [$nums[0]];\n        $best = $dp[0];\n        for ($i = 1; $i < $n; $i++) {\n            $dp[$i] = max($nums[$i], $dp[$i - 1] + $nums[$i]);\n            if ($dp[$i] > $best) $best = $dp[$i];\n        }\n        return $best;\n    }\n}"
+      }
+    },
+    {
+      "id": "kadane",
+      "name": "Kadane's Algorithm (Space-Optimized DP)",
+      "recommended": true,
+      "recommendedTradeOff": "Achieves the optimal O(n) worst-case time in one pass while compressing the DP table down to O(1) auxiliary space with zero allocations.",
+      "coreIdeaSummary": "Carry the running subarray sum only while it helps; otherwise restart at nums[i].",
+      "coreIdea": "Keep only two numbers: currentSum (best subarray ending at the current index) and bestSum (best seen anywhere). If currentSum + nums[i] < nums[i], discard the earlier negative prefix and restart at nums[i].",
+      "steps": [
+        "Initialize currentSum = nums[0] and bestSum = nums[0].",
+        "For i from 1 to n - 1, set currentSum = max(nums[i], currentSum + nums[i]).",
+        "Update bestSum = max(bestSum, currentSum).",
+        "Return bestSum."
+      ],
+      "whyItWorks": "Since dp[i] only reads dp[i - 1], storing dp[i - 1] in currentSum preserves the exact same DP recurrence while discarding older prefixes whenever they become negative.",
+      "whenToUse": "Default optimal solution for maximum contiguous subarray sum.",
+      "complexity": {
+        "time": "O(n)",
+        "space": "O(1)",
+        "variables": "n = length of nums",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "C++": "#include <algorithm>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        int current = nums[0], best = nums[0];\n        for (size_t i = 1; i < nums.size(); ++i) {\n            current = max(nums[i], current + nums[i]);\n            best = max(best, current);\n        }\n        return best;\n    }\n};",
+        "Java": "class Solution {\n    public int maxSubArray(int[] nums) {\n        int current = nums[0];\n        int best = nums[0];\n        for (int i = 1; i < nums.length; i++) {\n            current = Math.max(nums[i], current + nums[i]);\n            best = Math.max(best, current);\n        }\n        return best;\n    }\n}",
+        "Python3": "class Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        current = best = nums[0]\n        for x in nums[1:]:\n            current = max(x, current + x)\n            best = max(best, current)\n        return best",
+        "Python": "class Solution(object):\n    def maxSubArray(self, nums):\n        current = best = nums[0]\n        for x in nums[1:]:\n            current = max(x, current + x)\n            if current > best:\n                best = current\n        return best",
+        "JavaScript": "function maxSubArray(nums) {\n  let current = nums[0];\n  let best = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    current = Math.max(nums[i], current + nums[i]);\n    best = Math.max(best, current);\n  }\n  return best;\n}",
+        "TypeScript": "function maxSubArray(nums: number[]): number {\n  let current = nums[0];\n  let best = nums[0];\n  for (let i = 1; i < nums.length; i++) {\n    current = Math.max(nums[i], current + nums[i]);\n    best = Math.max(best, current);\n  }\n  return best;\n}",
+        "C#": "using System;\n\npublic class Solution {\n    public int MaxSubArray(int[] nums) {\n        int current = nums[0], best = nums[0];\n        for (int i = 1; i < nums.Length; i++) {\n            current = Math.Max(nums[i], current + nums[i]);\n            best = Math.Max(best, current);\n        }\n        return best;\n    }\n}",
+        "C": "int maxSubArray(int* nums, int numsSize) {\n    int current = nums[0], best = nums[0];\n    for (int i = 1; i < numsSize; i++) {\n        current = nums[i] > current + nums[i] ? nums[i] : current + nums[i];\n        if (current > best) best = current;\n    }\n    return best;\n}",
+        "Go": "func maxSubArray(nums []int) int {\n\tcurrent, best := nums[0], nums[0]\n\tfor _, x := range nums[1:] {\n\t\tif current+x > x {\n\t\t\tcurrent += x\n\t\t} else {\n\t\t\tcurrent = x\n\t\t}\n\t\tif current > best {\n\t\t\tbest = current\n\t\t}\n\t}\n\treturn best\n}",
+        "Kotlin": "class Solution {\n    fun maxSubArray(nums: IntArray): Int {\n        var current = nums[0]\n        var best = nums[0]\n        for (i in 1 until nums.size) {\n            current = maxOf(nums[i], current + nums[i])\n            best = maxOf(best, current)\n        }\n        return best\n    }\n}",
+        "Swift": "class Solution {\n    func maxSubArray(_ nums: [Int]) -> Int {\n        var current = nums[0]\n        var best = nums[0]\n        for x in nums.dropFirst() {\n            current = max(x, current + x)\n            best = max(best, current)\n        }\n        return best\n    }\n}",
+        "Rust": "impl Solution {\n    pub fn max_sub_array(nums: Vec<i32>) -> i32 {\n        let mut current = nums[0];\n        let mut best = nums[0];\n        for &x in &nums[1..] {\n            current = x.max(current + x);\n            best = best.max(current);\n        }\n        best\n    }\n}",
+        "Ruby": "def max_sub_array(nums)\n  current = best = nums[0]\n  nums[1..].each do |x|\n    current = [x, current + x].max\n    best = [best, current].max\n  end\n  best\nend",
+        "PHP": "class Solution {\n    function maxSubArray($nums) {\n        $current = $nums[0];\n        $best = $nums[0];\n        $n = count($nums);\n        for ($i = 1; $i < $n; $i++) {\n            $current = max($nums[$i], $current + $nums[$i]);\n            $best = max($best, $current);\n        }\n        return $best;\n    }\n}",
+        "Dart": "import 'dart:math';\n\nclass Solution {\n  int maxSubArray(List<int> nums) {\n    var current = nums[0];\n    var best = nums[0];\n    for (var i = 1; i < nums.length; i++) {\n      current = max(nums[i], current + nums[i]);\n      best = max(best, current);\n    }\n    return best;\n  }\n}",
+        "Scala": "object Solution {\n  def maxSubArray(nums: Array[Int]): Int = {\n    var current = nums(0)\n    var best = nums(0)\n    for (i <- 1 until nums.length) {\n      current = math.max(nums(i), current + nums(i))\n      best = math.max(best, current)\n    }\n    best\n  }\n}",
+        "Elixir": "defmodule Solution do\n  @spec max_sub_array(nums :: [integer]) :: integer\n  def max_sub_array([h | t]) do\n    {_cur, best} = Enum.reduce(t, {h, h}, fn x, {cur, best} ->\n      nxt = max(x, cur + x)\n      {nxt, max(best, nxt)}\n    end)\n    best\n  end\nend",
+        "Erlang": "-spec max_sub_array(Nums :: [integer()]) -> integer().\nmax_sub_array([H | T]) ->\n  max_sub_array(T, H, H).\n\nmax_sub_array([], _Cur, Best) -> Best;\nmax_sub_array([H | T], Cur, Best) ->\n  Nxt = max(H, Cur + H),\n  max_sub_array(T, Nxt, max(Best, Nxt)).",
+        "Racket": "(define/contract (max-sub-array nums)\n  (-> (listof exact-integer?) exact-integer?)\n  (let loop ([rest (cdr nums)] [cur (car nums)] [best (car nums)])\n    (if (null? rest)\n        best\n        (let* ([x (car rest)]\n               [nxt (max x (+ cur x))])\n          (loop (cdr rest) nxt (max best nxt))))))"
+      }
+    }
+  ],
+  "tests": [
+    { "name": "Example 1", "args": [[-2, 5, -1, 4, -6, 2]], "expected": 8 },
+    { "name": "Example 2 (all negative)", "args": [[-7, -2, -9, -4]], "expected": -2 },
+    { "name": "Single element", "args": [[42]], "expected": 42 },
+    { "name": "All positive", "args": [[1, 2, 3, 4]], "expected": 10 }
+  ],
+  "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (s.maxSubArray(new int[]{-2,5,-1,4,-6,2}) != 8) throw new AssertionError(\"Ex1\");\n    if (s.maxSubArray(new int[]{-7,-2,-9,-4}) != -2) throw new AssertionError(\"Ex2\");\n    if (s.maxSubArray(new int[]{42}) != 42) throw new AssertionError(\"Single\");\n    if (s.maxSubArray(new int[]{1,2,3,4}) != 10) throw new AssertionError(\"AllPos\");\n  }\n}",
+  "phpDriver": "$s = new Solution();\n$cases = [\n  [[-2,5,-1,4,-6,2], 8],\n  [[-7,-2,-9,-4], -2],\n  [[42], 42],\n  [[1,2,3,4], 10]\n];\nforeach ($cases as $c) {\n  if ($s->maxSubArray($c[0]) !== $c[1]) { fwrite(STDERR, \"FAIL\"); exit(1); }\n}",
+  "csharpDriver": "using System;\npublic class Runner {\n  public static void Main() {\n    var s = new Solution();\n    if (s.MaxSubArray(new int[]{-2,5,-1,4,-6,2}) != 8) throw new Exception(\"Ex1\");\n    if (s.MaxSubArray(new int[]{-7,-2,-9,-4}) != -2) throw new Exception(\"Ex2\");\n    if (s.MaxSubArray(new int[]{42}) != 42) throw new Exception(\"Single\");\n    if (s.MaxSubArray(new int[]{1,2,3,4}) != 10) throw new Exception(\"AllPos\");\n  }\n}"
+}

@@ -1,0 +1,7 @@
+# Raw upstream cache & temporary test files
+data/source_snapshot.json
+.tmp_verify/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

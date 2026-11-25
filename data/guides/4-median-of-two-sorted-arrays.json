@@ -1,0 +1,209 @@
+{
+  "number": 4,
+  "slug": "median-of-two-sorted-arrays",
+  "title": "Median of Two Sorted Arrays",
+  "difficulty": "Hard",
+  "topics": ["Array", "Binary Search", "Divide and Conquer"],
+  "access": "Free",
+  "url": "https://leetcode.com/problems/median-of-two-sorted-arrays/",
+  "jsFunctionName": "findMedianSortedArrays",
+  "pyMethodName": "findMedianSortedArrays",
+  "verification": {
+    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "untestedLanguages": []
+  },
+  "understand": {
+    "question": "Given two already-sorted integer arrays, what would the middle value (median) be if they were combined into one sorted list, without actually building that giant list in slow time?",
+    "plainExplanation": "Imagine two sorted stacks of test scores. If you poured them into one combined sorted pile, the median splits the pile into two equal-sized halves: every score in the left half is <= every score in the right half.",
+    "inputMeaning": "Two sorted integer arrays nums1 (length m) and nums2 (length n), where at least one array is non-empty.",
+    "outputMeaning": "A floating-point number: the middle element if m + n is odd, or the average of the two middle elements if m + n is even.",
+    "rules": [
+      "Both input arrays are already sorted in non-decreasing order.",
+      "Total length N = m + n determines whether there is 1 center value (odd N) or 2 center values averaged together (even N).",
+      "Target optimal time complexity is O(log(min(m, n)))."
+    ],
+    "terms": [
+      {
+        "term": "Median",
+        "definition": "The value(s) dividing a sorted dataset into equal lower and upper halves."
+      },
+      {
+        "term": "Partition",
+        "definition": "Choosing a cut point i in nums1 and j in nums2 so the left side holds half of all elements: i + j = Math.floor((m + n + 1) / 2)."
+      },
+      {
+        "term": "Sentinel (-Infinity / +Infinity)",
+        "definition": "Placeholder boundary values used when a cut sits at the very start (0 elements on left) or very end (0 elements on right) of an array."
+      }
+    ],
+    "example1": {
+      "input": "nums1 = [2, 8], nums2 = [1, 4, 9]",
+      "output": "4.0",
+      "whyValid": "Merged sorted order is [1, 2, 4, 8, 9] (length 5, odd). Cutting nums1 at i = 1 ([2] | [8]) and nums2 at j = 2 ([1, 4] | [9]) puts 3 elements on the left (1, 2, 4) and 2 on the right (8, 9). Max on left = max(2, 4) = 4, which is the median.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          { "index": 0, "value": 1, "state": "window", "label": "left half" },
+          { "index": 1, "value": 2, "state": "window", "label": "left half" },
+          { "index": 2, "value": 4, "state": "match", "label": "median" },
+          { "index": 3, "value": 8, "state": "default", "label": "right half" },
+          { "index": 4, "value": 9, "state": "default", "label": "right half" }
+        ],
+        "pointers": [{ "index": 2, "name": "mid" }],
+        "caption": "Combined sorted view [1, 2, 4, 8, 9] has median 4.0."
+      }
+    },
+    "example2": {
+      "input": "nums1 = [], nums2 = [3, 5]",
+      "output": "4.0",
+      "whyEdgeCase": "One array is completely empty and total length is even (2). The cut in nums1 is i = 0, so sentinels -Infinity/+Infinity prevent out-of-bounds reads, and the median averages (3 + 5) / 2 = 4.0."
+    }
+  },
+  "dryRun": {
+    "approachId": "binary-search-partition",
+    "algorithmName": "Binary Search Partition on Shorter Array",
+    "steps": [
+      {
+        "title": "Binary-search cut i in shorter array nums1 = [2, 8]",
+        "description": "Ensure nums1 is shorter (m=2, n=3). Half-size = (2 + 3 + 1) // 2 = 3. Search i in [0..2], starting at mid i = 1 -> j = 3 - 1 = 2.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": 2, "state": "active", "label": "A_left" },
+            { "index": 1, "value": 8, "state": "default", "label": "A_right" }
+          ],
+          "pointers": [{ "index": 1, "name": "cut i=1" }],
+          "aux": {
+            "title": "Partition Check (i=1, j=2)",
+            "entries": [
+              { "key": "A_left", "value": 2 },
+              { "key": "A_right", "value": 8 },
+              { "key": "B_left", "value": 4 },
+              { "key": "B_right", "value": 9 }
+            ]
+          },
+          "caption": "Check cross inequalities: A_left <= B_right and B_left <= A_right."
+        }
+      },
+      {
+        "title": "Cross-check succeeds: 2 <= 9 and 4 <= 8",
+        "description": "Both inequalities hold! Because m + n = 5 is odd, the median is max(A_left, B_left) = max(2, 4) = 4.0.",
+        "state": {
+          "type": "array",
+          "items": [
+            { "index": 0, "value": 2, "state": "window", "label": "A_left=2" },
+            { "index": 1, "value": 8, "state": "default", "label": "A_right=8" }
+          ],
+          "pointers": [{ "index": 1, "name": "valid cut" }],
+          "aux": {
+            "title": "Median Calculation (odd total)",
+            "entries": [
+              { "key": "max(A_left, B_left)", "value": "max(2, 4) = 4.0", "highlight": true }
+            ]
+          },
+          "caption": "Valid partition found in 1 binary-search probe -> return 4.0."
+        }
+      }
+    ]
+  },
+  "approaches": [
+    {
+      "id": "merge-array",
+      "name": "Merge Both Sorted Arrays",
+      "recommended": false,
+      "coreIdeaSummary": "Merge nums1 and nums2 into a combined array, then pick the middle.",
+      "coreIdea": "Use the standard two-pointer merge step from Merge Sort to create a single sorted array of length m + n, then read the median index(es).",
+      "steps": [
+        "Allocate merged array of size m + n.",
+        "Merge nums1 and nums2 with two pointers.",
+        "If total is odd return merged[total / 2]; else return (merged[total/2 - 1] + merged[total/2]) / 2.0."
+      ],
+      "whyItWorks": "Merging two sorted lists preserves sorted order across all elements.",
+      "whenToUse": "Simple baseline when O(m + n) time and space are fine.",
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(m + n)",
+        "variables": "m = len(nums1), n = len(nums2)",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public double findMedianSortedArrays(int[] nums1, int[] nums2) {\n        int m = nums1.length, n = nums2.length, total = m + n;\n        int[] merged = new int[total];\n        int i = 0, j = 0, k = 0;\n        while (i < m && j < n) merged[k++] = (nums1[i] <= nums2[j]) ? nums1[i++] : nums2[j++];\n        while (i < m) merged[k++] = nums1[i++];\n        while (j < n) merged[k++] = nums2[j++];\n        if (total % 2 == 1) return merged[total / 2];\n        return (merged[total / 2 - 1] + merged[total / 2]) / 2.0;\n    }\n}",
+        "Python3": "class Solution:\n    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:\n        merged = []\n        i = j = 0\n        while i < len(nums1) and j < len(nums2):\n            if nums1[i] <= nums2[j]:\n                merged.append(nums1[i]); i += 1\n            else:\n                merged.append(nums2[j]); j += 1\n        merged.extend(nums1[i:])\n        merged.extend(nums2[j:])\n        total = len(merged)\n        if total % 2 == 1:\n            return float(merged[total // 2])\n        return (merged[total // 2 - 1] + merged[total // 2]) / 2.0",
+        "Python": "class Solution(object):\n    def findMedianSortedArrays(self, nums1, nums2):\n        merged = []\n        i = j = 0\n        while i < len(nums1) and j < len(nums2):\n            if nums1[i] <= nums2[j]:\n                merged.append(nums1[i]); i += 1\n            else:\n                merged.append(nums2[j]); j += 1\n        merged.extend(nums1[i:])\n        merged.extend(nums2[j:])\n        total = len(merged)\n        if total % 2 == 1:\n            return float(merged[total // 2])\n        return (merged[total // 2 - 1] + merged[total // 2]) / 2.0",
+        "JavaScript": "function findMedianSortedArrays(nums1, nums2) {\n  const merged = [];\n  let i = 0, j = 0;\n  while (i < nums1.length && j < nums2.length) {\n    merged.push(nums1[i] <= nums2[j] ? nums1[i++] : nums2[j++]);\n  }\n  while (i < nums1.length) merged.push(nums1[i++]);\n  while (j < nums2.length) merged.push(nums2[j++]);\n  const total = merged.length;\n  const mid = Math.floor(total / 2);\n  return total % 2 === 1 ? merged[mid] : (merged[mid - 1] + merged[mid]) / 2;\n}",
+        "TypeScript": "function findMedianSortedArrays(nums1: number[], nums2: number[]): number {\n  const merged: number[] = [];\n  let i = 0, j = 0;\n  while (i < nums1.length && j < nums2.length) {\n    merged.push(nums1[i] <= nums2[j] ? nums1[i++] : nums2[j++]);\n  }\n  while (i < nums1.length) merged.push(nums1[i++]);\n  while (j < nums2.length) merged.push(nums2[j++]);\n  const total = merged.length;\n  const mid = Math.floor(total / 2);\n  return total % 2 === 1 ? merged[mid] : (merged[mid - 1] + merged[mid]) / 2;\n}",
+        "C#": "public class Solution {\n    public double FindMedianSortedArrays(int[] nums1, int[] nums2) {\n        int m = nums1.Length, n = nums2.Length, total = m + n;\n        int[] merged = new int[total];\n        int i = 0, j = 0, k = 0;\n        while (i < m && j < n) merged[k++] = nums1[i] <= nums2[j] ? nums1[i++] : nums2[j++];\n        while (i < m) merged[k++] = nums1[i++];\n        while (j < n) merged[k++] = nums2[j++];\n        if (total % 2 == 1) return merged[total / 2];\n        return (merged[total / 2 - 1] + merged[total / 2]) / 2.0;\n    }\n}",
+        "PHP": "class Solution {\n    function findMedianSortedArrays($nums1, $nums2) {\n        $merged = []; $i = 0; $j = 0; $m = count($nums1); $n = count($nums2);\n        while ($i < $m && $j < $n) $merged[] = ($nums1[$i] <= $nums2[$j]) ? $nums1[$i++] : $nums2[$j++];\n        while ($i < $m) $merged[] = $nums1[$i++];\n        while ($j < $n) $merged[] = $nums2[$j++];\n        $total = count($merged); $mid = intdiv($total, 2);\n        return ($total % 2 === 1) ? (float)$merged[$mid] : ($merged[$mid - 1] + $merged[$mid]) / 2.0;\n    }\n}"
+      }
+    },
+    {
+      "id": "two-pointer-count",
+      "name": "Two-Pointer Simulation (O(1) Space)",
+      "recommended": false,
+      "coreIdeaSummary": "Advance two pointers (m + n) / 2 steps tracking only the last two values.",
+      "coreIdea": "Walk through the virtual merged sequence without storing it, retaining only prev and curr until reaching index (m + n) / 2.",
+      "steps": [
+        "Set total = m + n and targetSteps = floor(total / 2) + 1.",
+        "Repeat targetSteps times: shift prev = curr, pick smaller head from nums1[i] or nums2[j] into curr.",
+        "Return curr if total is odd, else (prev + curr) / 2.0."
+      ],
+      "whyItWorks": "Median only depends on the 1 or 2 values at the midpoint, so earlier merged values do not need to be retained.",
+      "whenToUse": "When O(1) space is wanted and O(m + n) time is acceptable.",
+      "complexity": {
+        "time": "O(m + n)",
+        "space": "O(1)",
+        "variables": "m = len(nums1), n = len(nums2)",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public double findMedianSortedArrays(int[] nums1, int[] nums2) {\n        int m = nums1.length, n = nums2.length, total = m + n;\n        int i = 0, j = 0, prev = 0, curr = 0;\n        for (int step = 0; step <= total / 2; step++) {\n            prev = curr;\n            if (i < m && (j >= n || nums1[i] <= nums2[j])) curr = nums1[i++];\n            else curr = nums2[j++];\n        }\n        return (total % 2 == 1) ? curr : (prev + curr) / 2.0;\n    }\n}",
+        "Python3": "class Solution:\n    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:\n        m, n = len(nums1), len(nums2)\n        total = m + n\n        i = j = prev = curr = 0\n        for _ in range(total // 2 + 1):\n            prev = curr\n            if i < m and (j >= n or nums1[i] <= nums2[j]):\n                curr = nums1[i]; i += 1\n            else:\n                curr = nums2[j]; j += 1\n        return float(curr) if total % 2 == 1 else (prev + curr) / 2.0",
+        "Python": "class Solution(object):\n    def findMedianSortedArrays(self, nums1, nums2):\n        m, n = len(nums1), len(nums2)\n        total = m + n\n        i = j = prev = curr = 0\n        for _ in range(total // 2 + 1):\n            prev = curr\n            if i < m and (j >= n or nums1[i] <= nums2[j]):\n                curr = nums1[i]; i += 1\n            else:\n                curr = nums2[j]; j += 1\n        return float(curr) if total % 2 == 1 else (prev + curr) / 2.0",
+        "JavaScript": "function findMedianSortedArrays(nums1, nums2) {\n  const m = nums1.length, n = nums2.length, total = m + n;\n  let i = 0, j = 0, prev = 0, curr = 0;\n  for (let step = 0; step <= Math.floor(total / 2); step++) {\n    prev = curr;\n    if (i < m && (j >= n || nums1[i] <= nums2[j])) curr = nums1[i++];\n    else curr = nums2[j++];\n  }\n  return total % 2 === 1 ? curr : (prev + curr) / 2;\n}",
+        "TypeScript": "function findMedianSortedArrays(nums1: number[], nums2: number[]): number {\n  const m = nums1.length, n = nums2.length, total = m + n;\n  let i = 0, j = 0, prev = 0, curr = 0;\n  for (let step = 0; step <= Math.floor(total / 2); step++) {\n    prev = curr;\n    if (i < m && (j >= n || nums1[i] <= nums2[j])) curr = nums1[i++];\n    else curr = nums2[j++];\n  }\n  return total % 2 === 1 ? curr : (prev + curr) / 2;\n}",
+        "C#": "public class Solution {\n    public double FindMedianSortedArrays(int[] nums1, int[] nums2) {\n        int m = nums1.Length, n = nums2.Length, total = m + n;\n        int i = 0, j = 0, prev = 0, curr = 0;\n        for (int step = 0; step <= total / 2; step++) {\n            prev = curr;\n            if (i < m && (j >= n || nums1[i] <= nums2[j])) curr = nums1[i++];\n            else curr = nums2[j++];\n        }\n        return (total % 2 == 1) ? curr : (prev + curr) / 2.0;\n    }\n}",
+        "PHP": "class Solution {\n    function findMedianSortedArrays($nums1, $nums2) {\n        $m = count($nums1); $n = count($nums2); $total = $m + $n;\n        $i = 0; $j = 0; $prev = 0; $curr = 0;\n        for ($step = 0; $step <= intdiv($total, 2); $step++) {\n            $prev = $curr;\n            if ($i < $m && ($j >= $n || $nums1[$i] <= $nums2[$j])) $curr = $nums1[$i++];\n            else $curr = $nums2[$j++];\n        }\n        return ($total % 2 === 1) ? (float)$curr : ($prev + $curr) / 2.0;\n    }\n}"
+      }
+    },
+    {
+      "id": "binary-search-partition",
+      "name": "Binary Search Partition on Shorter Array",
+      "recommended": true,
+      "recommendedTradeOff": "Achieves optimal O(log(min(m, n))) time and O(1) space by binary-searching the split index on the shorter array.",
+      "coreIdeaSummary": "Binary-search cut i on the shorter array so left-half max <= right-half min.",
+      "coreIdea": "Always binary-search on the shorter array A so j = half - i stays in bounds for B. Adjust i until A_left <= B_right and B_left <= A_right.",
+      "steps": [
+        "If len(nums1) > len(nums2), swap them so nums1 has smaller length m.",
+        "Set half = floor((m + n + 1) / 2), lo = 0, hi = m.",
+        "Pick i = floor((lo + hi) / 2), j = half - i, and read boundary values using -Infinity/+Infinity sentinels.",
+        "If A_left <= B_right and B_left <= A_right, compute median from max(A_left, B_left) and min(A_right, B_right). Otherwise shift hi = i - 1 (when A_left > B_right) or lo = i + 1."
+      ],
+      "whyItWorks": "Since both arrays are sorted, A_left <= A_right and B_left <= B_right already hold. Checking only the two cross inequalities ensures every element in the combined left half is <= every element in the combined right half.",
+      "whenToUse": "Default optimal solution meeting the O(log(m + n)) constraint.",
+      "complexity": {
+        "time": "O(log(min(m, n)))",
+        "space": "O(1)",
+        "variables": "m = len(nums1), n = len(nums2)",
+        "boundType": "Worst-case"
+      },
+      "code": {
+        "Java": "class Solution {\n    public double findMedianSortedArrays(int[] nums1, int[] nums2) {\n        if (nums1.length > nums2.length) return findMedianSortedArrays(nums2, nums1);\n        int m = nums1.length, n = nums2.length;\n        int half = (m + n + 1) / 2, lo = 0, hi = m;\n        while (lo <= hi) {\n            int i = (lo + hi) / 2;\n            int j = half - i;\n            int aLeft = (i > 0) ? nums1[i - 1] : Integer.MIN_VALUE;\n            int aRight = (i < m) ? nums1[i] : Integer.MAX_VALUE;\n            int bLeft = (j > 0) ? nums2[j - 1] : Integer.MIN_VALUE;\n            int bRight = (j < n) ? nums2[j] : Integer.MAX_VALUE;\n            if (aLeft <= bRight && bLeft <= aRight) {\n                if ((m + n) % 2 == 1) return Math.max(aLeft, bLeft);\n                return (Math.max(aLeft, bLeft) + Math.min(aRight, bRight)) / 2.0;\n            } else if (aLeft > bRight) {\n                hi = i - 1;\n            } else {\n                lo = i + 1;\n            }\n        }\n        return 0.0;\n    }\n}",
+        "Python3": "class Solution:\n    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:\n        if len(nums1) > len(nums2):\n            nums1, nums2 = nums2, nums1\n        m, n = len(nums1), len(nums2)\n        half = (m + n + 1) // 2\n        lo, hi = 0, m\n        while lo <= hi:\n            i = (lo + hi) // 2\n            j = half - i\n            a_left = nums1[i - 1] if i > 0 else float('-inf')\n            a_right = nums1[i] if i < m else float('inf')\n            b_left = nums2[j - 1] if j > 0 else float('-inf')\n            b_right = nums2[j] if j < n else float('inf')\n            if a_left <= b_right and b_left <= a_right:\n                if (m + n) % 2 == 1:\n                    return float(max(a_left, b_left))\n                return (max(a_left, b_left) + min(a_right, b_right)) / 2.0\n            if a_left > b_right:\n                hi = i - 1\n            else:\n                lo = i + 1\n        return 0.0",
+        "Python": "class Solution(object):\n    def findMedianSortedArrays(self, nums1, nums2):\n        if len(nums1) > len(nums2):\n            nums1, nums2 = nums2, nums1\n        m, n = len(nums1), len(nums2)\n        half = (m + n + 1) // 2\n        lo, hi = 0, m\n        while lo <= hi:\n            i = (lo + hi) // 2\n            j = half - i\n            a_left = nums1[i - 1] if i > 0 else float('-inf')\n            a_right = nums1[i] if i < m else float('inf')\n            b_left = nums2[j - 1] if j > 0 else float('-inf')\n            b_right = nums2[j] if j < n else float('inf')\n            if a_left <= b_right and b_left <= a_right:\n                if (m + n) % 2 == 1:\n                    return float(max(a_left, b_left))\n                return (max(a_left, b_left) + min(a_right, b_right)) / 2.0\n            if a_left > b_right:\n                hi = i - 1\n            else:\n                lo = i + 1\n        return 0.0",
+        "JavaScript": "function findMedianSortedArrays(nums1, nums2) {\n  if (nums1.length > nums2.length) return findMedianSortedArrays(nums2, nums1);\n  const m = nums1.length, n = nums2.length;\n  const half = Math.floor((m + n + 1) / 2);\n  let lo = 0, hi = m;\n  while (lo <= hi) {\n    const i = (lo + hi) >> 1;\n    const j = half - i;\n    const aLeft = i > 0 ? nums1[i - 1] : -Infinity;\n    const aRight = i < m ? nums1[i] : Infinity;\n    const bLeft = j > 0 ? nums2[j - 1] : -Infinity;\n    const bRight = j < n ? nums2[j] : Infinity;\n    if (aLeft <= bRight && bLeft <= aRight) {\n      if ((m + n) % 2 === 1) return Math.max(aLeft, bLeft);\n      return (Math.max(aLeft, bLeft) + Math.min(aRight, bRight)) / 2;\n    } else if (aLeft > bRight) {\n      hi = i - 1;\n    } else {\n      lo = i + 1;\n    }\n  }\n  return 0;\n}",
+        "TypeScript": "function findMedianSortedArrays(nums1: number[], nums2: number[]): number {\n  if (nums1.length > nums2.length) return findMedianSortedArrays(nums2, nums1);\n  const m = nums1.length, n = nums2.length;\n  const half = Math.floor((m + n + 1) / 2);\n  let lo = 0, hi = m;\n  while (lo <= hi) {\n    const i = (lo + hi) >> 1;\n    const j = half - i;\n    const aLeft = i > 0 ? nums1[i - 1] : -Infinity;\n    const aRight = i < m ? nums1[i] : Infinity;\n    const bLeft = j > 0 ? nums2[j - 1] : -Infinity;\n    const bRight = j < n ? nums2[j] : Infinity;\n    if (aLeft <= bRight && bLeft <= aRight) {\n      if ((m + n) % 2 === 1) return Math.max(aLeft, bLeft);\n      return (Math.max(aLeft, bLeft) + Math.min(aRight, bRight)) / 2;\n    } else if (aLeft > bRight) {\n      hi = i - 1;\n    } else {\n      lo = i + 1;\n    }\n  }\n  return 0;\n}",
+        "C#": "using System;\n\npublic class Solution {\n    public double FindMedianSortedArrays(int[] nums1, int[] nums2) {\n        if (nums1.Length > nums2.Length) return FindMedianSortedArrays(nums2, nums1);\n        int m = nums1.Length, n = nums2.Length;\n        int half = (m + n + 1) / 2, lo = 0, hi = m;\n        while (lo <= hi) {\n            int i = (lo + hi) / 2;\n            int j = half - i;\n            int aLeft = i > 0 ? nums1[i - 1] : int.MinValue;\n            int aRight = i < m ? nums1[i] : int.MaxValue;\n            int bLeft = j > 0 ? nums2[j - 1] : int.MinValue;\n            int bRight = j < n ? nums2[j] : int.MaxValue;\n            if (aLeft <= bRight && bLeft <= aRight) {\n                if ((m + n) % 2 == 1) return Math.Max(aLeft, bLeft);\n                return (Math.Max(aLeft, bLeft) + Math.Min(aRight, bRight)) / 2.0;\n            } else if (aLeft > bRight) {\n                hi = i - 1;\n            } else {\n                lo = i + 1;\n            }\n        }\n        return 0.0;\n    }\n}",
+        "PHP": "class Solution {\n    function findMedianSortedArrays($nums1, $nums2) {\n        if (count($nums1) > count($nums2)) return $this->findMedianSortedArrays($nums2, $nums1);\n        $m = count($nums1); $n = count($nums2);\n        $half = intdiv($m + $n + 1, 2); $lo = 0; $hi = $m;\n        while ($lo <= $hi) {\n            $i = intdiv($lo + $hi, 2);\n            $j = $half - $i;\n            $aLeft = $i > 0 ? $nums1[$i - 1] : -INF;\n            $aRight = $i < $m ? $nums1[$i] : INF;\n            $bLeft = $j > 0 ? $nums2[$j - 1] : -INF;\n            $bRight = $j < $n ? $nums2[$j] : INF;\n            if ($aLeft <= $bRight && $bLeft <= $aRight) {\n                if (($m + $n) % 2 === 1) return (float)max($aLeft, $bLeft);\n                return (max($aLeft, $bLeft) + min($aRight, $bRight)) / 2.0;\n            } elseif ($aLeft > $bRight) {\n                $hi = $i - 1;\n            } else {\n                $lo = $i + 1;\n            }\n        }\n        return 0.0;\n    }\n}"
+      }
+    }
+  ],
+  "tests": [
+    { "name": "Example 1 (odd total)", "args": [[2, 8], [1, 4, 9]], "expected": 4 },
+    { "name": "Example 2 (empty nums1)", "args": [[], [3, 5]], "expected": 4 },
+    { "name": "Even interleaved", "args": [[1, 3], [2, 4]], "expected": 2.5 },
+    { "name": "Negatives", "args": [[-5, -2], [-3, 10]], "expected": -2.5 }
+  ],
+  "javaDriver": "public class Main {\n  static void eq(double a, double b, String n) { if (Math.abs(a - b) > 1e-9) throw new AssertionError(n + \": \" + a); }\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    eq(s.findMedianSortedArrays(new int[]{2,8}, new int[]{1,4,9}), 4.0, \"Ex1\");\n    eq(s.findMedianSortedArrays(new int[]{}, new int[]{3,5}), 4.0, \"Ex2\");\n    eq(s.findMedianSortedArrays(new int[]{1,3}, new int[]{2,4}), 2.5, \"Even\");\n    eq(s.findMedianSortedArrays(new int[]{-5,-2}, new int[]{-3,10}), -2.5, \"Neg\");\n  }\n}",
+  "phpDriver": "$s = new Solution();\nif (abs($s->findMedianSortedArrays([2,8],[1,4,9]) - 4.0) > 1e-9) exit(1);\nif (abs($s->findMedianSortedArrays([],[3,5]) - 4.0) > 1e-9) exit(1);\nif (abs($s->findMedianSortedArrays([1,3],[2,4]) - 2.5) > 1e-9) exit(1);\nif (abs($s->findMedianSortedArrays([-5,-2],[-3,10]) - (-2.5)) > 1e-9) exit(1);",
+  "csharpDriver": "using System;\npublic class Runner {\n  public static void Main() {\n    var s = new Solution();\n    if (Math.Abs(s.FindMedianSortedArrays(new int[]{2,8}, new int[]{1,4,9}) - 4.0) > 1e-9) throw new Exception();\n    if (Math.Abs(s.FindMedianSortedArrays(new int[]{}, new int[]{3,5}) - 4.0) > 1e-9) throw new Exception();\n    if (Math.Abs(s.FindMedianSortedArrays(new int[]{1,3}, new int[]{2,4}) - 2.5) > 1e-9) throw new Exception();\n    if (Math.Abs(s.FindMedianSortedArrays(new int[]{-5,-2}, new int[]{-3,10}) - (-2.5)) > 1e-9) throw new Exception();\n  }\n}"
+}
