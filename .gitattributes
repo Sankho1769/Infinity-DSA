@@ -2,3 +2,8 @@
 # excluded from the GitHub language bar because they are not part of the static website.
 scripts/import_catalog.py linguist-detectable=false
 scripts/validate_and_test.py linguist-detectable=false
+
+# Generated static-fallback bundles mirrored from data/catalog.json and data/guides/*.json
+# so opening index.html or problem.html directly via file:// also works without a server.
+data/offline-catalog.js linguist-generated
+data/offline-guides.js linguist-generated

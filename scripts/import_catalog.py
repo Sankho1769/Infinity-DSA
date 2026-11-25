@@ -290,6 +290,27 @@ def build_catalog(local_path: str | None = None, url: str = DEFAULT_DATA_URL) ->
     with CATALOG_PATH.open("w", encoding="utf-8") as fh:
         json.dump(catalog, fh, ensure_ascii=False, separators=(",", ":"))
 
+    # Generate file:// fallback script mirrors so direct file opens work without CORS failures
+    offline_catalog_path = DATA_DIR / "offline-catalog.js"
+    with offline_catalog_path.open("w", encoding="utf-8") as fh:
+        fh.write("// Auto-generated from data/catalog.json for file:// fallback.\n")
+        fh.write("window.__INFINITY_DSA_CATALOG__ = ")
+        json.dump(catalog, fh, ensure_ascii=False, separators=(",", ":"))
+        fh.write(";\n")
+
+    offline_guides = {}
+    for p in problems:
+        if p["guideStatus"] == "available" and p["guideFile"]:
+            gpath = ROOT_DIR / p["guideFile"]
+            if gpath.exists():
+                offline_guides[p["guideFile"]] = json.loads(gpath.read_text(encoding="utf-8"))
+    offline_guides_path = DATA_DIR / "offline-guides.js"
+    with offline_guides_path.open("w", encoding="utf-8") as fh:
+        fh.write("// Auto-generated from data/guides/*.json for file:// fallback.\n")
+        fh.write("window.__INFINITY_DSA_GUIDES__ = ")
+        json.dump(offline_guides, fh, ensure_ascii=False, separators=(",", ":"))
+        fh.write(";\n")
+
     return catalog
 
 

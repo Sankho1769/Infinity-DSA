@@ -358,14 +358,29 @@
     });
   }
 
+  function isValidCatalog(data) {
+    return (
+      Boolean(data) &&
+      typeof data === "object" &&
+      data.meta &&
+      Array.isArray(data.problems) &&
+      data.problems.length > 0 &&
+      typeof data.problems[0].number === "number" &&
+      typeof data.problems[0].title === "string"
+    );
+  }
+
   async function init() {
     cacheElements();
     readQueryParams();
 
     try {
-      const resp = await fetch("data/catalog.json");
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      state.catalog = await resp.json();
+      state.catalog = await window.InfinityDSA.fetchSiteJson(
+        "data/catalog.json",
+        isValidCatalog,
+        "data/offline-catalog.js",
+        () => window.__INFINITY_DSA_CATALOG__
+      );
       populateFacets(state.catalog.meta || {});
       syncControlsFromState();
       bindEvents();

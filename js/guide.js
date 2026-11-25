@@ -780,6 +780,21 @@ Output: ${esc(u.example2.output)}</pre>
     }
   }
 
+  function isValidCatalog(data) {
+    return Boolean(data) && typeof data === "object" && Array.isArray(data.problems) && data.problems.length > 0;
+  }
+
+  function isValidGuide(data) {
+    return (
+      Boolean(data) &&
+      typeof data === "object" &&
+      data.understand &&
+      data.dryRun &&
+      Array.isArray(data.approaches) &&
+      data.approaches.length > 0
+    );
+  }
+
   async function init() {
     const root = document.getElementById("guideRoot");
     const params = new URLSearchParams(window.location.search);
@@ -787,9 +802,12 @@ Output: ${esc(u.example2.output)}</pre>
     const idParam = params.get("id");
 
     try {
-      const catResp = await fetch("data/catalog.json");
-      if (!catResp.ok) throw new Error(`HTTP ${catResp.status}`);
-      state.catalog = await catResp.json();
+      state.catalog = await window.InfinityDSA.fetchSiteJson(
+        "data/catalog.json",
+        isValidCatalog,
+        "data/offline-catalog.js",
+        () => window.__INFINITY_DSA_CATALOG__
+      );
       const problems = state.catalog.problems || [];
 
       let idx = -1;
@@ -807,9 +825,13 @@ Output: ${esc(u.example2.output)}</pre>
       const neighbors = { prev: idx > 0 ? problems[idx - 1] : null, next: idx < problems.length - 1 ? problems[idx + 1] : null };
 
       if (state.problem.guideStatus === "available" && state.problem.guideFile) {
-        const gResp = await fetch(state.problem.guideFile);
-        if (!gResp.ok) throw new Error(`Guide HTTP ${gResp.status}`);
-        state.guide = await gResp.json();
+        const guidePath = state.problem.guideFile;
+        state.guide = await window.InfinityDSA.fetchSiteJson(
+          guidePath,
+          isValidGuide,
+          "data/offline-guides.js",
+          () => (window.__INFINITY_DSA_GUIDES__ ? window.__INFINITY_DSA_GUIDES__[guidePath] : null)
+        );
         const recIdx = (state.guide.approaches || []).findIndex((a) => a.recommended);
         state.selectedApproachIdx = recIdx >= 0 ? recIdx : 0;
       }
