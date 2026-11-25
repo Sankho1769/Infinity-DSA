@@ -52,6 +52,13 @@
     return `<div class="aux-panel"><div class="aux-title">${esc(aux.title || "State")}</div><div class="aux-entries">${chips}</div></div>`;
   }
 
+  function stateMarkerBadge(stateName) {
+    if (!stateName || stateName === "default") return "";
+    const symbols = { active: "● active", match: "★ match", window: "↔ window", skip: "× skip" };
+    const text = symbols[stateName] || stateName;
+    return `<span class="state-marker">${esc(text)}</span>`;
+  }
+
   function renderDiagram(diagram) {
     if (!diagram) return `<p class="muted">No diagram data provided.</p>`;
     const type = diagram.type || "array";
@@ -68,9 +75,11 @@
         .map((item) => {
           const ptrs = (ptrMap.get(item.index) || []).map((n) => `<span class="pointer-tag">${esc(n)}</span>`).join("");
           const stateCls = item.state ? `state-${esc(item.state)}` : "";
-          const labelHtml = item.label ? `<span class="cell-label">${esc(item.label)}</span>` : "";
+          const labelHtml = item.label
+            ? `<span class="cell-label">${esc(item.label)}</span>`
+            : stateMarkerBadge(item.state);
           return `
-            <div class="cell-wrap">
+            <div class="cell-wrap" aria-label="index ${esc(item.index)} value ${esc(item.value)} ${esc(item.state || "default")}">
               <div class="cell-pointers">${ptrs}</div>
               <div class="cell-box ${stateCls}">${esc(item.value)}</div>
               <span class="cell-index">idx ${esc(item.index)}</span>
@@ -90,11 +99,14 @@
           const ptrs = (ptrMap.get(node.id) || []).map((n) => `<span class="pointer-tag">${esc(n)}</span>`).join("");
           const stateCls = node.state ? `state-${esc(node.state)}` : "";
           const arrow = idx < arr.length - 1 ? `<span class="ll-arrow">→</span>` : `<span class="ll-arrow">→ null</span>`;
+          const labelHtml = node.label
+            ? `<span class="cell-label">${esc(node.label)}</span>`
+            : stateMarkerBadge(node.state);
           return `
             <div class="cell-wrap">
               <div class="cell-pointers">${ptrs}</div>
               <div class="cell-box ${stateCls}">${esc(node.value)}</div>
-              ${node.label ? `<span class="cell-label">${esc(node.label)}</span>` : ""}
+              ${labelHtml}
             </div>${arrow}`;
         })
         .join("");
@@ -109,7 +121,7 @@
               const obj = typeof cell === "object" && cell !== null ? cell : { value: cell };
               const stateCls = obj.state ? `state-${esc(obj.state)}` : "";
               const ptr = ptrMap.get(`${rIdx},${cIdx}`);
-              return `<td class="${stateCls}">${esc(obj.value)}${ptr ? `<div class="pointer-tag">${esc(ptr)}</div>` : ""}</td>`;
+              return `<td class="${stateCls}" title="row ${rIdx}, col ${cIdx}${obj.state ? ` (${obj.state})` : ""}">${esc(obj.value)}${ptr ? `<div class="pointer-tag">${esc(ptr)}</div>` : ""}</td>`;
             })
             .join("");
           return `<tr>${tds}</tr>`;
@@ -223,6 +235,11 @@
     }
 
     if (state.activeSubtab === "intuition") {
+      const visualDiagram = activeApproach.diagram || guide.understand.example1.diagram;
+      const visualHeading = activeApproach.diagram
+        ? `Visual Overview — ${activeApproach.name}`
+        : "Visual Overview (Example 1)";
+      const visualNote = activeApproach.diagramNote || guide.understand.example1.whyValid;
       return `
         <div class="subpanel-grid">
           <div class="inner-box">
@@ -236,9 +253,9 @@
             }
           </div>
           <div class="inner-box">
-            <h3>Visual Overview (Example 1)</h3>
-            ${renderDiagram(guide.understand.example1.diagram)}
-            <p style="margin:10px 0 0;font-size:0.86rem;color:var(--text-secondary);">${esc(guide.understand.example1.whyValid)}</p>
+            <h3>${esc(visualHeading)}</h3>
+            ${renderDiagram(visualDiagram)}
+            <p style="margin:10px 0 0;font-size:0.86rem;color:var(--text-secondary);">${esc(visualNote)}</p>
           </div>
         </div>`;
     }
@@ -255,7 +272,7 @@
 
     if (state.activeSubtab === "dryrun") {
       return `
-        <div class="inner-box">
+        <div class="inner-box" id="dryRunTabBox" tabindex="0" aria-label="Interactive dry run walkthrough">
           <div class="dryrun-controls">
             <div>
               <strong>Interactive Dry Run: ${esc(guide.dryRun.algorithmName)}</strong>
@@ -267,9 +284,12 @@
               <button type="button" class="btn btn-secondary btn-sm" id="resetStepBtn">Reset</button>
             </div>
           </div>
-          <span class="step-indicator">Step ${state.dryStep + 1} of ${guide.dryRun.steps.length}</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="step-indicator" aria-live="polite">Step ${state.dryStep + 1} of ${guide.dryRun.steps.length}</span>
+            <span class="dryrun-kbd-hint">Keys: ← / → / Home</span>
+          </div>
           <div id="dryRunDiagram">${renderDiagram(currentStep.state)}</div>
-          <div class="step-description" id="dryRunText">
+          <div class="step-description" id="dryRunText" aria-live="polite">
             <strong>${esc(currentStep.title)}</strong>
             <span>${esc(currentStep.description)}</span>
           </div>
@@ -474,6 +494,7 @@
                 <h4>Example 1</h4>
                 <pre>Input: ${esc(u.example1.input)}
 Output: ${esc(u.example1.output)}</pre>
+                <p style="margin:6px 0 0;font-size:0.79rem;color:var(--text-secondary);">${esc(u.example1.whyValid)}</p>
               </div>
               <div class="mini-example-card">
                 <h4>Example 2 (Edge Case)</h4>
@@ -485,6 +506,11 @@ Output: ${esc(u.example2.output)}</pre>
                 <h4>Rules &amp; Constraints</h4>
                 <ul>${(u.rules || []).map((r) => `<li>${esc(r)}</li>`).join("")}</ul>
               </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <strong style="font-size:0.86rem;">Worked Example 1 Diagram</strong>
+              ${renderDiagram(u.example1.diagram)}
             </div>
 
             ${
@@ -530,13 +556,13 @@ Output: ${esc(u.example2.output)}</pre>
             <div id="subtabBody">${renderSubtabContent(guide, activeApproach, allLanguages)}</div>
           </article>
 
-          <article class="stage-card" id="dryRunAlwaysSection" style="margin-top:16px;">
+          <article class="stage-card" id="dryRunAlwaysSection" tabindex="0" aria-label="Interactive dry run walkthrough" style="margin-top:16px;">
             <div class="stage-card-header">
               <h2>Interactive Dry Run: ${esc(guide.dryRun.algorithmName)}</h2>
-              <span class="step-indicator">Step ${state.dryStep + 1} of ${guide.dryRun.steps.length}</span>
+              <span class="step-indicator" aria-live="polite">Step ${state.dryStep + 1} of ${guide.dryRun.steps.length}</span>
             </div>
             <div class="dryrun-controls">
-              <span style="font-size:0.85rem;color:var(--muted);">Walk through Example 1 step by step with the recommended algorithm.</span>
+              <span style="font-size:0.85rem;color:var(--muted);">Walk through Example 1 step by step with the recommended algorithm. <span class="dryrun-kbd-hint">(Keys: ← / → / Home)</span></span>
               <div class="dryrun-buttons">
                 <button type="button" class="btn btn-secondary btn-sm" id="prevStepMainBtn" ${state.dryStep <= 0 ? "disabled" : ""}>← Previous</button>
                 <button type="button" class="btn btn-primary btn-sm" id="nextStepMainBtn" ${state.dryStep >= guide.dryRun.steps.length - 1 ? "disabled" : ""}>Next →</button>
@@ -544,7 +570,7 @@ Output: ${esc(u.example2.output)}</pre>
               </div>
             </div>
             <div id="dryRunMainDiagram">${renderDiagram((guide.dryRun.steps[state.dryStep] || guide.dryRun.steps[0]).state)}</div>
-            <div class="step-description" id="dryRunMainText">
+            <div class="step-description" id="dryRunMainText" aria-live="polite">
               <strong>${esc((guide.dryRun.steps[state.dryStep] || guide.dryRun.steps[0]).title)}</strong>
               <span>${esc((guide.dryRun.steps[state.dryStep] || guide.dryRun.steps[0]).description)}</span>
             </div>
@@ -662,13 +688,9 @@ Output: ${esc(u.example2.output)}</pre>
     const copyShareBtn = document.getElementById("copyShareBtn");
     if (copyShareBtn) {
       copyShareBtn.addEventListener("click", async () => {
-        try {
-          await navigator.clipboard.writeText(window.location.href);
-          copyShareBtn.textContent = "Copied!";
-          window.setTimeout(() => { copyShareBtn.textContent = "Share link"; }, 1400);
-        } catch (_) {
-          copyShareBtn.textContent = window.location.href;
-        }
+        const ok = await window.InfinityDSA.copyText(window.location.href);
+        copyShareBtn.textContent = ok ? "Copied!" : window.location.href;
+        window.setTimeout(() => { copyShareBtn.textContent = "Share link"; }, 1400);
       });
     }
 
@@ -735,6 +757,26 @@ Output: ${esc(u.example2.output)}</pre>
       if (el) el.addEventListener("click", () => stepChange(0));
     });
 
+    ["dryRunAlwaysSection", "dryRunTabBox"].forEach((boxId) => {
+      const box = document.getElementById(boxId);
+      if (!box) return;
+      box.addEventListener("keydown", (ev) => {
+        if (ev.key === "ArrowLeft") {
+          ev.preventDefault();
+          stepChange(state.dryStep - 1);
+          document.getElementById(boxId)?.focus();
+        } else if (ev.key === "ArrowRight") {
+          ev.preventDefault();
+          stepChange(state.dryStep + 1);
+          document.getElementById(boxId)?.focus();
+        } else if (ev.key === "Home") {
+          ev.preventDefault();
+          stepChange(0);
+          document.getElementById(boxId)?.focus();
+        }
+      });
+    });
+
     root.querySelectorAll("[data-lang]").forEach((btn) => {
       btn.addEventListener("click", () => {
         if (btn.disabled) return;
@@ -749,13 +791,9 @@ Output: ${esc(u.example2.output)}</pre>
       copyCodeBtn.addEventListener("click", async () => {
         const ap = state.guide.approaches[state.selectedApproachIdx];
         const code = (ap && ap.code && ap.code[state.selectedLanguage]) || "";
-        try {
-          await navigator.clipboard.writeText(code);
-          copyCodeBtn.textContent = "Copied!";
-          window.setTimeout(() => { copyCodeBtn.textContent = "Copy code"; }, 1400);
-        } catch (_) {
-          copyCodeBtn.textContent = "Copy failed";
-        }
+        const ok = await window.InfinityDSA.copyText(code);
+        copyCodeBtn.textContent = ok ? "Copied!" : "Copy failed";
+        window.setTimeout(() => { copyCodeBtn.textContent = "Copy code"; }, 1400);
       });
     }
 

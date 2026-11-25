@@ -3,13 +3,23 @@
   "slug": "palindrome-number",
   "title": "Palindrome Number",
   "difficulty": "Easy",
-  "topics": ["Math"],
+  "topics": [
+    "Math"
+  ],
   "access": "Free",
   "url": "https://leetcode.com/problems/palindrome-number/",
   "jsFunctionName": "isPalindrome",
   "pyMethodName": "isPalindrome",
   "verification": {
-    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "verifiedLanguages": [
+      "Java",
+      "Python3",
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "C#",
+      "PHP"
+    ],
     "untestedLanguages": []
   },
   "understand": {
@@ -39,11 +49,36 @@
       "diagram": {
         "type": "array",
         "items": [
-          { "index": 0, "value": 1, "state": "match", "label": "left" },
-          { "index": 1, "value": 2, "state": "match", "label": "left" },
-          { "index": 2, "value": 3, "state": "window", "label": "middle" },
-          { "index": 3, "value": 2, "state": "match", "label": "right" },
-          { "index": 4, "value": 1, "state": "match", "label": "right" }
+          {
+            "index": 0,
+            "value": 1,
+            "state": "match",
+            "label": "left"
+          },
+          {
+            "index": 1,
+            "value": 2,
+            "state": "match",
+            "label": "left"
+          },
+          {
+            "index": 2,
+            "value": 3,
+            "state": "window",
+            "label": "middle"
+          },
+          {
+            "index": 3,
+            "value": 2,
+            "state": "match",
+            "label": "right"
+          },
+          {
+            "index": 4,
+            "value": 1,
+            "state": "match",
+            "label": "right"
+          }
         ],
         "caption": "12 == floor(123 / 10) -> palindrome!"
       }
@@ -59,35 +94,149 @@
     "algorithmName": "Reverse Half of Digits",
     "steps": [
       {
-        "title": "Check guards and pop 1st digit (1)",
-        "description": "12321 >= 0 and does not end in 0. Pop 1 -> x = 1232, rev = 1. Still x > rev.",
+        "title": "Verify non-negative and non-trailing-zero guards",
+        "description": "12321 >= 0 and 12321 % 10 != 0, so it passes the upfront guards. Start with x = 12321, rev = 0.",
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": 1, "state": "default" },
-            { "index": 1, "value": 2, "state": "default" },
-            { "index": 2, "value": 3, "state": "default" },
-            { "index": 3, "value": 2, "state": "default" },
-            { "index": 4, "value": 1, "state": "active", "label": "popped" }
+            {
+              "index": 0,
+              "value": 1,
+              "state": "default"
+            },
+            {
+              "index": 1,
+              "value": 2,
+              "state": "default"
+            },
+            {
+              "index": 2,
+              "value": 3,
+              "state": "default"
+            },
+            {
+              "index": 3,
+              "value": 2,
+              "state": "default"
+            },
+            {
+              "index": 4,
+              "value": 1,
+              "state": "default"
+            }
           ],
-          "aux": { "title": "Halves", "entries": [{ "key": "x", "value": 1232 }, { "key": "rev", "value": 1 }] },
-          "caption": "Continue while x > rev."
+          "aux": {
+            "title": "Halves",
+            "entries": [
+              {
+                "key": "x",
+                "value": 12321
+              },
+              {
+                "key": "rev",
+                "value": 0
+              }
+            ]
+          },
+          "caption": "Ready to reverse right half while x > rev."
         }
       },
       {
-        "title": "Pop 2 and 3 until x <= rev",
-        "description": "Pop 2 -> x = 123, rev = 12. Pop 3 -> x = 12, rev = 123. Now x <= rev so stop! Since 12 == floor(123 / 10), return true.",
+        "title": "Pop right digits 1 and 2 -> x = 123, rev = 12",
+        "description": "Iteration 1: rev = 1, x = 1232. Iteration 2: rev = 12, x = 123. Since 123 > 12, run one more iteration.",
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": 1, "state": "match" },
-            { "index": 1, "value": 2, "state": "match" },
-            { "index": 2, "value": 3, "state": "window", "label": "middle" },
-            { "index": 3, "value": 2, "state": "match" },
-            { "index": 4, "value": 1, "state": "match" }
+            {
+              "index": 0,
+              "value": 1,
+              "state": "window"
+            },
+            {
+              "index": 1,
+              "value": 2,
+              "state": "window"
+            },
+            {
+              "index": 2,
+              "value": 3,
+              "state": "active"
+            },
+            {
+              "index": 3,
+              "value": 2,
+              "state": "match"
+            },
+            {
+              "index": 4,
+              "value": 1,
+              "state": "match"
+            }
           ],
-          "aux": { "title": "Final Comparison", "entries": [{ "key": "x", "value": 12 }, { "key": "rev", "value": 123 }, { "key": "x == rev//10", "value": "true", "highlight": true }] },
-          "caption": "Half-reversal matches! Return true."
+          "aux": {
+            "title": "Halves",
+            "entries": [
+              {
+                "key": "x",
+                "value": 123
+              },
+              {
+                "key": "rev",
+                "value": 12
+              }
+            ]
+          },
+          "caption": "Continue because x (123) > rev (12)."
+        }
+      },
+      {
+        "title": "Pop middle digit 3 -> x = 12 <= rev = 123 -> match!",
+        "description": "Iteration 3: rev = 123, x = 12. Now x <= rev so stop! Check x == rev (false) or x == rev // 10 (12 == 12 -> true!). Return true.",
+        "state": {
+          "type": "array",
+          "items": [
+            {
+              "index": 0,
+              "value": 1,
+              "state": "match"
+            },
+            {
+              "index": 1,
+              "value": 2,
+              "state": "match"
+            },
+            {
+              "index": 2,
+              "value": 3,
+              "state": "window",
+              "label": "mid"
+            },
+            {
+              "index": 3,
+              "value": 2,
+              "state": "match"
+            },
+            {
+              "index": 4,
+              "value": 1,
+              "state": "match"
+            }
+          ],
+          "aux": {
+            "title": "Final Check",
+            "entries": [
+              {
+                "key": "x",
+                "value": 12
+              },
+              {
+                "key": "rev // 10",
+                "value": 12,
+                "highlight": true
+              }
+            ]
+          },
+          "caption": "Halves match -> return true."
         }
       }
     ]
@@ -150,6 +299,48 @@
         "TypeScript": "function isPalindrome(x: number): boolean {\n  if (x < 0) return false;\n  const s = String(x);\n  let l = 0, r = s.length - 1;\n  while (l < r) if (s[l++] !== s[r--]) return false;\n  return true;\n}",
         "C#": "public class Solution {\n    public bool IsPalindrome(int x) {\n        if (x < 0) return false;\n        string s = x.ToString();\n        int l = 0, r = s.Length - 1;\n        while (l < r) if (s[l++] != s[r--]) return false;\n        return true;\n    }\n}",
         "PHP": "class Solution {\n    function isPalindrome($x) {\n        if ($x < 0) return false;\n        $s = (string)$x;\n        return $s === strrev($s);\n    }\n}"
+      },
+      "diagramNote": "Converts 12321 to \"12321\" and compares characters from left and right inward.",
+      "diagram": {
+        "type": "two-pointers",
+        "items": [
+          {
+            "index": 0,
+            "value": "1",
+            "state": "match"
+          },
+          {
+            "index": 1,
+            "value": "2",
+            "state": "window"
+          },
+          {
+            "index": 2,
+            "value": "3",
+            "state": "default"
+          },
+          {
+            "index": 3,
+            "value": "2",
+            "state": "window"
+          },
+          {
+            "index": 4,
+            "value": "1",
+            "state": "match"
+          }
+        ],
+        "pointers": [
+          {
+            "index": 0,
+            "name": "L"
+          },
+          {
+            "index": 4,
+            "name": "R"
+          }
+        ],
+        "caption": "L and R step inward while s[L] == s[R]."
       }
     },
     {
@@ -179,14 +370,84 @@
         "TypeScript": "function isPalindrome(x: number): boolean {\n  if (x < 0) return false;\n  let orig = x, rev = 0;\n  while (x > 0) {\n    rev = rev * 10 + (x % 10);\n    x = Math.floor(x / 10);\n  }\n  return rev === orig;\n}",
         "C#": "public class Solution {\n    public bool IsPalindrome(int x) {\n        if (x < 0) return false;\n        long orig = x, rev = 0;\n        while (x > 0) {\n            rev = rev * 10 + x % 10;\n            x /= 10;\n        }\n        return rev == orig;\n    }\n}",
         "PHP": "class Solution {\n    function isPalindrome($x) {\n        if ($x < 0) return false;\n        $orig = $x; $rev = 0;\n        while ($x > 0) {\n            $rev = $rev * 10 + ($x % 10);\n            $x = intdiv($x, 10);\n        }\n        return $rev === $orig;\n    }\n}"
+      },
+      "diagramNote": "Reverses all 5 digits into a 64-bit integer rev = 12321 and compares rev == orig.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          {
+            "index": 0,
+            "value": 1,
+            "state": "match"
+          },
+          {
+            "index": 1,
+            "value": 2,
+            "state": "match"
+          },
+          {
+            "index": 2,
+            "value": 3,
+            "state": "match"
+          },
+          {
+            "index": 3,
+            "value": 2,
+            "state": "match"
+          },
+          {
+            "index": 4,
+            "value": 1,
+            "state": "match"
+          }
+        ],
+        "aux": {
+          "title": "64-Bit Compare",
+          "entries": [
+            {
+              "key": "orig",
+              "value": 12321
+            },
+            {
+              "key": "rev",
+              "value": 12321,
+              "highlight": true
+            }
+          ]
+        },
+        "caption": "rev == orig -> true."
       }
     }
   ],
   "tests": [
-    { "name": "Example 1 (odd palindrome)", "args": [12321], "expected": true },
-    { "name": "Example 2 (trailing zero)", "args": [10], "expected": false },
-    { "name": "Zero", "args": [0], "expected": true },
-    { "name": "Negative", "args": [-121], "expected": false }
+    {
+      "name": "Example 1 (odd palindrome)",
+      "args": [
+        12321
+      ],
+      "expected": true
+    },
+    {
+      "name": "Example 2 (trailing zero)",
+      "args": [
+        10
+      ],
+      "expected": false
+    },
+    {
+      "name": "Zero",
+      "args": [
+        0
+      ],
+      "expected": true
+    },
+    {
+      "name": "Negative",
+      "args": [
+        -121
+      ],
+      "expected": false
+    }
   ],
   "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (!s.isPalindrome(12321)) throw new AssertionError();\n    if (s.isPalindrome(10)) throw new AssertionError();\n    if (!s.isPalindrome(0)) throw new AssertionError();\n    if (s.isPalindrome(-121)) throw new AssertionError();\n  }\n}",
   "phpDriver": "$s = new Solution();\nif ($s->isPalindrome(12321) !== true) exit(1);\nif ($s->isPalindrome(10) !== false) exit(1);\nif ($s->isPalindrome(0) !== true) exit(1);\nif ($s->isPalindrome(-121) !== false) exit(1);",

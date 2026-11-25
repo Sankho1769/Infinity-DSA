@@ -3,13 +3,25 @@
   "slug": "longest-substring-without-repeating-characters",
   "title": "Longest Substring Without Repeating Characters",
   "difficulty": "Medium",
-  "topics": ["Hash Table", "String", "Sliding Window"],
+  "topics": [
+    "Hash Table",
+    "String",
+    "Sliding Window"
+  ],
   "access": "Free",
   "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
   "jsFunctionName": "lengthOfLongestSubstring",
   "pyMethodName": "lengthOfLongestSubstring",
   "verification": {
-    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "verifiedLanguages": [
+      "Java",
+      "Python3",
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "C#",
+      "PHP"
+    ],
     "untestedLanguages": []
   },
   "understand": {
@@ -43,19 +55,61 @@
       "diagram": {
         "type": "array",
         "items": [
-          { "index": 0, "value": "c", "state": "match" },
-          { "index": 1, "value": "a", "state": "match" },
-          { "index": 2, "value": "d", "state": "match" },
-          { "index": 3, "value": "b", "state": "match" },
-          { "index": 4, "value": "z", "state": "match" },
-          { "index": 5, "value": "a", "state": "skip" },
-          { "index": 6, "value": "b", "state": "default" },
-          { "index": 7, "value": "c", "state": "default" },
-          { "index": 8, "value": "d", "state": "default" }
+          {
+            "index": 0,
+            "value": "c",
+            "state": "match"
+          },
+          {
+            "index": 1,
+            "value": "a",
+            "state": "match"
+          },
+          {
+            "index": 2,
+            "value": "d",
+            "state": "match"
+          },
+          {
+            "index": 3,
+            "value": "b",
+            "state": "match"
+          },
+          {
+            "index": 4,
+            "value": "z",
+            "state": "match"
+          },
+          {
+            "index": 5,
+            "value": "a",
+            "state": "skip"
+          },
+          {
+            "index": 6,
+            "value": "b",
+            "state": "default"
+          },
+          {
+            "index": 7,
+            "value": "c",
+            "state": "default"
+          },
+          {
+            "index": 8,
+            "value": "d",
+            "state": "default"
+          }
         ],
         "pointers": [
-          { "index": 0, "name": "L" },
-          { "index": 4, "name": "R" }
+          {
+            "index": 0,
+            "name": "L"
+          },
+          {
+            "index": 4,
+            "name": "R"
+          }
         ],
         "caption": "Window \"cadbz\" (indices 0..4) has 5 all-unique characters."
       }
@@ -76,25 +130,74 @@
         "state": {
           "type": "hash",
           "items": [
-            { "index": 0, "value": "c", "state": "match" },
-            { "index": 1, "value": "a", "state": "match" },
-            { "index": 2, "value": "d", "state": "match" },
-            { "index": 3, "value": "b", "state": "match" },
-            { "index": 4, "value": "z", "state": "match" },
-            { "index": 5, "value": "a", "state": "default" },
-            { "index": 6, "value": "b", "state": "default" },
-            { "index": 7, "value": "c", "state": "default" },
-            { "index": 8, "value": "d", "state": "default" }
+            {
+              "index": 0,
+              "value": "c",
+              "state": "match"
+            },
+            {
+              "index": 1,
+              "value": "a",
+              "state": "match"
+            },
+            {
+              "index": 2,
+              "value": "d",
+              "state": "match"
+            },
+            {
+              "index": 3,
+              "value": "b",
+              "state": "match"
+            },
+            {
+              "index": 4,
+              "value": "z",
+              "state": "match"
+            },
+            {
+              "index": 5,
+              "value": "a",
+              "state": "default"
+            },
+            {
+              "index": 6,
+              "value": "b",
+              "state": "default"
+            },
+            {
+              "index": 7,
+              "value": "c",
+              "state": "default"
+            },
+            {
+              "index": 8,
+              "value": "d",
+              "state": "default"
+            }
           ],
           "pointers": [
-            { "index": 0, "name": "L" },
-            { "index": 4, "name": "R" }
+            {
+              "index": 0,
+              "name": "L"
+            },
+            {
+              "index": 4,
+              "name": "R"
+            }
           ],
           "aux": {
             "title": "Window & Last-Seen Map",
             "entries": [
-              { "key": "maxLen", "value": 5, "highlight": true },
-              { "key": "c:0, a:1, d:2, b:3, z:4", "value": "" }
+              {
+                "key": "maxLen",
+                "value": 5,
+                "highlight": true
+              },
+              {
+                "key": "c:0, a:1, d:2, b:3, z:4",
+                "value": ""
+              }
             ]
           },
           "caption": "Window length = 4 - 0 + 1 = 5."
@@ -106,25 +209,74 @@
         "state": {
           "type": "hash",
           "items": [
-            { "index": 0, "value": "c", "state": "skip" },
-            { "index": 1, "value": "a", "state": "skip" },
-            { "index": 2, "value": "d", "state": "window" },
-            { "index": 3, "value": "b", "state": "window" },
-            { "index": 4, "value": "z", "state": "window" },
-            { "index": 5, "value": "a", "state": "active" },
-            { "index": 6, "value": "b", "state": "default" },
-            { "index": 7, "value": "c", "state": "default" },
-            { "index": 8, "value": "d", "state": "default" }
+            {
+              "index": 0,
+              "value": "c",
+              "state": "skip"
+            },
+            {
+              "index": 1,
+              "value": "a",
+              "state": "skip"
+            },
+            {
+              "index": 2,
+              "value": "d",
+              "state": "window"
+            },
+            {
+              "index": 3,
+              "value": "b",
+              "state": "window"
+            },
+            {
+              "index": 4,
+              "value": "z",
+              "state": "window"
+            },
+            {
+              "index": 5,
+              "value": "a",
+              "state": "active"
+            },
+            {
+              "index": 6,
+              "value": "b",
+              "state": "default"
+            },
+            {
+              "index": 7,
+              "value": "c",
+              "state": "default"
+            },
+            {
+              "index": 8,
+              "value": "d",
+              "state": "default"
+            }
           ],
           "pointers": [
-            { "index": 2, "name": "L" },
-            { "index": 5, "name": "R" }
+            {
+              "index": 2,
+              "name": "L"
+            },
+            {
+              "index": 5,
+              "name": "R"
+            }
           ],
           "aux": {
             "title": "Window & Last-Seen Map",
             "entries": [
-              { "key": "maxLen", "value": 5 },
-              { "key": "a", "value": "updated -> 5", "highlight": true }
+              {
+                "key": "maxLen",
+                "value": 5
+              },
+              {
+                "key": "a",
+                "value": "updated -> 5",
+                "highlight": true
+              }
             ]
           },
           "caption": "Window [2..5] = \"dbza\", length 4."
@@ -136,24 +288,70 @@
         "state": {
           "type": "hash",
           "items": [
-            { "index": 0, "value": "c", "state": "skip" },
-            { "index": 1, "value": "a", "state": "skip" },
-            { "index": 2, "value": "d", "state": "skip" },
-            { "index": 3, "value": "b", "state": "skip" },
-            { "index": 4, "value": "z", "state": "match" },
-            { "index": 5, "value": "a", "state": "match" },
-            { "index": 6, "value": "b", "state": "match" },
-            { "index": 7, "value": "c", "state": "match" },
-            { "index": 8, "value": "d", "state": "match" }
+            {
+              "index": 0,
+              "value": "c",
+              "state": "skip"
+            },
+            {
+              "index": 1,
+              "value": "a",
+              "state": "skip"
+            },
+            {
+              "index": 2,
+              "value": "d",
+              "state": "skip"
+            },
+            {
+              "index": 3,
+              "value": "b",
+              "state": "skip"
+            },
+            {
+              "index": 4,
+              "value": "z",
+              "state": "match"
+            },
+            {
+              "index": 5,
+              "value": "a",
+              "state": "match"
+            },
+            {
+              "index": 6,
+              "value": "b",
+              "state": "match"
+            },
+            {
+              "index": 7,
+              "value": "c",
+              "state": "match"
+            },
+            {
+              "index": 8,
+              "value": "d",
+              "state": "match"
+            }
           ],
           "pointers": [
-            { "index": 4, "name": "L" },
-            { "index": 8, "name": "R" }
+            {
+              "index": 4,
+              "name": "L"
+            },
+            {
+              "index": 8,
+              "name": "R"
+            }
           ],
           "aux": {
             "title": "Final Result",
             "entries": [
-              { "key": "maxLen", "value": 5, "highlight": true }
+              {
+                "key": "maxLen",
+                "value": 5,
+                "highlight": true
+              }
             ]
           },
           "caption": "Window [4..8] = \"zabcd\" also has length 5. Final answer: 5."
@@ -189,6 +387,54 @@
         "TypeScript": "function lengthOfLongestSubstring(s: string): number {\n  let best = 0;\n  for (let i = 0; i < s.length; i++) {\n    const seen = new Set<string>();\n    for (let j = i; j < s.length; j++) {\n      if (seen.has(s[j])) break;\n      seen.add(s[j]);\n      best = Math.max(best, j - i + 1);\n    }\n  }\n  return best;\n}",
         "C#": "using System;\nusing System.Collections.Generic;\n\npublic class Solution {\n    public int LengthOfLongestSubstring(string s) {\n        int best = 0;\n        for (int i = 0; i < s.Length; i++) {\n            var seen = new HashSet<char>();\n            for (int j = i; j < s.Length; j++) {\n                if (!seen.Add(s[j])) break;\n                best = Math.Max(best, j - i + 1);\n            }\n        }\n        return best;\n    }\n}",
         "PHP": "class Solution {\n    function lengthOfLongestSubstring($s) {\n        $best = 0; $n = strlen($s);\n        for ($i = 0; $i < $n; $i++) {\n            $seen = [];\n            for ($j = $i; $j < $n; $j++) {\n                $ch = $s[$j];\n                if (isset($seen[$ch])) break;\n                $seen[$ch] = true;\n                $best = max($best, $j - $i + 1);\n            }\n        }\n        return $best;\n    }\n}"
+      },
+      "diagramNote": "Starts fresh from each index i and halts j as soon as a repeated character hits the set.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          {
+            "index": 0,
+            "value": "c",
+            "state": "match"
+          },
+          {
+            "index": 1,
+            "value": "a",
+            "state": "match"
+          },
+          {
+            "index": 2,
+            "value": "d",
+            "state": "match"
+          },
+          {
+            "index": 3,
+            "value": "b",
+            "state": "match"
+          },
+          {
+            "index": 4,
+            "value": "z",
+            "state": "match"
+          },
+          {
+            "index": 5,
+            "value": "a",
+            "state": "skip",
+            "label": "repeat!"
+          }
+        ],
+        "pointers": [
+          {
+            "index": 0,
+            "name": "i"
+          },
+          {
+            "index": 5,
+            "name": "j stops"
+          }
+        ],
+        "caption": "Starting at i=0 reaches length 5 before hitting duplicate 'a'."
       }
     },
     {
@@ -218,6 +464,65 @@
         "TypeScript": "function lengthOfLongestSubstring(s: string): number {\n  const active = new Set<string>();\n  let left = 0, best = 0;\n  for (let right = 0; right < s.length; right++) {\n    const c = s[right];\n    while (active.has(c)) {\n      active.delete(s[left++]);\n    }\n    active.add(c);\n    best = Math.max(best, right - left + 1);\n  }\n  return best;\n}",
         "C#": "using System;\nusing System.Collections.Generic;\n\npublic class Solution {\n    public int LengthOfLongestSubstring(string s) {\n        var active = new HashSet<char>();\n        int left = 0, best = 0;\n        for (int right = 0; right < s.Length; right++) {\n            char c = s[right];\n            while (active.Contains(c)) {\n                active.Remove(s[left++]);\n            }\n            active.Add(c);\n            best = Math.Max(best, right - left + 1);\n        }\n        return best;\n    }\n}",
         "PHP": "class Solution {\n    function lengthOfLongestSubstring($s) {\n        $active = [];\n        $left = 0; $best = 0; $n = strlen($s);\n        for ($right = 0; $right < $n; $right++) {\n            $c = $s[$right];\n            while (isset($active[$c])) {\n                unset($active[$s[$left]]);\n                $left++;\n            }\n            $active[$c] = true;\n            $best = max($best, $right - $left + 1);\n        }\n        return $best;\n    }\n}"
+      },
+      "diagramNote": "Advances L one character at a time while removing s[L] from the active set until duplicate 'a' is evicted.",
+      "diagram": {
+        "type": "hash",
+        "items": [
+          {
+            "index": 0,
+            "value": "c",
+            "state": "skip",
+            "label": "removed"
+          },
+          {
+            "index": 1,
+            "value": "a",
+            "state": "skip",
+            "label": "removed"
+          },
+          {
+            "index": 2,
+            "value": "d",
+            "state": "window"
+          },
+          {
+            "index": 3,
+            "value": "b",
+            "state": "window"
+          },
+          {
+            "index": 4,
+            "value": "z",
+            "state": "window"
+          },
+          {
+            "index": 5,
+            "value": "a",
+            "state": "active"
+          }
+        ],
+        "pointers": [
+          {
+            "index": 2,
+            "name": "L"
+          },
+          {
+            "index": 5,
+            "name": "R"
+          }
+        ],
+        "aux": {
+          "title": "Active Set",
+          "entries": [
+            {
+              "key": "chars",
+              "value": "{d, b, z, a}",
+              "highlight": true
+            }
+          ]
+        },
+        "caption": "Step-by-step eviction preserves uniqueness."
       }
     },
     {
@@ -277,14 +582,99 @@
         "TypeScript": "function lengthOfLongestSubstring(s: string): number {\n  const last = new Int32Array(128).fill(-1);\n  let left = 0, best = 0;\n  for (let right = 0; right < s.length; right++) {\n    const code = s.charCodeAt(right);\n    if (last[code] >= left) left = last[code] + 1;\n    last[code] = right;\n    best = Math.max(best, right - left + 1);\n  }\n  return best;\n}",
         "C#": "using System;\n\npublic class Solution {\n    public int LengthOfLongestSubstring(string s) {\n        int[] last = new int[128];\n        for (int i = 0; i < 128; i++) last[i] = -1;\n        int left = 0, best = 0;\n        for (int right = 0; right < s.Length; right++) {\n            int code = s[right];\n            if (last[code] >= left) left = last[code] + 1;\n            last[code] = right;\n            best = Math.Max(best, right - left + 1);\n        }\n        return best;\n    }\n}",
         "PHP": "class Solution {\n    function lengthOfLongestSubstring($s) {\n        $last = array_fill(0, 128, -1);\n        $left = 0; $best = 0; $n = strlen($s);\n        for ($right = 0; $right < $n; $right++) {\n            $code = ord($s[$right]);\n            if ($last[$code] >= $left) $left = $last[$code] + 1;\n            $last[$code] = $right;\n            $best = max($best, $right - $left + 1);\n        }\n        return $best;\n    }\n}"
+      },
+      "diagramNote": "Direct 128-slot integer table maps ASCII code ord(ch) -> last index in O(1) worst-case time.",
+      "diagram": {
+        "type": "hash",
+        "items": [
+          {
+            "index": 0,
+            "value": "c",
+            "state": "skip"
+          },
+          {
+            "index": 1,
+            "value": "a",
+            "state": "skip"
+          },
+          {
+            "index": 2,
+            "value": "d",
+            "state": "window"
+          },
+          {
+            "index": 3,
+            "value": "b",
+            "state": "window"
+          },
+          {
+            "index": 4,
+            "value": "z",
+            "state": "window"
+          },
+          {
+            "index": 5,
+            "value": "a",
+            "state": "active"
+          }
+        ],
+        "pointers": [
+          {
+            "index": 2,
+            "name": "L"
+          },
+          {
+            "index": 5,
+            "name": "R"
+          }
+        ],
+        "aux": {
+          "title": "ASCII Table slots",
+          "entries": [
+            {
+              "key": "last[97 ('a')]",
+              "value": "1 -> 5",
+              "highlight": true
+            },
+            {
+              "key": "last[98 ('b')]",
+              "value": "3"
+            }
+          ]
+        },
+        "caption": "Fixed int[128] replaces hash table overhead."
       }
     }
   ],
   "tests": [
-    { "name": "Example 1", "args": ["cadbzabcd"], "expected": 5 },
-    { "name": "Example 2 (abba trap)", "args": ["abba"], "expected": 2 },
-    { "name": "Empty string", "args": [""], "expected": 0 },
-    { "name": "All identical", "args": ["zzzzz"], "expected": 1 }
+    {
+      "name": "Example 1",
+      "args": [
+        "cadbzabcd"
+      ],
+      "expected": 5
+    },
+    {
+      "name": "Example 2 (abba trap)",
+      "args": [
+        "abba"
+      ],
+      "expected": 2
+    },
+    {
+      "name": "Empty string",
+      "args": [
+        ""
+      ],
+      "expected": 0
+    },
+    {
+      "name": "All identical",
+      "args": [
+        "zzzzz"
+      ],
+      "expected": 1
+    }
   ],
   "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (s.lengthOfLongestSubstring(\"cadbzabcd\") != 5) throw new AssertionError(\"Ex1\");\n    if (s.lengthOfLongestSubstring(\"abba\") != 2) throw new AssertionError(\"Ex2\");\n    if (s.lengthOfLongestSubstring(\"\") != 0) throw new AssertionError(\"Empty\");\n    if (s.lengthOfLongestSubstring(\"zzzzz\") != 1) throw new AssertionError(\"Same\");\n  }\n}",
   "phpDriver": "$s = new Solution();\nif ($s->lengthOfLongestSubstring(\"cadbzabcd\") !== 5) exit(1);\nif ($s->lengthOfLongestSubstring(\"abba\") !== 2) exit(1);\nif ($s->lengthOfLongestSubstring(\"\") !== 0) exit(1);\nif ($s->lengthOfLongestSubstring(\"zzzzz\") !== 1) exit(1);",

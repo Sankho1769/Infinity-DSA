@@ -80,7 +80,7 @@
     }
   }
 
-  function writeQueryParams() {
+  function writeQueryParams(pushHistory) {
     const params = new URLSearchParams();
     if (state.q.trim()) params.set("q", state.q.trim());
     if (state.difficulty !== "all") params.set("diff", state.difficulty);
@@ -92,7 +92,12 @@
     if (state.page > 1) params.set("page", String(state.page));
     const qs = params.toString();
     const nextUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
-    window.history.replaceState(null, "", nextUrl);
+    if (nextUrl === `${window.location.pathname}${window.location.search}`) return;
+    if (pushHistory) {
+      window.history.pushState(null, "", nextUrl);
+    } else {
+      window.history.replaceState(null, "", nextUrl);
+    }
   }
 
   function difficultyBadgeClass(diff) {
@@ -136,7 +141,7 @@
     }
   }
 
-  function applyFilters(resetPage) {
+  function applyFilters(resetPage, pushHistory = false, syncUrl = true) {
     if (resetPage) state.page = 1;
     const query = state.q.trim().toLowerCase();
     const numericQuery = query.replace(/^#/, "");
@@ -174,7 +179,7 @@
     if (state.page > totalPages) state.page = totalPages;
 
     syncControlsFromState();
-    writeQueryParams();
+    if (syncUrl) writeQueryParams(pushHistory);
     renderResults();
   }
 
@@ -286,7 +291,7 @@
       els.navProblems.addEventListener("click", (ev) => {
         ev.preventDefault();
         state.status = "all";
-        applyFilters(true);
+        applyFilters(true, true);
         document.getElementById("catalog").scrollIntoView({ behavior: "smooth" });
       });
     }
@@ -294,7 +299,7 @@
       els.navTopics.addEventListener("click", (ev) => {
         ev.preventDefault();
         state.status = "all";
-        applyFilters(false);
+        applyFilters(false, true);
         els.topicFilter.focus();
         document.getElementById("catalog").scrollIntoView({ behavior: "smooth" });
       });
@@ -303,7 +308,7 @@
       els.navRoadmap.addEventListener("click", (ev) => {
         ev.preventDefault();
         state.status = state.status === "available" ? "all" : "available";
-        applyFilters(true);
+        applyFilters(true, true);
         document.getElementById("catalog").scrollIntoView({ behavior: "smooth" });
       });
     }
@@ -311,7 +316,7 @@
     els.diffButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         state.difficulty = btn.getAttribute("data-diff") || "all";
-        applyFilters(true);
+        applyFilters(true, true);
       });
     });
 
@@ -324,7 +329,7 @@
     ].forEach(([el, key]) => {
       el.addEventListener("change", () => {
         state[key] = el.value;
-        applyFilters(true);
+        applyFilters(true, true);
       });
     });
 
@@ -337,7 +342,7 @@
       state.access = "all";
       state.sort = "number-asc";
       state.page = 1;
-      applyFilters(true);
+      applyFilters(true, true);
     });
 
     els.catalogBody.addEventListener("click", (ev) => {
@@ -345,7 +350,7 @@
       if (chip) {
         ev.stopPropagation();
         state.topic = chip.getAttribute("data-topic-pick") || "all";
-        applyFilters(true);
+        applyFilters(true, true);
         return;
       }
       if (ev.target.closest("a, button")) {
@@ -377,9 +382,14 @@
       const nextPage = parseInt(btn.getAttribute("data-page"), 10);
       if (!Number.isFinite(nextPage)) return;
       state.page = nextPage;
-      writeQueryParams();
+      writeQueryParams(true);
       renderResults();
       document.getElementById("catalog").scrollIntoView({ behavior: "smooth" });
+    });
+
+    window.addEventListener("popstate", () => {
+      readQueryParams();
+      applyFilters(false, false, false);
     });
   }
 
@@ -409,7 +419,10 @@
       populateFacets(state.catalog.meta || {});
       syncControlsFromState();
       bindEvents();
-      applyFilters(false);
+      applyFilters(false, false, false);
+      if (new URLSearchParams(window.location.search).get("focus") === "topics") {
+        els.topicFilter.focus();
+      }
     } catch (err) {
       els.resultsCount.textContent = "Failed to load catalog.";
       els.catalogBody.innerHTML = `

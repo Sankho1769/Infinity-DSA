@@ -50,6 +50,41 @@
     }
   }
 
+  function initShortcutLabels() {
+    const isApple = /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent || "");
+    const label = isApple ? "⌘K" : "Ctrl+K";
+    document.querySelectorAll(".kbd-hint").forEach((el) => {
+      el.textContent = label;
+    });
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (_) {
+        // Fallback below.
+      }
+    }
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    ta.style.pointerEvents = "none";
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try {
+      ok = document.execCommand("copy");
+    } catch (_) {
+      ok = false;
+    }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
   function escapeHtml(value) {
     return String(value == null ? "" : value)
       .replace(/&/g, "&amp;")
@@ -161,8 +196,12 @@
     initTheme: initTheme,
     applyTheme: applyTheme,
     fetchSiteJson: fetchSiteJson,
+    copyText: copyText,
   };
 
   document.documentElement.setAttribute("data-theme", getPreferredTheme());
-  document.addEventListener("DOMContentLoaded", initTheme);
+  document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+    initShortcutLabels();
+  });
 })();

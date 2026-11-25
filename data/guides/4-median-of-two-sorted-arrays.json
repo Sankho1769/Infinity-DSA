@@ -3,13 +3,25 @@
   "slug": "median-of-two-sorted-arrays",
   "title": "Median of Two Sorted Arrays",
   "difficulty": "Hard",
-  "topics": ["Array", "Binary Search", "Divide and Conquer"],
+  "topics": [
+    "Array",
+    "Binary Search",
+    "Divide and Conquer"
+  ],
   "access": "Free",
   "url": "https://leetcode.com/problems/median-of-two-sorted-arrays/",
   "jsFunctionName": "findMedianSortedArrays",
   "pyMethodName": "findMedianSortedArrays",
   "verification": {
-    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "verifiedLanguages": [
+      "Java",
+      "Python3",
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "C#",
+      "PHP"
+    ],
     "untestedLanguages": []
   },
   "understand": {
@@ -43,13 +55,43 @@
       "diagram": {
         "type": "array",
         "items": [
-          { "index": 0, "value": 1, "state": "window", "label": "left half" },
-          { "index": 1, "value": 2, "state": "window", "label": "left half" },
-          { "index": 2, "value": 4, "state": "match", "label": "median" },
-          { "index": 3, "value": 8, "state": "default", "label": "right half" },
-          { "index": 4, "value": 9, "state": "default", "label": "right half" }
+          {
+            "index": 0,
+            "value": 1,
+            "state": "window",
+            "label": "left half"
+          },
+          {
+            "index": 1,
+            "value": 2,
+            "state": "window",
+            "label": "left half"
+          },
+          {
+            "index": 2,
+            "value": 4,
+            "state": "match",
+            "label": "median"
+          },
+          {
+            "index": 3,
+            "value": 8,
+            "state": "default",
+            "label": "right half"
+          },
+          {
+            "index": 4,
+            "value": 9,
+            "state": "default",
+            "label": "right half"
+          }
         ],
-        "pointers": [{ "index": 2, "name": "mid" }],
+        "pointers": [
+          {
+            "index": 2,
+            "name": "mid"
+          }
+        ],
         "caption": "Combined sorted view [1, 2, 4, 8, 9] has median 4.0."
       }
     },
@@ -64,44 +106,147 @@
     "algorithmName": "Binary Search Partition on Shorter Array",
     "steps": [
       {
-        "title": "Binary-search cut i in shorter array nums1 = [2, 8]",
-        "description": "Ensure nums1 is shorter (m=2, n=3). Half-size = (2 + 3 + 1) // 2 = 3. Search i in [0..2], starting at mid i = 1 -> j = 3 - 1 = 2.",
+        "title": "Ensure shorter array is first and set partition half-size",
+        "description": "nums1 = [2, 8] (m=2) and nums2 = [1, 4, 9] (n=3). Total = 5, so left half must hold half = (5 + 1) // 2 = 3 elements. Set binary search bounds lo = 0, hi = 2 on nums1.",
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": 2, "state": "active", "label": "A_left" },
-            { "index": 1, "value": 8, "state": "default", "label": "A_right" }
+            {
+              "index": 0,
+              "value": 2,
+              "state": "active",
+              "label": "lo=0"
+            },
+            {
+              "index": 1,
+              "value": 8,
+              "state": "default",
+              "label": "hi=2"
+            }
           ],
-          "pointers": [{ "index": 1, "name": "cut i=1" }],
+          "pointers": [
+            {
+              "index": 0,
+              "name": "lo"
+            },
+            {
+              "index": 1,
+              "name": "hi"
+            }
+          ],
           "aux": {
-            "title": "Partition Check (i=1, j=2)",
+            "title": "Search Setup",
             "entries": [
-              { "key": "A_left", "value": 2 },
-              { "key": "A_right", "value": 8 },
-              { "key": "B_left", "value": 4 },
-              { "key": "B_right", "value": 9 }
+              {
+                "key": "m, n",
+                "value": "2, 3"
+              },
+              {
+                "key": "half",
+                "value": 3
+              }
             ]
           },
-          "caption": "Check cross inequalities: A_left <= B_right and B_left <= A_right."
+          "caption": "Binary-search cut i in [0..2] on shorter array nums1."
         }
       },
       {
-        "title": "Cross-check succeeds: 2 <= 9 and 4 <= 8",
-        "description": "Both inequalities hold! Because m + n = 5 is odd, the median is max(A_left, B_left) = max(2, 4) = 4.0.",
+        "title": "Probe midpoint i = 1 -> j = 3 - 1 = 2",
+        "description": "Compare border elements across the cut: nums1 gives A_left = 2 | A_right = 8, and nums2 gives B_left = 4 | B_right = 9.",
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": 2, "state": "window", "label": "A_left=2" },
-            { "index": 1, "value": 8, "state": "default", "label": "A_right=8" }
+            {
+              "index": 0,
+              "value": 2,
+              "state": "window",
+              "label": "A_left=2"
+            },
+            {
+              "index": 1,
+              "value": 8,
+              "state": "active",
+              "label": "A_right=8"
+            }
           ],
-          "pointers": [{ "index": 1, "name": "valid cut" }],
+          "pointers": [
+            {
+              "index": 1,
+              "name": "cut i=1"
+            }
+          ],
           "aux": {
-            "title": "Median Calculation (odd total)",
+            "title": "Cross Border Check (i=1, j=2)",
             "entries": [
-              { "key": "max(A_left, B_left)", "value": "max(2, 4) = 4.0", "highlight": true }
+              {
+                "key": "A_left <= B_right",
+                "value": "2 <= 9 (ok)",
+                "highlight": true
+              },
+              {
+                "key": "B_left <= A_right",
+                "value": "4 <= 8 (ok)",
+                "highlight": true
+              }
             ]
           },
-          "caption": "Valid partition found in 1 binary-search probe -> return 4.0."
+          "caption": "Both cross inequalities hold on the first probe."
+        }
+      },
+      {
+        "title": "Compute median from valid partition",
+        "description": "Because total length 5 is odd, the median sits at the top of the 3-element left half: max(A_left, B_left) = max(2, 4) = 4.0.",
+        "state": {
+          "type": "array",
+          "items": [
+            {
+              "index": 0,
+              "value": 1,
+              "state": "window",
+              "label": "B_left"
+            },
+            {
+              "index": 1,
+              "value": 2,
+              "state": "window",
+              "label": "A_left"
+            },
+            {
+              "index": 2,
+              "value": 4,
+              "state": "match",
+              "label": "median"
+            },
+            {
+              "index": 3,
+              "value": 8,
+              "state": "default",
+              "label": "A_right"
+            },
+            {
+              "index": 4,
+              "value": 9,
+              "state": "default",
+              "label": "B_right"
+            }
+          ],
+          "pointers": [
+            {
+              "index": 2,
+              "name": "max left"
+            }
+          ],
+          "aux": {
+            "title": "Final Result",
+            "entries": [
+              {
+                "key": "median",
+                "value": "4.0",
+                "highlight": true
+              }
+            ]
+          },
+          "caption": "Return 4.0."
         }
       }
     ]
@@ -134,6 +279,45 @@
         "TypeScript": "function findMedianSortedArrays(nums1: number[], nums2: number[]): number {\n  const merged: number[] = [];\n  let i = 0, j = 0;\n  while (i < nums1.length && j < nums2.length) {\n    merged.push(nums1[i] <= nums2[j] ? nums1[i++] : nums2[j++]);\n  }\n  while (i < nums1.length) merged.push(nums1[i++]);\n  while (j < nums2.length) merged.push(nums2[j++]);\n  const total = merged.length;\n  const mid = Math.floor(total / 2);\n  return total % 2 === 1 ? merged[mid] : (merged[mid - 1] + merged[mid]) / 2;\n}",
         "C#": "public class Solution {\n    public double FindMedianSortedArrays(int[] nums1, int[] nums2) {\n        int m = nums1.Length, n = nums2.Length, total = m + n;\n        int[] merged = new int[total];\n        int i = 0, j = 0, k = 0;\n        while (i < m && j < n) merged[k++] = nums1[i] <= nums2[j] ? nums1[i++] : nums2[j++];\n        while (i < m) merged[k++] = nums1[i++];\n        while (j < n) merged[k++] = nums2[j++];\n        if (total % 2 == 1) return merged[total / 2];\n        return (merged[total / 2 - 1] + merged[total / 2]) / 2.0;\n    }\n}",
         "PHP": "class Solution {\n    function findMedianSortedArrays($nums1, $nums2) {\n        $merged = []; $i = 0; $j = 0; $m = count($nums1); $n = count($nums2);\n        while ($i < $m && $j < $n) $merged[] = ($nums1[$i] <= $nums2[$j]) ? $nums1[$i++] : $nums2[$j++];\n        while ($i < $m) $merged[] = $nums1[$i++];\n        while ($j < $n) $merged[] = $nums2[$j++];\n        $total = count($merged); $mid = intdiv($total, 2);\n        return ($total % 2 === 1) ? (float)$merged[$mid] : ($merged[$mid - 1] + $merged[$mid]) / 2.0;\n    }\n}"
+      },
+      "diagramNote": "Two pointers merge nums1 and nums2 into one sorted array of size m + n, then read merged[mid].",
+      "diagram": {
+        "type": "array",
+        "items": [
+          {
+            "index": 0,
+            "value": 1,
+            "state": "default"
+          },
+          {
+            "index": 1,
+            "value": 2,
+            "state": "default"
+          },
+          {
+            "index": 2,
+            "value": 4,
+            "state": "match",
+            "label": "mid"
+          },
+          {
+            "index": 3,
+            "value": 8,
+            "state": "default"
+          },
+          {
+            "index": 4,
+            "value": 9,
+            "state": "default"
+          }
+        ],
+        "pointers": [
+          {
+            "index": 2,
+            "name": "total//2"
+          }
+        ],
+        "caption": "Allocates full O(m+n) merged array."
       }
     },
     {
@@ -163,6 +347,60 @@
         "TypeScript": "function findMedianSortedArrays(nums1: number[], nums2: number[]): number {\n  const m = nums1.length, n = nums2.length, total = m + n;\n  let i = 0, j = 0, prev = 0, curr = 0;\n  for (let step = 0; step <= Math.floor(total / 2); step++) {\n    prev = curr;\n    if (i < m && (j >= n || nums1[i] <= nums2[j])) curr = nums1[i++];\n    else curr = nums2[j++];\n  }\n  return total % 2 === 1 ? curr : (prev + curr) / 2;\n}",
         "C#": "public class Solution {\n    public double FindMedianSortedArrays(int[] nums1, int[] nums2) {\n        int m = nums1.Length, n = nums2.Length, total = m + n;\n        int i = 0, j = 0, prev = 0, curr = 0;\n        for (int step = 0; step <= total / 2; step++) {\n            prev = curr;\n            if (i < m && (j >= n || nums1[i] <= nums2[j])) curr = nums1[i++];\n            else curr = nums2[j++];\n        }\n        return (total % 2 == 1) ? curr : (prev + curr) / 2.0;\n    }\n}",
         "PHP": "class Solution {\n    function findMedianSortedArrays($nums1, $nums2) {\n        $m = count($nums1); $n = count($nums2); $total = $m + $n;\n        $i = 0; $j = 0; $prev = 0; $curr = 0;\n        for ($step = 0; $step <= intdiv($total, 2); $step++) {\n            $prev = $curr;\n            if ($i < $m && ($j >= $n || $nums1[$i] <= $nums2[$j])) $curr = $nums1[$i++];\n            else $curr = $nums2[$j++];\n        }\n        return ($total % 2 === 1) ? (float)$curr : ($prev + $curr) / 2.0;\n    }\n}"
+      },
+      "diagramNote": "Steps two virtual merge pointers (m+n)/2 times while holding only prev and curr.",
+      "diagram": {
+        "type": "two-pointers",
+        "items": [
+          {
+            "index": 0,
+            "value": 1,
+            "state": "skip"
+          },
+          {
+            "index": 1,
+            "value": 2,
+            "state": "window",
+            "label": "prev"
+          },
+          {
+            "index": 2,
+            "value": 4,
+            "state": "match",
+            "label": "curr"
+          },
+          {
+            "index": 3,
+            "value": 8,
+            "state": "default"
+          },
+          {
+            "index": 4,
+            "value": 9,
+            "state": "default"
+          }
+        ],
+        "pointers": [
+          {
+            "index": 2,
+            "name": "step=2"
+          }
+        ],
+        "aux": {
+          "title": "O(1) Variables",
+          "entries": [
+            {
+              "key": "prev",
+              "value": 2
+            },
+            {
+              "key": "curr",
+              "value": 4,
+              "highlight": true
+            }
+          ]
+        },
+        "caption": "Stops at step 2 without allocating a merged array."
       }
     },
     {
@@ -198,10 +436,60 @@
     }
   ],
   "tests": [
-    { "name": "Example 1 (odd total)", "args": [[2, 8], [1, 4, 9]], "expected": 4 },
-    { "name": "Example 2 (empty nums1)", "args": [[], [3, 5]], "expected": 4 },
-    { "name": "Even interleaved", "args": [[1, 3], [2, 4]], "expected": 2.5 },
-    { "name": "Negatives", "args": [[-5, -2], [-3, 10]], "expected": -2.5 }
+    {
+      "name": "Example 1 (odd total)",
+      "args": [
+        [
+          2,
+          8
+        ],
+        [
+          1,
+          4,
+          9
+        ]
+      ],
+      "expected": 4
+    },
+    {
+      "name": "Example 2 (empty nums1)",
+      "args": [
+        [],
+        [
+          3,
+          5
+        ]
+      ],
+      "expected": 4
+    },
+    {
+      "name": "Even interleaved",
+      "args": [
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          4
+        ]
+      ],
+      "expected": 2.5
+    },
+    {
+      "name": "Negatives",
+      "args": [
+        [
+          -5,
+          -2
+        ],
+        [
+          -3,
+          10
+        ]
+      ],
+      "expected": -2.5
+    }
   ],
   "javaDriver": "public class Main {\n  static void eq(double a, double b, String n) { if (Math.abs(a - b) > 1e-9) throw new AssertionError(n + \": \" + a); }\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    eq(s.findMedianSortedArrays(new int[]{2,8}, new int[]{1,4,9}), 4.0, \"Ex1\");\n    eq(s.findMedianSortedArrays(new int[]{}, new int[]{3,5}), 4.0, \"Ex2\");\n    eq(s.findMedianSortedArrays(new int[]{1,3}, new int[]{2,4}), 2.5, \"Even\");\n    eq(s.findMedianSortedArrays(new int[]{-5,-2}, new int[]{-3,10}), -2.5, \"Neg\");\n  }\n}",
   "phpDriver": "$s = new Solution();\nif (abs($s->findMedianSortedArrays([2,8],[1,4,9]) - 4.0) > 1e-9) exit(1);\nif (abs($s->findMedianSortedArrays([],[3,5]) - 4.0) > 1e-9) exit(1);\nif (abs($s->findMedianSortedArrays([1,3],[2,4]) - 2.5) > 1e-9) exit(1);\nif (abs($s->findMedianSortedArrays([-5,-2],[-3,10]) - (-2.5)) > 1e-9) exit(1);",

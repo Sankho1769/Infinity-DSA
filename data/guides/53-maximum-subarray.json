@@ -3,14 +3,39 @@
   "slug": "maximum-subarray",
   "title": "Maximum Subarray",
   "difficulty": "Medium",
-  "topics": ["Array", "Divide and Conquer", "Dynamic Programming"],
+  "topics": [
+    "Array",
+    "Divide and Conquer",
+    "Dynamic Programming"
+  ],
   "access": "Free",
   "url": "https://leetcode.com/problems/maximum-subarray/",
   "jsFunctionName": "maxSubArray",
   "pyMethodName": "maxSubArray",
   "verification": {
-    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
-    "untestedLanguages": ["C++", "C", "Go", "Kotlin", "Swift", "Rust", "Ruby", "Dart", "Scala", "Elixir", "Erlang", "Racket"]
+    "verifiedLanguages": [
+      "Java",
+      "Python3",
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "C#",
+      "PHP"
+    ],
+    "untestedLanguages": [
+      "C++",
+      "C",
+      "Go",
+      "Kotlin",
+      "Swift",
+      "Rust",
+      "Ruby",
+      "Dart",
+      "Scala",
+      "Elixir",
+      "Erlang",
+      "Racket"
+    ]
   },
   "understand": {
     "question": "Given an array of integers (which may include negatives and zero), what is the largest total sum you can get from a non-empty contiguous slice?",
@@ -43,16 +68,49 @@
       "diagram": {
         "type": "array",
         "items": [
-          { "index": 0, "value": -2, "state": "skip" },
-          { "index": 1, "value": 5, "state": "match", "label": "start" },
-          { "index": 2, "value": -1, "state": "match", "label": "bridge" },
-          { "index": 3, "value": 4, "state": "match", "label": "end" },
-          { "index": 4, "value": -6, "state": "skip" },
-          { "index": 5, "value": 2, "state": "default" }
+          {
+            "index": 0,
+            "value": -2,
+            "state": "skip"
+          },
+          {
+            "index": 1,
+            "value": 5,
+            "state": "match",
+            "label": "start"
+          },
+          {
+            "index": 2,
+            "value": -1,
+            "state": "match",
+            "label": "bridge"
+          },
+          {
+            "index": 3,
+            "value": 4,
+            "state": "match",
+            "label": "end"
+          },
+          {
+            "index": 4,
+            "value": -6,
+            "state": "skip"
+          },
+          {
+            "index": 5,
+            "value": 2,
+            "state": "default"
+          }
         ],
         "pointers": [
-          { "index": 1, "name": "L" },
-          { "index": 3, "name": "R" }
+          {
+            "index": 1,
+            "name": "L"
+          },
+          {
+            "index": 3,
+            "name": "R"
+          }
         ],
         "caption": "Best contiguous subarray [5, -1, 4] has sum 8."
       }
@@ -73,19 +131,55 @@
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": -2, "state": "active" },
-            { "index": 1, "value": 5, "state": "default" },
-            { "index": 2, "value": -1, "state": "default" },
-            { "index": 3, "value": 4, "state": "default" },
-            { "index": 4, "value": -6, "state": "default" },
-            { "index": 5, "value": 2, "state": "default" }
+            {
+              "index": 0,
+              "value": -2,
+              "state": "active"
+            },
+            {
+              "index": 1,
+              "value": 5,
+              "state": "default"
+            },
+            {
+              "index": 2,
+              "value": -1,
+              "state": "default"
+            },
+            {
+              "index": 3,
+              "value": 4,
+              "state": "default"
+            },
+            {
+              "index": 4,
+              "value": -6,
+              "state": "default"
+            },
+            {
+              "index": 5,
+              "value": 2,
+              "state": "default"
+            }
           ],
-          "pointers": [{ "index": 0, "name": "i" }],
+          "pointers": [
+            {
+              "index": 0,
+              "name": "i"
+            }
+          ],
           "aux": {
             "title": "Kadane State",
             "entries": [
-              { "key": "currentSum", "value": -2 },
-              { "key": "bestSum", "value": -2, "highlight": true }
+              {
+                "key": "currentSum",
+                "value": -2
+              },
+              {
+                "key": "bestSum",
+                "value": -2,
+                "highlight": true
+              }
             ]
           },
           "caption": "Initial window is [-2]."
@@ -97,19 +191,55 @@
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": -2, "state": "skip" },
-            { "index": 1, "value": 5, "state": "match" },
-            { "index": 2, "value": -1, "state": "default" },
-            { "index": 3, "value": 4, "state": "default" },
-            { "index": 4, "value": -6, "state": "default" },
-            { "index": 5, "value": 2, "state": "default" }
+            {
+              "index": 0,
+              "value": -2,
+              "state": "skip"
+            },
+            {
+              "index": 1,
+              "value": 5,
+              "state": "match"
+            },
+            {
+              "index": 2,
+              "value": -1,
+              "state": "default"
+            },
+            {
+              "index": 3,
+              "value": 4,
+              "state": "default"
+            },
+            {
+              "index": 4,
+              "value": -6,
+              "state": "default"
+            },
+            {
+              "index": 5,
+              "value": 2,
+              "state": "default"
+            }
           ],
-          "pointers": [{ "index": 1, "name": "i" }],
+          "pointers": [
+            {
+              "index": 1,
+              "name": "i"
+            }
+          ],
           "aux": {
             "title": "Kadane State",
             "entries": [
-              { "key": "currentSum", "value": 5 },
-              { "key": "bestSum", "value": 5, "highlight": true }
+              {
+                "key": "currentSum",
+                "value": 5
+              },
+              {
+                "key": "bestSum",
+                "value": 5,
+                "highlight": true
+              }
             ]
           },
           "caption": "Drop negative prefix [-2]; start fresh at index 1."
@@ -121,19 +251,54 @@
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": -2, "state": "skip" },
-            { "index": 1, "value": 5, "state": "window" },
-            { "index": 2, "value": -1, "state": "active" },
-            { "index": 3, "value": 4, "state": "default" },
-            { "index": 4, "value": -6, "state": "default" },
-            { "index": 5, "value": 2, "state": "default" }
+            {
+              "index": 0,
+              "value": -2,
+              "state": "skip"
+            },
+            {
+              "index": 1,
+              "value": 5,
+              "state": "window"
+            },
+            {
+              "index": 2,
+              "value": -1,
+              "state": "active"
+            },
+            {
+              "index": 3,
+              "value": 4,
+              "state": "default"
+            },
+            {
+              "index": 4,
+              "value": -6,
+              "state": "default"
+            },
+            {
+              "index": 5,
+              "value": 2,
+              "state": "default"
+            }
           ],
-          "pointers": [{ "index": 2, "name": "i" }],
+          "pointers": [
+            {
+              "index": 2,
+              "name": "i"
+            }
+          ],
           "aux": {
             "title": "Kadane State",
             "entries": [
-              { "key": "currentSum", "value": 4 },
-              { "key": "bestSum", "value": 5 }
+              {
+                "key": "currentSum",
+                "value": 4
+              },
+              {
+                "key": "bestSum",
+                "value": 5
+              }
             ]
           },
           "caption": "Keep carrying +4 forward into index 3."
@@ -145,19 +310,55 @@
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": -2, "state": "skip" },
-            { "index": 1, "value": 5, "state": "match" },
-            { "index": 2, "value": -1, "state": "match" },
-            { "index": 3, "value": 4, "state": "match" },
-            { "index": 4, "value": -6, "state": "default" },
-            { "index": 5, "value": 2, "state": "default" }
+            {
+              "index": 0,
+              "value": -2,
+              "state": "skip"
+            },
+            {
+              "index": 1,
+              "value": 5,
+              "state": "match"
+            },
+            {
+              "index": 2,
+              "value": -1,
+              "state": "match"
+            },
+            {
+              "index": 3,
+              "value": 4,
+              "state": "match"
+            },
+            {
+              "index": 4,
+              "value": -6,
+              "state": "default"
+            },
+            {
+              "index": 5,
+              "value": 2,
+              "state": "default"
+            }
           ],
-          "pointers": [{ "index": 3, "name": "i" }],
+          "pointers": [
+            {
+              "index": 3,
+              "name": "i"
+            }
+          ],
           "aux": {
             "title": "Kadane State",
             "entries": [
-              { "key": "currentSum", "value": 8 },
-              { "key": "bestSum", "value": 8, "highlight": true }
+              {
+                "key": "currentSum",
+                "value": 8
+              },
+              {
+                "key": "bestSum",
+                "value": 8,
+                "highlight": true
+              }
             ]
           },
           "caption": "Slice [5, -1, 4] sets bestSum = 8."
@@ -169,19 +370,55 @@
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": -2, "state": "skip" },
-            { "index": 1, "value": 5, "state": "match" },
-            { "index": 2, "value": -1, "state": "match" },
-            { "index": 3, "value": 4, "state": "match" },
-            { "index": 4, "value": -6, "state": "window" },
-            { "index": 5, "value": 2, "state": "active" }
+            {
+              "index": 0,
+              "value": -2,
+              "state": "skip"
+            },
+            {
+              "index": 1,
+              "value": 5,
+              "state": "match"
+            },
+            {
+              "index": 2,
+              "value": -1,
+              "state": "match"
+            },
+            {
+              "index": 3,
+              "value": 4,
+              "state": "match"
+            },
+            {
+              "index": 4,
+              "value": -6,
+              "state": "window"
+            },
+            {
+              "index": 5,
+              "value": 2,
+              "state": "active"
+            }
           ],
-          "pointers": [{ "index": 5, "name": "i" }],
+          "pointers": [
+            {
+              "index": 5,
+              "name": "i"
+            }
+          ],
           "aux": {
             "title": "Kadane Final State",
             "entries": [
-              { "key": "currentSum", "value": 4 },
-              { "key": "bestSum", "value": 8, "highlight": true }
+              {
+                "key": "currentSum",
+                "value": 4
+              },
+              {
+                "key": "bestSum",
+                "value": 8,
+                "highlight": true
+              }
             ]
           },
           "caption": "Final answer: 8."
@@ -217,6 +454,55 @@
         "TypeScript": "function maxSubArray(nums: number[]): number {\n  let best = nums[0];\n  for (let i = 0; i < nums.length; i++) {\n    let running = 0;\n    for (let j = i; j < nums.length; j++) {\n      running += nums[j];\n      if (running > best) best = running;\n    }\n  }\n  return best;\n}",
         "C#": "public class Solution {\n    public int MaxSubArray(int[] nums) {\n        int best = nums[0];\n        for (int i = 0; i < nums.Length; i++) {\n            int running = 0;\n            for (int j = i; j < nums.Length; j++) {\n                running += nums[j];\n                if (running > best) best = running;\n            }\n        }\n        return best;\n    }\n}",
         "PHP": "class Solution {\n    function maxSubArray($nums) {\n        $best = $nums[0];\n        $n = count($nums);\n        for ($i = 0; $i < $n; $i++) {\n            $running = 0;\n            for ($j = $i; $j < $n; $j++) {\n                $running += $nums[$j];\n                if ($running > $best) $best = $running;\n            }\n        }\n        return $best;\n    }\n}"
+      },
+      "diagramNote": "Fixes start i=1 and extends j rightward while summing 5 -> 4 -> 8 -> 2 -> 4.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          {
+            "index": 0,
+            "value": -2,
+            "state": "skip"
+          },
+          {
+            "index": 1,
+            "value": 5,
+            "state": "match",
+            "label": "i=1"
+          },
+          {
+            "index": 2,
+            "value": -1,
+            "state": "match"
+          },
+          {
+            "index": 3,
+            "value": 4,
+            "state": "match",
+            "label": "j=3 (8)"
+          },
+          {
+            "index": 4,
+            "value": -6,
+            "state": "default"
+          },
+          {
+            "index": 5,
+            "value": 2,
+            "state": "default"
+          }
+        ],
+        "pointers": [
+          {
+            "index": 1,
+            "name": "i"
+          },
+          {
+            "index": 3,
+            "name": "j"
+          }
+        ],
+        "caption": "Best running sum from i=1 occurs at j=3 (sum = 8)."
       }
     },
     {
@@ -247,6 +533,59 @@
         "TypeScript": "function maxSubArray(nums: number[]): number {\n  let prefix = 0;\n  let minPrefix = 0;\n  let best = nums[0];\n  for (const x of nums) {\n    prefix += x;\n    best = Math.max(best, prefix - minPrefix);\n    minPrefix = Math.min(minPrefix, prefix);\n  }\n  return best;\n}",
         "C#": "using System;\n\npublic class Solution {\n    public int MaxSubArray(int[] nums) {\n        int prefix = 0, minPrefix = 0, best = nums[0];\n        foreach (int x in nums) {\n            prefix += x;\n            best = Math.Max(best, prefix - minPrefix);\n            minPrefix = Math.Min(minPrefix, prefix);\n        }\n        return best;\n    }\n}",
         "PHP": "class Solution {\n    function maxSubArray($nums) {\n        $prefix = 0;\n        $minPrefix = 0;\n        $best = $nums[0];\n        foreach ($nums as $x) {\n            $prefix += $x;\n            $best = max($best, $prefix - $minPrefix);\n            $minPrefix = min($minPrefix, $prefix);\n        }\n        return $best;\n    }\n}"
+      },
+      "diagramNote": "Tracks cumulative prefix sums: subtracting minPrefix (-2 at idx 0) from prefix (6 at idx 3) gives 6 - (-2) = 8.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          {
+            "index": 0,
+            "value": -2,
+            "state": "window",
+            "label": "minP=-2"
+          },
+          {
+            "index": 1,
+            "value": 3,
+            "state": "default",
+            "label": "p=3"
+          },
+          {
+            "index": 2,
+            "value": 2,
+            "state": "default",
+            "label": "p=2"
+          },
+          {
+            "index": 3,
+            "value": 6,
+            "state": "match",
+            "label": "p=6"
+          },
+          {
+            "index": 4,
+            "value": 0,
+            "state": "default",
+            "label": "p=0"
+          },
+          {
+            "index": 5,
+            "value": 2,
+            "state": "default",
+            "label": "p=2"
+          }
+        ],
+        "aux": {
+          "title": "Prefix Math",
+          "entries": [
+            {
+              "key": "prefix[3] - minPrefix",
+              "value": "6 - (-2) = 8",
+              "highlight": true
+            }
+          ]
+        },
+        "caption": "Array shows prefix sums at each index."
       }
     },
     {
@@ -277,6 +616,70 @@
         "TypeScript": "function maxSubArray(nums: number[]): number {\n  function solve(left: number, right: number): number {\n    if (left === right) return nums[left];\n    const mid = (left + right) >> 1;\n    const leftBest = solve(left, mid);\n    const rightBest = solve(mid + 1, right);\n    let s = 0;\n    let maxLeft = -Infinity;\n    for (let i = mid; i >= left; i--) {\n      s += nums[i];\n      if (s > maxLeft) maxLeft = s;\n    }\n    s = 0;\n    let maxRight = -Infinity;\n    for (let i = mid + 1; i <= right; i++) {\n      s += nums[i];\n      if (s > maxRight) maxRight = s;\n    }\n    return Math.max(leftBest, rightBest, maxLeft + maxRight);\n  }\n  return solve(0, nums.length - 1);\n}",
         "C#": "using System;\n\npublic class Solution {\n    public int MaxSubArray(int[] nums) {\n        return Solve(nums, 0, nums.Length - 1);\n    }\n    private int Solve(int[] nums, int left, int right) {\n        if (left == right) return nums[left];\n        int mid = left + (right - left) / 2;\n        int leftBest = Solve(nums, left, mid);\n        int rightBest = Solve(nums, mid + 1, right);\n        int s = 0, maxLeft = int.MinValue;\n        for (int i = mid; i >= left; i--) {\n            s += nums[i];\n            if (s > maxLeft) maxLeft = s;\n        }\n        s = 0; int maxRight = int.MinValue;\n        for (int i = mid + 1; i <= right; i++) {\n            s += nums[i];\n            if (s > maxRight) maxRight = s;\n        }\n        return Math.Max(Math.Max(leftBest, rightBest), maxLeft + maxRight);\n    }\n}",
         "PHP": "class Solution {\n    function maxSubArray($nums) {\n        return $this->solve($nums, 0, count($nums) - 1);\n    }\n    private function solve(&$nums, $left, $right) {\n        if ($left === $right) return $nums[$left];\n        $mid = intdiv($left + $right, 2);\n        $leftBest = $this->solve($nums, $left, $mid);\n        $rightBest = $this->solve($nums, $mid + 1, $right);\n        $s = 0; $maxLeft = PHP_INT_MIN;\n        for ($i = $mid; $i >= $left; $i--) {\n            $s += $nums[$i];\n            if ($s > $maxLeft) $maxLeft = $s;\n        }\n        $s = 0; $maxRight = PHP_INT_MIN;\n        for ($i = $mid + 1; $i <= $right; $i++) {\n            $s += $nums[$i];\n            if ($s > $maxRight) $maxRight = $s;\n        }\n        return max($leftBest, $rightBest, $maxLeft + $maxRight);\n    }\n}"
+      },
+      "diagramNote": "Splits at mid=2: best left [5,-1] = 5, best right [4] = 4, and best crossing [5,-1] + [4] = 8.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          {
+            "index": 0,
+            "value": -2,
+            "state": "skip"
+          },
+          {
+            "index": 1,
+            "value": 5,
+            "state": "match",
+            "label": "L cross"
+          },
+          {
+            "index": 2,
+            "value": -1,
+            "state": "match",
+            "label": "mid"
+          },
+          {
+            "index": 3,
+            "value": 4,
+            "state": "match",
+            "label": "R cross"
+          },
+          {
+            "index": 4,
+            "value": -6,
+            "state": "skip"
+          },
+          {
+            "index": 5,
+            "value": 2,
+            "state": "skip"
+          }
+        ],
+        "pointers": [
+          {
+            "index": 2,
+            "name": "mid"
+          }
+        ],
+        "aux": {
+          "title": "Halves & Crossing",
+          "entries": [
+            {
+              "key": "maxLeft",
+              "value": 4
+            },
+            {
+              "key": "maxRight",
+              "value": 4
+            },
+            {
+              "key": "cross",
+              "value": "4+4=8",
+              "highlight": true
+            }
+          ]
+        },
+        "caption": "Crossing sum 8 beats leftBest (5) and rightBest (4)."
       }
     },
     {
@@ -306,6 +709,55 @@
         "TypeScript": "function maxSubArray(nums: number[]): number {\n  const dp: number[] = new Array(nums.length);\n  dp[0] = nums[0];\n  let best = dp[0];\n  for (let i = 1; i < nums.length; i++) {\n    dp[i] = Math.max(nums[i], dp[i - 1] + nums[i]);\n    if (dp[i] > best) best = dp[i];\n  }\n  return best;\n}",
         "C#": "using System;\n\npublic class Solution {\n    public int MaxSubArray(int[] nums) {\n        int[] dp = new int[nums.Length];\n        dp[0] = nums[0];\n        int best = dp[0];\n        for (int i = 1; i < nums.Length; i++) {\n            dp[i] = Math.Max(nums[i], dp[i - 1] + nums[i]);\n            if (dp[i] > best) best = dp[i];\n        }\n        return best;\n    }\n}",
         "PHP": "class Solution {\n    function maxSubArray($nums) {\n        $n = count($nums);\n        $dp = [$nums[0]];\n        $best = $dp[0];\n        for ($i = 1; $i < $n; $i++) {\n            $dp[$i] = max($nums[$i], $dp[$i - 1] + $nums[$i]);\n            if ($dp[$i] > $best) $best = $dp[$i];\n        }\n        return $best;\n    }\n}"
+      },
+      "diagramNote": "Stores dp[i] = max subarray sum ending at index i. Maximum value in dp[] is 8 at index 3.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          {
+            "index": 0,
+            "value": -2,
+            "state": "skip",
+            "label": "dp[0]"
+          },
+          {
+            "index": 1,
+            "value": 5,
+            "state": "window",
+            "label": "dp[1]"
+          },
+          {
+            "index": 2,
+            "value": 4,
+            "state": "window",
+            "label": "dp[2]"
+          },
+          {
+            "index": 3,
+            "value": 8,
+            "state": "match",
+            "label": "dp[3] max"
+          },
+          {
+            "index": 4,
+            "value": 2,
+            "state": "default",
+            "label": "dp[4]"
+          },
+          {
+            "index": 5,
+            "value": 4,
+            "state": "default",
+            "label": "dp[5]"
+          }
+        ],
+        "pointers": [
+          {
+            "index": 3,
+            "name": "best"
+          }
+        ],
+        "caption": "Array shows tabulated dp[i] values; global max is 8."
       }
     },
     {
@@ -353,10 +805,53 @@
     }
   ],
   "tests": [
-    { "name": "Example 1", "args": [[-2, 5, -1, 4, -6, 2]], "expected": 8 },
-    { "name": "Example 2 (all negative)", "args": [[-7, -2, -9, -4]], "expected": -2 },
-    { "name": "Single element", "args": [[42]], "expected": 42 },
-    { "name": "All positive", "args": [[1, 2, 3, 4]], "expected": 10 }
+    {
+      "name": "Example 1",
+      "args": [
+        [
+          -2,
+          5,
+          -1,
+          4,
+          -6,
+          2
+        ]
+      ],
+      "expected": 8
+    },
+    {
+      "name": "Example 2 (all negative)",
+      "args": [
+        [
+          -7,
+          -2,
+          -9,
+          -4
+        ]
+      ],
+      "expected": -2
+    },
+    {
+      "name": "Single element",
+      "args": [
+        [
+          42
+        ]
+      ],
+      "expected": 42
+    },
+    {
+      "name": "All positive",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 10
+    }
   ],
   "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (s.maxSubArray(new int[]{-2,5,-1,4,-6,2}) != 8) throw new AssertionError(\"Ex1\");\n    if (s.maxSubArray(new int[]{-7,-2,-9,-4}) != -2) throw new AssertionError(\"Ex2\");\n    if (s.maxSubArray(new int[]{42}) != 42) throw new AssertionError(\"Single\");\n    if (s.maxSubArray(new int[]{1,2,3,4}) != 10) throw new AssertionError(\"AllPos\");\n  }\n}",
   "phpDriver": "$s = new Solution();\n$cases = [\n  [[-2,5,-1,4,-6,2], 8],\n  [[-7,-2,-9,-4], -2],\n  [[42], 42],\n  [[1,2,3,4], 10]\n];\nforeach ($cases as $c) {\n  if ($s->maxSubArray($c[0]) !== $c[1]) { fwrite(STDERR, \"FAIL\"); exit(1); }\n}",

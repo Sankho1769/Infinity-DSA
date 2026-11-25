@@ -3,13 +3,23 @@
   "slug": "string-to-integer-atoi",
   "title": "String to Integer (atoi)",
   "difficulty": "Medium",
-  "topics": ["String"],
+  "topics": [
+    "String"
+  ],
   "access": "Free",
   "url": "https://leetcode.com/problems/string-to-integer-atoi/",
   "jsFunctionName": "myAtoi",
   "pyMethodName": "myAtoi",
   "verification": {
-    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "verifiedLanguages": [
+      "Java",
+      "Python3",
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "C#",
+      "PHP"
+    ],
     "untestedLanguages": []
   },
   "understand": {
@@ -39,16 +49,61 @@
       "diagram": {
         "type": "array",
         "items": [
-          { "index": 0, "value": " ", "state": "skip", "label": "space" },
-          { "index": 1, "value": " ", "state": "skip", "label": "space" },
-          { "index": 2, "value": " ", "state": "skip", "label": "space" },
-          { "index": 3, "value": "-", "state": "window", "label": "sign=-1" },
-          { "index": 4, "value": "0", "state": "match", "label": "digit" },
-          { "index": 5, "value": "4", "state": "match", "label": "digit" },
-          { "index": 6, "value": "2", "state": "match", "label": "digit" },
-          { "index": 7, "value": "a", "state": "skip", "label": "stop!" }
+          {
+            "index": 0,
+            "value": " ",
+            "state": "skip",
+            "label": "space"
+          },
+          {
+            "index": 1,
+            "value": " ",
+            "state": "skip",
+            "label": "space"
+          },
+          {
+            "index": 2,
+            "value": " ",
+            "state": "skip",
+            "label": "space"
+          },
+          {
+            "index": 3,
+            "value": "-",
+            "state": "window",
+            "label": "sign=-1"
+          },
+          {
+            "index": 4,
+            "value": "0",
+            "state": "match",
+            "label": "digit"
+          },
+          {
+            "index": 5,
+            "value": "4",
+            "state": "match",
+            "label": "digit"
+          },
+          {
+            "index": 6,
+            "value": "2",
+            "state": "match",
+            "label": "digit"
+          },
+          {
+            "index": 7,
+            "value": "a",
+            "state": "skip",
+            "label": "stop!"
+          }
         ],
-        "pointers": [{ "index": 7, "name": "halt" }],
+        "pointers": [
+          {
+            "index": 7,
+            "name": "halt"
+          }
+        ],
         "caption": "Result after stopping at 'a': -42."
       }
     },
@@ -63,43 +118,208 @@
     "algorithmName": "Single-Pass Scanner with Clamping Guard",
     "steps": [
       {
-        "title": "Skip leading whitespace (indices 0..2)",
-        "description": "Advance pointer i past all leading ' ' characters until landing on '-' at index 3.",
+        "title": "Phase 1: Skip leading spaces (indices 0..2)",
+        "description": "Advance index i past every leading ' ' until hitting '-' at index 3.",
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": "_", "state": "skip" },
-            { "index": 1, "value": "_", "state": "skip" },
-            { "index": 2, "value": "_", "state": "skip" },
-            { "index": 3, "value": "-", "state": "active" },
-            { "index": 4, "value": "0", "state": "default" },
-            { "index": 5, "value": "4", "state": "default" },
-            { "index": 6, "value": "2", "state": "default" },
-            { "index": 7, "value": "a", "state": "default" }
+            {
+              "index": 0,
+              "value": "_",
+              "state": "skip"
+            },
+            {
+              "index": 1,
+              "value": "_",
+              "state": "skip"
+            },
+            {
+              "index": 2,
+              "value": "_",
+              "state": "skip"
+            },
+            {
+              "index": 3,
+              "value": "-",
+              "state": "active"
+            },
+            {
+              "index": 4,
+              "value": "0",
+              "state": "default"
+            },
+            {
+              "index": 5,
+              "value": "4",
+              "state": "default"
+            },
+            {
+              "index": 6,
+              "value": "2",
+              "state": "default"
+            },
+            {
+              "index": 7,
+              "value": "a",
+              "state": "default"
+            }
           ],
-          "pointers": [{ "index": 3, "name": "i" }],
-          "aux": { "title": "Parser State", "entries": [{ "key": "sign", "value": 1 }, { "key": "acc", "value": 0 }] },
-          "caption": "Spaces skipped; ready to check optional sign."
+          "pointers": [
+            {
+              "index": 3,
+              "name": "i"
+            }
+          ],
+          "aux": {
+            "title": "Parser State",
+            "entries": [
+              {
+                "key": "sign",
+                "value": 1
+              },
+              {
+                "key": "acc",
+                "value": 0
+              }
+            ]
+          },
+          "caption": "All leading spaces skipped."
         }
       },
       {
-        "title": "Consume sign '-' and digits 0, 4, 2",
-        "description": "Read '-' so sign = -1 and i = 4. Then read '0' -> acc = 0, '4' -> acc = 4, '2' -> acc = 42. All are safely below INT_MAX / 10.",
+        "title": "Phase 2 & 3: Read '-' sign and digits '0', '4', '2'",
+        "description": "Read '-' (sign = -1, i = 4), then consume '0' (acc=0), '4' (acc=4), '2' (acc=42). Pre-overflow check passes on every digit.",
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": "_", "state": "skip" },
-            { "index": 1, "value": "_", "state": "skip" },
-            { "index": 2, "value": "_", "state": "skip" },
-            { "index": 3, "value": "-", "state": "window" },
-            { "index": 4, "value": "0", "state": "match" },
-            { "index": 5, "value": "4", "state": "match" },
-            { "index": 6, "value": "2", "state": "match" },
-            { "index": 7, "value": "a", "state": "active" }
+            {
+              "index": 0,
+              "value": "_",
+              "state": "skip"
+            },
+            {
+              "index": 1,
+              "value": "_",
+              "state": "skip"
+            },
+            {
+              "index": 2,
+              "value": "_",
+              "state": "skip"
+            },
+            {
+              "index": 3,
+              "value": "-",
+              "state": "window"
+            },
+            {
+              "index": 4,
+              "value": "0",
+              "state": "match"
+            },
+            {
+              "index": 5,
+              "value": "4",
+              "state": "match"
+            },
+            {
+              "index": 6,
+              "value": "2",
+              "state": "match"
+            },
+            {
+              "index": 7,
+              "value": "a",
+              "state": "default"
+            }
           ],
-          "pointers": [{ "index": 7, "name": "i" }],
-          "aux": { "title": "Parser State", "entries": [{ "key": "sign", "value": -1 }, { "key": "acc", "value": 42, "highlight": true }] },
-          "caption": "'a' is not a digit: stop and return -42."
+          "pointers": [
+            {
+              "index": 6,
+              "name": "i"
+            }
+          ],
+          "aux": {
+            "title": "Parser State",
+            "entries": [
+              {
+                "key": "sign",
+                "value": -1
+              },
+              {
+                "key": "acc",
+                "value": 42
+              }
+            ]
+          },
+          "caption": "Accumulated magnitude 42 with sign -1."
+        }
+      },
+      {
+        "title": "Phase 4: Halt immediately on non-digit 'a'",
+        "description": "Index 7 holds 'a', which is outside '0'..'9'. Stop scanning and return sign * acc = -42.",
+        "state": {
+          "type": "array",
+          "items": [
+            {
+              "index": 0,
+              "value": "_",
+              "state": "skip"
+            },
+            {
+              "index": 1,
+              "value": "_",
+              "state": "skip"
+            },
+            {
+              "index": 2,
+              "value": "_",
+              "state": "skip"
+            },
+            {
+              "index": 3,
+              "value": "-",
+              "state": "window"
+            },
+            {
+              "index": 4,
+              "value": "0",
+              "state": "match"
+            },
+            {
+              "index": 5,
+              "value": "4",
+              "state": "match"
+            },
+            {
+              "index": 6,
+              "value": "2",
+              "state": "match"
+            },
+            {
+              "index": 7,
+              "value": "a",
+              "state": "skip",
+              "label": "halt"
+            }
+          ],
+          "pointers": [
+            {
+              "index": 7,
+              "name": "stop"
+            }
+          ],
+          "aux": {
+            "title": "Final Result",
+            "entries": [
+              {
+                "key": "output",
+                "value": -42,
+                "highlight": true
+              }
+            ]
+          },
+          "caption": "Return -42."
         }
       }
     ]
@@ -163,14 +383,93 @@
         "TypeScript": "function myAtoi(s: string): number {\n  const table = [[0,1,2,3],[3,3,2,3],[3,3,2,3],[3,3,3,3]];\n  const INT_MAX = 2147483647, INT_MIN = -2147483648;\n  let state = 0, sign = 1, acc = 0;\n  for (const c of s) {\n    const col = c === ' ' ? 0 : (c === '+' || c === '-') ? 1 : (c >= '0' && c <= '9') ? 2 : 3;\n    state = table[state][col];\n    if (state === 3) break;\n    if (state === 1 && c === '-') sign = -1;\n    if (state === 2) {\n      const d = c.charCodeAt(0) - 48;\n      if (acc > Math.floor((INT_MAX - d) / 10)) return sign === 1 ? INT_MAX : INT_MIN;\n      acc = acc * 10 + d;\n    }\n  }\n  return sign * acc;\n}",
         "C#": "public class Solution {\n    public int MyAtoi(string s) {\n        int[,] table = {{0,1,2,3},{3,3,2,3},{3,3,2,3},{3,3,3,3}};\n        int state = 0, sign = 1, acc = 0;\n        foreach (char c in s) {\n            int col = (c == ' ') ? 0 : (c == '+' || c == '-') ? 1 : (c >= '0' && c <= '9') ? 2 : 3;\n            state = table[state, col];\n            if (state == 3) break;\n            if (state == 1 && c == '-') sign = -1;\n            if (state == 2) {\n                int d = c - '0';\n                if (acc > (int.MaxValue - d) / 10) return sign == 1 ? int.MaxValue : int.MinValue;\n                acc = acc * 10 + d;\n            }\n        }\n        return sign * acc;\n    }\n}",
         "PHP": "class Solution {\n    function myAtoi($s) {\n        $table = [[0,1,2,3],[3,3,2,3],[3,3,2,3],[3,3,3,3]];\n        $intMax = 2147483647; $intMin = -2147483648;\n        $state = 0; $sign = 1; $acc = 0; $n = strlen($s);\n        for ($i = 0; $i < $n; $i++) {\n            $c = $s[$i];\n            $col = ($c === ' ') ? 0 : (($c === '+' || $c === '-') ? 1 : (($c >= '0' && $c <= '9') ? 2 : 3));\n            $state = $table[$state][$col];\n            if ($state === 3) break;\n            if ($state === 1 && $c === '-') $sign = -1;\n            if ($state === 2) {\n                $d = ord($c) - 48;\n                if ($acc > intdiv($intMax - $d, 10)) return ($sign === 1) ? $intMax : $intMin;\n                $acc = $acc * 10 + $d;\n            }\n        }\n        return $sign * $acc;\n    }\n}"
+      },
+      "diagramNote": "Characters drive transitions between states START (0), SIGNED (1), IN_NUMBER (2), and END (3).",
+      "diagram": {
+        "type": "graph",
+        "width": 560,
+        "height": 150,
+        "nodes": [
+          {
+            "id": "s0",
+            "label": "START",
+            "x": 70,
+            "y": 75,
+            "state": "default"
+          },
+          {
+            "id": "s1",
+            "label": "SIGNED",
+            "x": 210,
+            "y": 40,
+            "state": "active"
+          },
+          {
+            "id": "s2",
+            "label": "NUMBER",
+            "x": 350,
+            "y": 75,
+            "state": "match"
+          },
+          {
+            "id": "s3",
+            "label": "END",
+            "x": 485,
+            "y": 75,
+            "state": "default"
+          }
+        ],
+        "edges": [
+          {
+            "from": "s0",
+            "to": "s1"
+          },
+          {
+            "from": "s0",
+            "to": "s2"
+          },
+          {
+            "from": "s1",
+            "to": "s2"
+          },
+          {
+            "from": "s2",
+            "to": "s3"
+          }
+        ],
+        "caption": "Any invalid character jumps straight to END and halts."
       }
     }
   ],
   "tests": [
-    { "name": "Example 1", "args": ["   -042abc"], "expected": -42 },
-    { "name": "Example 2 (clamp min)", "args": ["-91283472332"], "expected": -2147483648 },
-    { "name": "Double sign", "args": ["+-12"], "expected": 0 },
-    { "name": "Clamp max", "args": ["9999999999"], "expected": 2147483647 }
+    {
+      "name": "Example 1",
+      "args": [
+        "   -042abc"
+      ],
+      "expected": -42
+    },
+    {
+      "name": "Example 2 (clamp min)",
+      "args": [
+        "-91283472332"
+      ],
+      "expected": -2147483648
+    },
+    {
+      "name": "Double sign",
+      "args": [
+        "+-12"
+      ],
+      "expected": 0
+    },
+    {
+      "name": "Clamp max",
+      "args": [
+        "9999999999"
+      ],
+      "expected": 2147483647
+    }
   ],
   "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (s.myAtoi(\"   -042abc\") != -42) throw new AssertionError();\n    if (s.myAtoi(\"-91283472332\") != -2147483648) throw new AssertionError();\n    if (s.myAtoi(\"+-12\") != 0) throw new AssertionError();\n    if (s.myAtoi(\"9999999999\") != 2147483647) throw new AssertionError();\n  }\n}",
   "phpDriver": "$s = new Solution();\nif ($s->myAtoi(\"   -042abc\") !== -42) exit(1);\nif ($s->myAtoi(\"-91283472332\") !== -2147483648) exit(1);\nif ($s->myAtoi(\"+-12\") !== 0) exit(1);\nif ($s->myAtoi(\"9999999999\") !== 2147483647) exit(1);",

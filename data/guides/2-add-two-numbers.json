@@ -3,14 +3,26 @@
   "slug": "add-two-numbers",
   "title": "Add Two Numbers",
   "difficulty": "Medium",
-  "topics": ["Linked List", "Math", "Recursion"],
+  "topics": [
+    "Linked List",
+    "Math",
+    "Recursion"
+  ],
   "access": "Free",
   "url": "https://leetcode.com/problems/add-two-numbers/",
   "jsFunctionName": "addTwoNumbers",
   "pyMethodName": "addTwoNumbers",
   "runtimeHelpers": "linked_list",
   "verification": {
-    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "verifiedLanguages": [
+      "Java",
+      "Python3",
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "C#",
+      "PHP"
+    ],
     "untestedLanguages": []
   },
   "understand": {
@@ -44,15 +56,39 @@
       "diagram": {
         "type": "linked-list",
         "nodes": [
-          { "id": "r0", "value": 2, "state": "match", "label": "(5+7)%10" },
-          { "id": "r1", "value": 7, "state": "match", "label": "2+4+1" },
-          { "id": "r2", "value": 3, "state": "match", "label": "3+0+0" }
+          {
+            "id": "r0",
+            "value": 2,
+            "state": "match",
+            "label": "(5+7)%10"
+          },
+          {
+            "id": "r1",
+            "value": 7,
+            "state": "match",
+            "label": "2+4+1"
+          },
+          {
+            "id": "r2",
+            "value": 3,
+            "state": "match",
+            "label": "3+0+0"
+          }
         ],
-        "pointers": [{ "nodeId": "r0", "name": "head" }],
+        "pointers": [
+          {
+            "nodeId": "r0",
+            "name": "head"
+          }
+        ],
         "aux": {
           "title": "Column Math",
           "entries": [
-            { "key": "325 + 47", "value": "372", "highlight": true }
+            {
+              "key": "325 + 47",
+              "value": "372",
+              "highlight": true
+            }
           ]
         },
         "caption": "Result list 2 -> 7 -> 3 represents 372."
@@ -73,15 +109,40 @@
         "description": "Create dummy -> null. Read l1 = 5 and l2 = 7. Sum = 5 + 7 + 0 = 12 -> append node(2) and set carry = 1.",
         "state": {
           "type": "linked-list",
-          "nodes": [{ "id": "n0", "value": 2, "state": "active", "label": "ones" }],
-          "pointers": [{ "nodeId": "n0", "name": "tail" }],
+          "nodes": [
+            {
+              "id": "n0",
+              "value": 2,
+              "state": "active",
+              "label": "ones"
+            }
+          ],
+          "pointers": [
+            {
+              "nodeId": "n0",
+              "name": "tail"
+            }
+          ],
           "aux": {
             "title": "Step 1 State",
             "entries": [
-              { "key": "l1.val", "value": 5 },
-              { "key": "l2.val", "value": 7 },
-              { "key": "sum", "value": 12 },
-              { "key": "carry", "value": 1, "highlight": true }
+              {
+                "key": "l1.val",
+                "value": 5
+              },
+              {
+                "key": "l2.val",
+                "value": 7
+              },
+              {
+                "key": "sum",
+                "value": 12
+              },
+              {
+                "key": "carry",
+                "value": 1,
+                "highlight": true
+              }
             ]
           },
           "caption": "Appended 2; carry = 1 passes to tens place."
@@ -93,17 +154,44 @@
         "state": {
           "type": "linked-list",
           "nodes": [
-            { "id": "n0", "value": 2, "state": "match", "label": "ones" },
-            { "id": "n1", "value": 7, "state": "active", "label": "tens" }
+            {
+              "id": "n0",
+              "value": 2,
+              "state": "match",
+              "label": "ones"
+            },
+            {
+              "id": "n1",
+              "value": 7,
+              "state": "active",
+              "label": "tens"
+            }
           ],
-          "pointers": [{ "nodeId": "n1", "name": "tail" }],
+          "pointers": [
+            {
+              "nodeId": "n1",
+              "name": "tail"
+            }
+          ],
           "aux": {
             "title": "Step 2 State",
             "entries": [
-              { "key": "l1.val", "value": 2 },
-              { "key": "l2.val", "value": 4 },
-              { "key": "sum", "value": 7 },
-              { "key": "carry", "value": 0 }
+              {
+                "key": "l1.val",
+                "value": 2
+              },
+              {
+                "key": "l2.val",
+                "value": 4
+              },
+              {
+                "key": "sum",
+                "value": 7
+              },
+              {
+                "key": "carry",
+                "value": 0
+              }
             ]
           },
           "caption": "Appended 7; l2 is now exhausted."
@@ -115,16 +203,43 @@
         "state": {
           "type": "linked-list",
           "nodes": [
-            { "id": "n0", "value": 2, "state": "match", "label": "ones" },
-            { "id": "n1", "value": 7, "state": "match", "label": "tens" },
-            { "id": "n2", "value": 3, "state": "match", "label": "hundreds" }
+            {
+              "id": "n0",
+              "value": 2,
+              "state": "match",
+              "label": "ones"
+            },
+            {
+              "id": "n1",
+              "value": 7,
+              "state": "match",
+              "label": "tens"
+            },
+            {
+              "id": "n2",
+              "value": 3,
+              "state": "match",
+              "label": "hundreds"
+            }
           ],
-          "pointers": [{ "nodeId": "n0", "name": "return" }],
+          "pointers": [
+            {
+              "nodeId": "n0",
+              "name": "return"
+            }
+          ],
           "aux": {
             "title": "Final State",
             "entries": [
-              { "key": "carry", "value": 0 },
-              { "key": "result", "value": "[2, 7, 3]", "highlight": true }
+              {
+                "key": "carry",
+                "value": 0
+              },
+              {
+                "key": "result",
+                "value": "[2, 7, 3]",
+                "highlight": true
+              }
             ]
           },
           "caption": "Return 2 -> 7 -> 3."
@@ -192,6 +307,45 @@
         "TypeScript": "function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {\n  function add(a: ListNode | null, b: ListNode | null, carry: number): ListNode | null {\n    if (!a && !b && carry === 0) return null;\n    const sum = (a ? a.val : 0) + (b ? b.val : 0) + carry;\n    const node = new ListNode(sum % 10);\n    node.next = add(a ? a.next : null, b ? b.next : null, Math.floor(sum / 10));\n    return node;\n  }\n  return add(l1, l2, 0);\n}",
         "C#": "public class Solution {\n    public ListNode AddTwoNumbers(ListNode l1, ListNode l2) {\n        return Add(l1, l2, 0);\n    }\n    private ListNode Add(ListNode a, ListNode b, int carry) {\n        if (a == null && b == null && carry == 0) return null;\n        int sum = (a != null ? a.val : 0) + (b != null ? b.val : 0) + carry;\n        ListNode node = new ListNode(sum % 10);\n        node.next = Add(a != null ? a.next : null, b != null ? b.next : null, sum / 10);\n        return node;\n    }\n}",
         "PHP": "class Solution {\n    function addTwoNumbers($l1, $l2) {\n        return $this->add($l1, $l2, 0);\n    }\n    private function add($a, $b, $carry) {\n        if ($a === null && $b === null && $carry === 0) return null;\n        $sum = ($a !== null ? $a->val : 0) + ($b !== null ? $b->val : 0) + $carry;\n        $node = new ListNode($sum % 10);\n        $node->next = $this->add($a !== null ? $a->next : null, $b !== null ? $b->next : null, intdiv($sum, 10));\n        return $node;\n    }\n}"
+      },
+      "diagramNote": "Each recursive call solves one digit column and passes carry = floor(sum / 10) down to next().",
+      "diagram": {
+        "type": "linked-list",
+        "nodes": [
+          {
+            "id": "c0",
+            "value": 2,
+            "state": "window",
+            "label": "carry->1"
+          },
+          {
+            "id": "c1",
+            "value": 7,
+            "state": "window",
+            "label": "carry->0"
+          },
+          {
+            "id": "c2",
+            "value": 3,
+            "state": "match",
+            "label": "base"
+          }
+        ],
+        "pointers": [
+          {
+            "nodeId": "c0",
+            "name": "call(0)"
+          },
+          {
+            "nodeId": "c1",
+            "name": "call(1)"
+          },
+          {
+            "nodeId": "c2",
+            "name": "call(2)"
+          }
+        ],
+        "caption": "Call stack unwinds 2 -> 7 -> 3 -> null."
       }
     },
     {
@@ -222,14 +376,111 @@
         "TypeScript": "function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {\n  const head = l1;\n  let prev: ListNode | null = null;\n  let carry = 0;\n  while (l1 !== null || l2 !== null) {\n    if (l1 === null && prev !== null) {\n      prev.next = l2;\n      l1 = l2;\n      l2 = null;\n    }\n    if (!l1) break;\n    const sum = l1.val + (l2 ? l2.val : 0) + carry;\n    l1.val = sum % 10;\n    carry = Math.floor(sum / 10);\n    prev = l1;\n    l1 = l1.next;\n    if (l2) l2 = l2.next;\n  }\n  if (carry > 0 && prev !== null) prev.next = new ListNode(carry);\n  return head;\n}",
         "C#": "public class Solution {\n    public ListNode AddTwoNumbers(ListNode l1, ListNode l2) {\n        ListNode head = l1, prev = null;\n        int carry = 0;\n        while (l1 != null || l2 != null) {\n            if (l1 == null) {\n                prev.next = l2;\n                l1 = l2;\n                l2 = null;\n            }\n            int sum = l1.val + (l2 != null ? l2.val : 0) + carry;\n            l1.val = sum % 10;\n            carry = sum / 10;\n            prev = l1;\n            l1 = l1.next;\n            if (l2 != null) l2 = l2.next;\n        }\n        if (carry > 0) prev.next = new ListNode(carry);\n        return head;\n    }\n}",
         "PHP": "class Solution {\n    function addTwoNumbers($l1, $l2) {\n        $head = $l1; $prev = null; $carry = 0;\n        while ($l1 !== null || $l2 !== null) {\n            if ($l1 === null) {\n                $prev->next = $l2;\n                $l1 = $l2;\n                $l2 = null;\n            }\n            $sum = $l1->val + ($l2 !== null ? $l2->val : 0) + $carry;\n            $l1->val = $sum % 10;\n            $carry = intdiv($sum, 10);\n            $prev = $l1;\n            $l1 = $l1->next;\n            if ($l2 !== null) $l2 = $l2->next;\n        }\n        if ($carry > 0) $prev->next = new ListNode($carry);\n        return $head;\n    }\n}"
+      },
+      "diagramNote": "Reuses l1 nodes in place: 5 becomes 2, 2 becomes 7, and 3 stays 3 without allocating new digit nodes.",
+      "diagram": {
+        "type": "linked-list",
+        "nodes": [
+          {
+            "id": "i0",
+            "value": "5->2",
+            "state": "active",
+            "label": "overwritten"
+          },
+          {
+            "id": "i1",
+            "value": "2->7",
+            "state": "active",
+            "label": "overwritten"
+          },
+          {
+            "id": "i2",
+            "value": "3->3",
+            "state": "match",
+            "label": "reused"
+          }
+        ],
+        "pointers": [
+          {
+            "nodeId": "i0",
+            "name": "head"
+          }
+        ],
+        "caption": "Zero extra nodes allocated when no final carry remains."
       }
     }
   ],
   "tests": [
-    { "name": "Example 1 (325 + 47)", "args": [[5, 2, 3], [7, 4]], "expected": [2, 7, 3] },
-    { "name": "Example 2 (99 + 1)", "args": [[9, 9], [1]], "expected": [0, 0, 1] },
-    { "name": "Zeros (0 + 0)", "args": [[0], [0]], "expected": [0] },
-    { "name": "Carry chain (999 + 99)", "args": [[9, 9, 9], [9, 9]], "expected": [8, 9, 0, 1] }
+    {
+      "name": "Example 1 (325 + 47)",
+      "args": [
+        [
+          5,
+          2,
+          3
+        ],
+        [
+          7,
+          4
+        ]
+      ],
+      "expected": [
+        2,
+        7,
+        3
+      ]
+    },
+    {
+      "name": "Example 2 (99 + 1)",
+      "args": [
+        [
+          9,
+          9
+        ],
+        [
+          1
+        ]
+      ],
+      "expected": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "Zeros (0 + 0)",
+      "args": [
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ],
+      "expected": [
+        0
+      ]
+    },
+    {
+      "name": "Carry chain (999 + 99)",
+      "args": [
+        [
+          9,
+          9,
+          9
+        ],
+        [
+          9,
+          9
+        ]
+      ],
+      "expected": [
+        8,
+        9,
+        0,
+        1
+      ]
+    }
   ],
   "javaDriver": "import java.util.*;\nclass ListNode { int val; ListNode next; ListNode(int v){val=v;} }\npublic class Main {\n  static ListNode mk(int[] a){ ListNode d=new ListNode(0),c=d; for(int x:a){c.next=new ListNode(x);c=c.next;} return d.next; }\n  static int[] arr(ListNode n){ List<Integer> l=new ArrayList<>(); while(n!=null){l.add(n.val);n=n.next;} return l.stream().mapToInt(i->i).toArray(); }\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (!Arrays.equals(arr(s.addTwoNumbers(mk(new int[]{5,2,3}), mk(new int[]{7,4}))), new int[]{2,7,3})) throw new AssertionError(\"Ex1\");\n    if (!Arrays.equals(arr(s.addTwoNumbers(mk(new int[]{9,9}), mk(new int[]{1}))), new int[]{0,0,1})) throw new AssertionError(\"Ex2\");\n    if (!Arrays.equals(arr(s.addTwoNumbers(mk(new int[]{0}), mk(new int[]{0}))), new int[]{0})) throw new AssertionError(\"Zero\");\n    if (!Arrays.equals(arr(s.addTwoNumbers(mk(new int[]{9,9,9}), mk(new int[]{9,9}))), new int[]{8,9,0,1})) throw new AssertionError(\"Carry\");\n  }\n}",
   "phpDriver": "class ListNode { public $val = 0; public $next = null; function __construct($v = 0, $n = null) { $this->val = $v; $this->next = $n; } }\nfunction mk($a) { $d = new ListNode(0); $c = $d; foreach ($a as $x) { $c->next = new ListNode($x); $c = $c->next; } return $d->next; }\nfunction arr($n) { $o = []; while ($n !== null) { $o[] = $n->val; $n = $n->next; } return $o; }\n$s = new Solution();\nif (arr($s->addTwoNumbers(mk([5,2,3]), mk([7,4]))) !== [2,7,3]) exit(1);\nif (arr($s->addTwoNumbers(mk([9,9]), mk([1]))) !== [0,0,1]) exit(1);\nif (arr($s->addTwoNumbers(mk([0]), mk([0]))) !== [0]) exit(1);\nif (arr($s->addTwoNumbers(mk([9,9,9]), mk([9,9]))) !== [8,9,0,1]) exit(1);",

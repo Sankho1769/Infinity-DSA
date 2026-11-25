@@ -3,13 +3,23 @@
   "slug": "reverse-integer",
   "title": "Reverse Integer",
   "difficulty": "Medium",
-  "topics": ["Math"],
+  "topics": [
+    "Math"
+  ],
   "access": "Free",
   "url": "https://leetcode.com/problems/reverse-integer/",
   "jsFunctionName": "reverse",
   "pyMethodName": "reverse",
   "verification": {
-    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "verifiedLanguages": [
+      "Java",
+      "Python3",
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "C#",
+      "PHP"
+    ],
     "untestedLanguages": []
   },
   "understand": {
@@ -39,10 +49,30 @@
       "diagram": {
         "type": "array",
         "items": [
-          { "index": 0, "value": "-", "state": "window", "label": "sign" },
-          { "index": 1, "value": "4", "state": "match", "label": "last popped" },
-          { "index": 2, "value": "2", "state": "match", "label": "2nd popped" },
-          { "index": 3, "value": "0", "state": "skip", "label": "drops leading 0" }
+          {
+            "index": 0,
+            "value": "-",
+            "state": "window",
+            "label": "sign"
+          },
+          {
+            "index": 1,
+            "value": "4",
+            "state": "match",
+            "label": "last popped"
+          },
+          {
+            "index": 2,
+            "value": "2",
+            "state": "match",
+            "label": "2nd popped"
+          },
+          {
+            "index": 3,
+            "value": "0",
+            "state": "skip",
+            "label": "drops leading 0"
+          }
         ],
         "caption": "Reading digits right-to-left gives -024 -> -24."
       }
@@ -58,31 +88,137 @@
     "algorithmName": "Digit Pop & Push with Pre-Overflow Guard",
     "steps": [
       {
-        "title": "Pop 0 from -420",
-        "description": "Extract sign (-1) and work with remaining = 420. Pop digit = 0, remaining = 42, rev = 0 * 10 + 0 = 0.",
+        "title": "Pop last digit 0 from -420",
+        "description": "Pop = -420 % 10 = 0, remaining x = -42. Since rev = 0 is safely inside [-214748364, 214748364], rev = 0 * 10 + 0 = 0.",
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": 4, "state": "default" },
-            { "index": 1, "value": 2, "state": "default" },
-            { "index": 2, "value": 0, "state": "active", "label": "pop" }
+            {
+              "index": 0,
+              "value": "-",
+              "state": "window",
+              "label": "sign"
+            },
+            {
+              "index": 1,
+              "value": 4,
+              "state": "default"
+            },
+            {
+              "index": 2,
+              "value": 2,
+              "state": "default"
+            },
+            {
+              "index": 3,
+              "value": 0,
+              "state": "active",
+              "label": "pop 0"
+            }
           ],
-          "aux": { "title": "State", "entries": [{ "key": "sign", "value": -1 }, { "key": "remaining", "value": 42 }, { "key": "rev", "value": 0 }] },
-          "caption": "Digit 0 dropped cleanly because rev starts at 0."
+          "aux": {
+            "title": "Pop & Push State",
+            "entries": [
+              {
+                "key": "x",
+                "value": -42
+              },
+              {
+                "key": "rev",
+                "value": 0
+              }
+            ]
+          },
+          "caption": "Trailing zero drops cleanly."
         }
       },
       {
-        "title": "Pop 2, then pop 4",
-        "description": "Pop 2 -> rev = 2, remaining = 4. Pop 4 -> 2 <= 214748364 (safe!) -> rev = 24, remaining = 0. Multiply by sign (-1) -> -24.",
+        "title": "Pop 2 -> rev = -2",
+        "description": "Pop = -42 % 10 = -2 (or +2 with sign separated), remaining x = -4. Pre-overflow guard passes; rev becomes -2.",
         "state": {
           "type": "array",
           "items": [
-            { "index": 0, "value": 4, "state": "match", "label": "pop" },
-            { "index": 1, "value": 2, "state": "match" },
-            { "index": 2, "value": 0, "state": "skip" }
+            {
+              "index": 0,
+              "value": "-",
+              "state": "window"
+            },
+            {
+              "index": 1,
+              "value": 4,
+              "state": "default"
+            },
+            {
+              "index": 2,
+              "value": 2,
+              "state": "active",
+              "label": "pop 2"
+            },
+            {
+              "index": 3,
+              "value": 0,
+              "state": "skip"
+            }
           ],
-          "aux": { "title": "Final State", "entries": [{ "key": "remaining", "value": 0 }, { "key": "result", "value": -24, "highlight": true }] },
-          "caption": "Apply sign -> return -24."
+          "aux": {
+            "title": "Pop & Push State",
+            "entries": [
+              {
+                "key": "x",
+                "value": -4
+              },
+              {
+                "key": "rev",
+                "value": -2
+              }
+            ]
+          },
+          "caption": "Push 2 onto rev -> -2."
+        }
+      },
+      {
+        "title": "Pop 4 -> guard safe -> return -24",
+        "description": "Pop = -4, remaining x = 0. Check -2 >= -214748364 (safe!), so rev = -2 * 10 + (-4) = -24. Loop ends because x == 0; return -24.",
+        "state": {
+          "type": "array",
+          "items": [
+            {
+              "index": 0,
+              "value": "-",
+              "state": "window"
+            },
+            {
+              "index": 1,
+              "value": 4,
+              "state": "match",
+              "label": "pop 4"
+            },
+            {
+              "index": 2,
+              "value": 2,
+              "state": "match"
+            },
+            {
+              "index": 3,
+              "value": 0,
+              "state": "skip"
+            }
+          ],
+          "aux": {
+            "title": "Final Result",
+            "entries": [
+              {
+                "key": "x",
+                "value": 0
+              },
+              {
+                "key": "rev",
+                "value": -24,
+                "highlight": true
+              }
+            ]
+          },
+          "caption": "Return -24."
         }
       }
     ]
@@ -147,14 +283,75 @@
         "TypeScript": "function reverse(x: number): number {\n  const sign = x < 0 ? -1 : 1;\n  const val = sign * Number(String(Math.abs(x)).split(\"\").reverse().join(\"\"));\n  return val < -2147483648 || val > 2147483647 ? 0 : val;\n}",
         "C#": "using System;\n\npublic class Solution {\n    public int Reverse(int x) {\n        long sign = x < 0 ? -1 : 1;\n        char[] arr = Math.Abs((long)x).ToString().ToCharArray();\n        Array.Reverse(arr);\n        long val = sign * long.Parse(new string(arr));\n        return (val < int.MinValue || val > int.MaxValue) ? 0 : (int)val;\n    }\n}",
         "PHP": "class Solution {\n    function reverse($x) {\n        $sign = $x < 0 ? -1 : 1;\n        $val = $sign * intval(strrev((string)abs($x)));\n        return ($val < -2147483648 || $val > 2147483647) ? 0 : $val;\n    }\n}"
+      },
+      "diagramNote": "Separates '-', reverses digit characters ['4','2','0'] -> \"024\", parses 24, and reapplies sign.",
+      "diagram": {
+        "type": "array",
+        "items": [
+          {
+            "index": 0,
+            "value": "0",
+            "state": "skip",
+            "label": "drops on parse"
+          },
+          {
+            "index": 1,
+            "value": "2",
+            "state": "match"
+          },
+          {
+            "index": 2,
+            "value": "4",
+            "state": "match"
+          }
+        ],
+        "aux": {
+          "title": "String Parse",
+          "entries": [
+            {
+              "key": "sign",
+              "value": -1
+            },
+            {
+              "key": "parsed",
+              "value": -24,
+              "highlight": true
+            }
+          ]
+        },
+        "caption": "Checks [-2^31, 2^31 - 1] before returning."
       }
     }
   ],
   "tests": [
-    { "name": "Example 1", "args": [-420], "expected": -24 },
-    { "name": "Example 2 (overflow)", "args": [1534236469], "expected": 0 },
-    { "name": "Zero", "args": [0], "expected": 0 },
-    { "name": "Negative overflow", "args": [-2147483648], "expected": 0 }
+    {
+      "name": "Example 1",
+      "args": [
+        -420
+      ],
+      "expected": -24
+    },
+    {
+      "name": "Example 2 (overflow)",
+      "args": [
+        1534236469
+      ],
+      "expected": 0
+    },
+    {
+      "name": "Zero",
+      "args": [
+        0
+      ],
+      "expected": 0
+    },
+    {
+      "name": "Negative overflow",
+      "args": [
+        -2147483648
+      ],
+      "expected": 0
+    }
   ],
   "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (s.reverse(-420) != -24) throw new AssertionError();\n    if (s.reverse(1534236469) != 0) throw new AssertionError();\n    if (s.reverse(0) != 0) throw new AssertionError();\n    if (s.reverse(-2147483648) != 0) throw new AssertionError();\n  }\n}",
   "phpDriver": "$s = new Solution();\nif ($s->reverse(-420) !== -24) exit(1);\nif ($s->reverse(1534236469) !== 0) exit(1);\nif ($s->reverse(0) !== 0) exit(1);\nif ($s->reverse(-2147483648) !== 0) exit(1);",

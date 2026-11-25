@@ -178,11 +178,11 @@ button { cursor: pointer; }
   position: relative;
   display: flex;
   align-items: center;
-  width: 260px;
+  width: 270px;
 }
 .header-search input {
   width: 100%;
-  padding: 8px 50px 8px 36px;
+  padding: 8px 64px 8px 36px;
   border-radius: 999px;
   border: 1px solid var(--border);
   background: var(--surface);
@@ -739,12 +739,29 @@ button { cursor: pointer; }
 .cell-box.state-skip { opacity: 0.5; }
 .cell-index { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
 .cell-label { font-size: 0.7rem; color: var(--text-secondary); font-weight: 650; }
+.state-marker {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.dryrun-kbd-hint {
+  font-size: 0.76rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
 .ll-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .ll-arrow { font-family: var(--font-mono); font-weight: 800; color: var(--muted); }
 .grid-table { border-collapse: collapse; margin: 6px 0; }
 .grid-table td { width: 40px; height: 40px; text-align: center; font-family: var(--font-mono); font-weight: 700; border: 1px solid var(--border-strong); background: var(--surface); }
 .grid-table td.state-active { background: var(--accent-soft); border-color: var(--accent); }
 .grid-table td.state-match { background: var(--gold-soft); border-color: var(--gold); }
+.svg-diagram { width: 100%; max-width: 560px; height: auto; display: block; }
 .aux-panel { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-strong); }
 .aux-title { font-size: 0.73rem; font-weight: 750; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
 .aux-entries { display: flex; flex-wrap: wrap; gap: 6px; }

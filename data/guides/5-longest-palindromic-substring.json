@@ -3,13 +3,25 @@
   "slug": "longest-palindromic-substring",
   "title": "Longest Palindromic Substring",
   "difficulty": "Medium",
-  "topics": ["Two Pointers", "String", "Dynamic Programming"],
+  "topics": [
+    "Two Pointers",
+    "String",
+    "Dynamic Programming"
+  ],
   "access": "Free",
   "url": "https://leetcode.com/problems/longest-palindromic-substring/",
   "jsFunctionName": "longestPalindrome",
   "pyMethodName": "longestPalindrome",
   "verification": {
-    "verifiedLanguages": ["Java", "Python3", "Python", "JavaScript", "TypeScript", "C#", "PHP"],
+    "verifiedLanguages": [
+      "Java",
+      "Python3",
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "C#",
+      "PHP"
+    ],
     "untestedLanguages": []
   },
   "understand": {
@@ -39,15 +51,42 @@
       "diagram": {
         "type": "two-pointers",
         "items": [
-          { "index": 0, "value": "x", "state": "skip" },
-          { "index": 1, "value": "a", "state": "match" },
-          { "index": 2, "value": "b", "state": "match", "label": "center" },
-          { "index": 3, "value": "a", "state": "match" },
-          { "index": 4, "value": "y", "state": "skip" }
+          {
+            "index": 0,
+            "value": "x",
+            "state": "skip"
+          },
+          {
+            "index": 1,
+            "value": "a",
+            "state": "match"
+          },
+          {
+            "index": 2,
+            "value": "b",
+            "state": "match",
+            "label": "center"
+          },
+          {
+            "index": 3,
+            "value": "a",
+            "state": "match"
+          },
+          {
+            "index": 4,
+            "value": "y",
+            "state": "skip"
+          }
         ],
         "pointers": [
-          { "index": 1, "name": "L" },
-          { "index": 3, "name": "R" }
+          {
+            "index": 1,
+            "name": "L"
+          },
+          {
+            "index": 3,
+            "name": "R"
+          }
         ],
         "caption": "\"aba\" mirrors cleanly around index 2."
       }
@@ -68,14 +107,47 @@
         "state": {
           "type": "two-pointers",
           "items": [
-            { "index": 0, "value": "x", "state": "active" },
-            { "index": 1, "value": "a", "state": "default" },
-            { "index": 2, "value": "b", "state": "default" },
-            { "index": 3, "value": "a", "state": "default" },
-            { "index": 4, "value": "y", "state": "default" }
+            {
+              "index": 0,
+              "value": "x",
+              "state": "active"
+            },
+            {
+              "index": 1,
+              "value": "a",
+              "state": "default"
+            },
+            {
+              "index": 2,
+              "value": "b",
+              "state": "default"
+            },
+            {
+              "index": 3,
+              "value": "a",
+              "state": "default"
+            },
+            {
+              "index": 4,
+              "value": "y",
+              "state": "default"
+            }
           ],
-          "pointers": [{ "index": 0, "name": "L=R" }],
-          "aux": { "title": "Best Slice", "entries": [{ "key": "best", "value": "\"x\" (len 1)" }] },
+          "pointers": [
+            {
+              "index": 0,
+              "name": "L=R"
+            }
+          ],
+          "aux": {
+            "title": "Best Slice",
+            "entries": [
+              {
+                "key": "best",
+                "value": "\"x\" (len 1)"
+              }
+            ]
+          },
           "caption": "Center 0 gives length 1."
         }
       },
@@ -85,17 +157,52 @@
         "state": {
           "type": "two-pointers",
           "items": [
-            { "index": 0, "value": "x", "state": "skip" },
-            { "index": 1, "value": "a", "state": "match" },
-            { "index": 2, "value": "b", "state": "match" },
-            { "index": 3, "value": "a", "state": "match" },
-            { "index": 4, "value": "y", "state": "skip" }
+            {
+              "index": 0,
+              "value": "x",
+              "state": "skip"
+            },
+            {
+              "index": 1,
+              "value": "a",
+              "state": "match"
+            },
+            {
+              "index": 2,
+              "value": "b",
+              "state": "match"
+            },
+            {
+              "index": 3,
+              "value": "a",
+              "state": "match"
+            },
+            {
+              "index": 4,
+              "value": "y",
+              "state": "skip"
+            }
           ],
           "pointers": [
-            { "index": 1, "name": "L" },
-            { "index": 3, "name": "R" }
+            {
+              "index": 1,
+              "name": "L"
+            },
+            {
+              "index": 3,
+              "name": "R"
+            }
           ],
-          "aux": { "title": "Best Slice", "entries": [{ "key": "best", "value": "\"aba\" (len 3)", "highlight": true }] },
+          "aux": {
+            "title": "Best Slice",
+            "entries": [
+              {
+                "key": "best",
+                "value": "\"aba\" (len 3)",
+                "highlight": true
+              }
+            ]
+          },
           "caption": "Found length-3 palindrome \"aba\"!"
         }
       },
@@ -105,17 +212,52 @@
         "state": {
           "type": "two-pointers",
           "items": [
-            { "index": 0, "value": "x", "state": "default" },
-            { "index": 1, "value": "a", "state": "match" },
-            { "index": 2, "value": "b", "state": "match" },
-            { "index": 3, "value": "a", "state": "match" },
-            { "index": 4, "value": "y", "state": "default" }
+            {
+              "index": 0,
+              "value": "x",
+              "state": "default"
+            },
+            {
+              "index": 1,
+              "value": "a",
+              "state": "match"
+            },
+            {
+              "index": 2,
+              "value": "b",
+              "state": "match"
+            },
+            {
+              "index": 3,
+              "value": "a",
+              "state": "match"
+            },
+            {
+              "index": 4,
+              "value": "y",
+              "state": "default"
+            }
           ],
           "pointers": [
-            { "index": 1, "name": "bestStart" },
-            { "index": 3, "name": "bestEnd" }
+            {
+              "index": 1,
+              "name": "bestStart"
+            },
+            {
+              "index": 3,
+              "name": "bestEnd"
+            }
           ],
-          "aux": { "title": "Final Result", "entries": [{ "key": "output", "value": "\"aba\"", "highlight": true }] },
+          "aux": {
+            "title": "Final Result",
+            "entries": [
+              {
+                "key": "output",
+                "value": "\"aba\"",
+                "highlight": true
+              }
+            ]
+          },
           "caption": "Final answer: \"aba\"."
         }
       }
@@ -149,6 +291,48 @@
         "TypeScript": "function longestPalindrome(s: string): string {\n  let bestStart = 0, bestLen = 1;\n  for (let i = 0; i < s.length; i++) {\n    for (let j = i + bestLen; j < s.length; j++) {\n      let l = i, r = j, ok = true;\n      while (l < r) if (s[l++] !== s[r--]) { ok = false; break; }\n      if (ok) { bestStart = i; bestLen = j - i + 1; }\n    }\n  }\n  return s.slice(bestStart, bestStart + bestLen);\n}",
         "C#": "public class Solution {\n    public string LongestPalindrome(string s) {\n        int bestStart = 0, bestLen = 1, n = s.Length;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + bestLen; j < n; j++) {\n                int l = i, r = j; bool ok = true;\n                while (l < r) if (s[l++] != s[r--]) { ok = false; break; }\n                if (ok) { bestStart = i; bestLen = j - i + 1; }\n            }\n        }\n        return s.Substring(bestStart, bestLen);\n    }\n}",
         "PHP": "class Solution {\n    function longestPalindrome($s) {\n        $bestStart = 0; $bestLen = 1; $n = strlen($s);\n        for ($i = 0; $i < $n; $i++) {\n            for ($j = $i + $bestLen; $j < $n; $j++) {\n                $l = $i; $r = $j; $ok = true;\n                while ($l < $r) { if ($s[$l++] !== $s[$r--]) { $ok = false; break; } }\n                if ($ok) { $bestStart = $i; $bestLen = $j - $i + 1; }\n            }\n        }\n        return substr($s, $bestStart, $bestLen);\n    }\n}"
+      },
+      "diagramNote": "Tests candidate slice [i..j] inward from endpoints L=i and R=j.",
+      "diagram": {
+        "type": "two-pointers",
+        "items": [
+          {
+            "index": 0,
+            "value": "x",
+            "state": "skip"
+          },
+          {
+            "index": 1,
+            "value": "a",
+            "state": "match"
+          },
+          {
+            "index": 2,
+            "value": "b",
+            "state": "match"
+          },
+          {
+            "index": 3,
+            "value": "a",
+            "state": "match"
+          },
+          {
+            "index": 4,
+            "value": "y",
+            "state": "skip"
+          }
+        ],
+        "pointers": [
+          {
+            "index": 1,
+            "name": "i"
+          },
+          {
+            "index": 3,
+            "name": "j"
+          }
+        ],
+        "caption": "Checks endpoints inward for each candidate pair (i, j)."
       }
     },
     {
@@ -178,6 +362,109 @@
         "TypeScript": "function longestPalindrome(s: string): string {\n  const n = s.length;\n  const dp = Array.from({ length: n }, () => new Uint8Array(n));\n  let start = 0, maxLen = 1;\n  for (let i = n - 1; i >= 0; i--) {\n    for (let j = i; j < n; j++) {\n      if (s[i] === s[j] && (j - i <= 2 || dp[i + 1][j - 1])) {\n        dp[i][j] = 1;\n        if (j - i + 1 > maxLen) { start = i; maxLen = j - i + 1; }\n      }\n    }\n  }\n  return s.slice(start, start + maxLen);\n}",
         "C#": "public class Solution {\n    public string LongestPalindrome(string s) {\n        int n = s.Length, start = 0, maxLen = 1;\n        bool[,] dp = new bool[n, n];\n        for (int i = n - 1; i >= 0; i--) {\n            for (int j = i; j < n; j++) {\n                if (s[i] == s[j] && (j - i <= 2 || dp[i + 1, j - 1])) {\n                    dp[i, j] = true;\n                    if (j - i + 1 > maxLen) { start = i; maxLen = j - i + 1; }\n                }\n            }\n        }\n        return s.Substring(start, maxLen);\n    }\n}",
         "PHP": "class Solution {\n    function longestPalindrome($s) {\n        $n = strlen($s); $start = 0; $maxLen = 1;\n        $dp = array_fill(0, $n, array_fill(0, $n, false));\n        for ($i = $n - 1; $i >= 0; $i--) {\n            for ($j = $i; $j < $n; $j++) {\n                if ($s[$i] === $s[$j] && ($j - $i <= 2 || $dp[$i + 1][$j - 1])) {\n                    $dp[$i][$j] = true;\n                    if ($j - $i + 1 > $maxLen) { $start = $i; $maxLen = $j - $i + 1; }\n                }\n            }\n        }\n        return substr($s, $start, $maxLen);\n    }\n}"
+      },
+      "diagramNote": "Grid cell dp[i][j] is true when s[i] == s[j] and interior cell dp[i+1][j-1] is already true.",
+      "diagram": {
+        "type": "grid",
+        "rows": [
+          [
+            {
+              "value": "T"
+            },
+            {
+              "value": "F"
+            },
+            {
+              "value": "F"
+            },
+            {
+              "value": "F"
+            },
+            {
+              "value": "F"
+            }
+          ],
+          [
+            {
+              "value": "."
+            },
+            {
+              "value": "T",
+              "state": "window"
+            },
+            {
+              "value": "F"
+            },
+            {
+              "value": "T",
+              "state": "match"
+            },
+            {
+              "value": "F"
+            }
+          ],
+          [
+            {
+              "value": "."
+            },
+            {
+              "value": "."
+            },
+            {
+              "value": "T",
+              "state": "active"
+            },
+            {
+              "value": "F"
+            },
+            {
+              "value": "F"
+            }
+          ],
+          [
+            {
+              "value": "."
+            },
+            {
+              "value": "."
+            },
+            {
+              "value": "."
+            },
+            {
+              "value": "T",
+              "state": "window"
+            },
+            {
+              "value": "F"
+            }
+          ],
+          [
+            {
+              "value": "."
+            },
+            {
+              "value": "."
+            },
+            {
+              "value": "."
+            },
+            {
+              "value": "."
+            },
+            {
+              "value": "T"
+            }
+          ]
+        ],
+        "pointers": [
+          {
+            "r": 1,
+            "c": 3,
+            "name": "aba"
+          }
+        ],
+        "caption": "dp[1][3] = true because s[1]==s[3] ('a') and dp[2][2] is true."
       }
     },
     {
@@ -237,14 +524,101 @@
         "TypeScript": "function longestPalindrome(s: string): string {\n  const t = \"^#\" + s.split(\"\").join(\"#\") + \"#$\";\n  const p = new Int32Array(t.length);\n  let c = 0, r = 0, bestLen = 0, bestCenter = 0;\n  for (let i = 1; i < t.length - 1; i++) {\n    if (i < r) p[i] = Math.min(r - i, p[2 * c - i]);\n    while (t[i + 1 + p[i]] === t[i - 1 - p[i]]) p[i]++;\n    if (i + p[i] > r) { c = i; r = i + p[i]; }\n    if (p[i] > bestLen) { bestLen = p[i]; bestCenter = i; }\n  }\n  const start = Math.floor((bestCenter - bestLen) / 2);\n  return s.slice(start, start + bestLen);\n}",
         "C#": "using System;\nusing System.Text;\n\npublic class Solution {\n    public string LongestPalindrome(string s) {\n        var sb = new StringBuilder(\"^\");\n        for (int i = 0; i < s.Length; i++) { sb.Append('#'); sb.Append(s[i]); }\n        sb.Append(\"#$\");\n        string t = sb.ToString();\n        int[] p = new int[t.Length];\n        int c = 0, r = 0, bestLen = 0, bestCenter = 0;\n        for (int i = 1; i < t.Length - 1; i++) {\n            if (i < r) p[i] = Math.Min(r - i, p[2 * c - i]);\n            while (t[i + 1 + p[i]] == t[i - 1 - p[i]]) p[i]++;\n            if (i + p[i] > r) { c = i; r = i + p[i]; }\n            if (p[i] > bestLen) { bestLen = p[i]; bestCenter = i; }\n        }\n        int start = (bestCenter - bestLen) / 2;\n        return s.Substring(start, bestLen);\n    }\n}",
         "PHP": "class Solution {\n    function longestPalindrome($s) {\n        $t = \"^#\" . implode(\"#\", str_split($s)) . \"#$\";\n        $n = strlen($t);\n        $p = array_fill(0, $n, 0);\n        $c = 0; $r = 0; $bestLen = 0; $bestCenter = 0;\n        for ($i = 1; $i < $n - 1; $i++) {\n            if ($i < $r) $p[$i] = min($r - $i, $p[2 * $c - $i]);\n            while ($t[$i + 1 + $p[$i]] === $t[$i - 1 - $p[$i]]) $p[$i]++;\n            if ($i + $p[$i] > $r) { $c = $i; $r = $i + $p[$i]; }\n            if ($p[$i] > $bestLen) { $bestLen = $p[$i]; $bestCenter = $i; }\n        }\n        $start = intdiv($bestCenter - $bestLen, 2);\n        return substr($s, $start, $bestLen);\n    }\n}"
+      },
+      "diagramNote": "Inserts '#' separators so odd/even palindromes unify into centered radii p[i].",
+      "diagram": {
+        "type": "array",
+        "items": [
+          {
+            "index": 0,
+            "value": "#",
+            "state": "skip"
+          },
+          {
+            "index": 1,
+            "value": "x",
+            "state": "skip"
+          },
+          {
+            "index": 2,
+            "value": "#",
+            "state": "match"
+          },
+          {
+            "index": 3,
+            "value": "a",
+            "state": "match"
+          },
+          {
+            "index": 4,
+            "value": "#",
+            "state": "match"
+          },
+          {
+            "index": 5,
+            "value": "b",
+            "state": "active",
+            "label": "C, p=3"
+          },
+          {
+            "index": 6,
+            "value": "#",
+            "state": "match"
+          },
+          {
+            "index": 7,
+            "value": "a",
+            "state": "match"
+          },
+          {
+            "index": 8,
+            "value": "#",
+            "state": "match"
+          }
+        ],
+        "pointers": [
+          {
+            "index": 5,
+            "name": "C"
+          },
+          {
+            "index": 8,
+            "name": "R"
+          }
+        ],
+        "caption": "Radius p[5] = 3 corresponds directly to length-3 substring \"aba\"."
       }
     }
   ],
   "tests": [
-    { "name": "Example 1", "args": ["xabay"], "expected": "aba" },
-    { "name": "Example 2 (even)", "args": ["noon"], "expected": "noon" },
-    { "name": "Single char", "args": ["q"], "expected": "q" },
-    { "name": "All equal", "args": ["aaaa"], "expected": "aaaa" }
+    {
+      "name": "Example 1",
+      "args": [
+        "xabay"
+      ],
+      "expected": "aba"
+    },
+    {
+      "name": "Example 2 (even)",
+      "args": [
+        "noon"
+      ],
+      "expected": "noon"
+    },
+    {
+      "name": "Single char",
+      "args": [
+        "q"
+      ],
+      "expected": "q"
+    },
+    {
+      "name": "All equal",
+      "args": [
+        "aaaa"
+      ],
+      "expected": "aaaa"
+    }
   ],
   "javaDriver": "public class Main {\n  public static void main(String[] args) {\n    Solution s = new Solution();\n    if (!s.longestPalindrome(\"xabay\").equals(\"aba\")) throw new AssertionError(\"Ex1\");\n    if (!s.longestPalindrome(\"noon\").equals(\"noon\")) throw new AssertionError(\"Ex2\");\n    if (!s.longestPalindrome(\"q\").equals(\"q\")) throw new AssertionError(\"One\");\n    if (!s.longestPalindrome(\"aaaa\").equals(\"aaaa\")) throw new AssertionError(\"All\");\n  }\n}",
   "phpDriver": "$s = new Solution();\nif ($s->longestPalindrome(\"xabay\") !== \"aba\") exit(1);\nif ($s->longestPalindrome(\"noon\") !== \"noon\") exit(1);\nif ($s->longestPalindrome(\"q\") !== \"q\") exit(1);\nif ($s->longestPalindrome(\"aaaa\") !== \"aaaa\") exit(1);",
