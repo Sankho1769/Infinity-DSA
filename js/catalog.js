@@ -1,5 +1,5 @@
 /**
- * Homepage catalog loader, search, multi-facet filtering, and pagination for Infinity DSA.
+ * Homepage catalog loader, search, multi-facet filtering, sorting, and pagination.
  */
 (function () {
   const PAGE_SIZE = 48;
@@ -14,6 +14,7 @@
     language: "all",
     status: "all",
     access: "all",
+    sort: "number-asc",
     page: 1,
   };
 
@@ -24,20 +25,22 @@
     els.statCompleted = document.getElementById("statCompleted");
     els.statPending = document.getElementById("statPending");
     els.statLanguages = document.getElementById("statLanguages");
-    els.featuredSection = document.getElementById("featuredSection");
+    els.heroProvenanceTag = document.getElementById("heroProvenanceTag");
     els.featuredGrid = document.getElementById("featuredGrid");
     els.filterAvailableBtn = document.getElementById("filterAvailableBtn");
+    els.headerSearchInput = document.getElementById("headerSearchInput");
     els.searchInput = document.getElementById("searchInput");
-    els.difficultyFilter = document.getElementById("difficultyFilter");
     els.topicFilter = document.getElementById("topicFilter");
     els.languageFilter = document.getElementById("languageFilter");
     els.statusFilter = document.getElementById("statusFilter");
     els.accessFilter = document.getElementById("accessFilter");
+    els.sortSelect = document.getElementById("sortSelect");
     els.resetFiltersBtn = document.getElementById("resetFiltersBtn");
     els.resultsCount = document.getElementById("resultsCount");
     els.catalogProvenance = document.getElementById("catalogProvenance");
-    els.catalogList = document.getElementById("catalogList");
+    els.catalogBody = document.getElementById("catalogBody");
     els.pagination = document.getElementById("pagination");
+    els.diffButtons = Array.from(document.querySelectorAll("[data-diff]"));
   }
 
   function readQueryParams() {
@@ -48,17 +51,22 @@
     state.language = params.get("lang") || "all";
     state.status = params.get("status") || "all";
     state.access = params.get("access") || "all";
+    state.sort = params.get("sort") || "number-asc";
     const parsedPage = parseInt(params.get("page") || "1", 10);
     state.page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   }
 
   function syncControlsFromState() {
     els.searchInput.value = state.q;
-    els.difficultyFilter.value = state.difficulty;
+    if (els.headerSearchInput) els.headerSearchInput.value = state.q;
     els.topicFilter.value = state.topic;
     els.languageFilter.value = state.language;
     els.statusFilter.value = state.status;
     els.accessFilter.value = state.access;
+    els.sortSelect.value = state.sort;
+    els.diffButtons.forEach((btn) => {
+      btn.classList.toggle("active", btn.getAttribute("data-diff") === state.difficulty);
+    });
   }
 
   function writeQueryParams() {
@@ -69,6 +77,7 @@
     if (state.language !== "all") params.set("lang", state.language);
     if (state.status !== "all") params.set("status", state.status);
     if (state.access !== "all") params.set("access", state.access);
+    if (state.sort !== "number-asc") params.set("sort", state.sort);
     if (state.page > 1) params.set("page", String(state.page));
     const qs = params.toString();
     const nextUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
@@ -107,20 +116,12 @@
 
     const langFrag = document.createDocumentFragment();
     const coveredLangs = meta.availableLanguages || [];
-    if (coveredLangs.length === 0) {
+    coveredLangs.forEach((lang) => {
       const opt = document.createElement("option");
-      opt.value = "__none__";
-      opt.textContent = "No code added yet";
-      opt.disabled = true;
+      opt.value = lang;
+      opt.textContent = lang;
       langFrag.appendChild(opt);
-    } else {
-      coveredLangs.forEach((lang) => {
-        const opt = document.createElement("option");
-        opt.value = lang;
-        opt.textContent = lang;
-        langFrag.appendChild(opt);
-      });
-    }
+    });
     els.languageFilter.appendChild(langFrag);
   }
 
@@ -134,23 +135,25 @@
     els.statLanguages.textContent = `${covCount} / ${totalLangs}`;
 
     if (meta.source) {
-      els.catalogProvenance.textContent = `Catalog snapshot: ${meta.source.name} (${meta.source.license}, checked ${meta.source.checkedDate})`;
+      if (els.heroProvenanceTag) {
+        els.heroProvenanceTag.textContent = `Snapshot ${meta.source.checkedDate} · ${meta.source.license}`;
+      }
+      els.catalogProvenance.textContent = `Source: ${meta.source.name} (${meta.source.license}, checked ${meta.source.checkedDate})`;
     }
 
     const completed = (data.problems || []).filter((p) => p.guideStatus === "available");
-    if (completed.length > 0) {
-      els.featuredSection.hidden = false;
+    if (els.featuredGrid) {
       els.featuredGrid.innerHTML = completed
         .slice(0, 12)
         .map(
           (p) => `
-          <a class="featured-card" href="${guideHref(p)}">
-            <div class="featured-top">
+          <a class="completed-mini" href="${guideHref(p)}">
+            <div class="sub-meta" style="justify-content:space-between;">
               <span class="problem-num">#${esc(p.number)}</span>
               <span class="badge ${difficultyBadgeClass(p.difficulty)}">${esc(p.difficulty)}</span>
             </div>
-            <div class="featured-title">${esc(p.title)}</div>
-            <div class="badge-row">
+            <strong style="font-size:0.9rem;">${esc(p.title)}</strong>
+            <div class="sub-meta">
               <span class="badge badge-available">Guide available</span>
               <span class="badge badge-unknown">${esc(p.languages.length)} langs</span>
             </div>
@@ -165,7 +168,7 @@
     const query = state.q.trim().toLowerCase();
     const numericQuery = query.replace(/^#/, "");
 
-    state.filtered = (state.catalog.problems || []).filter((p) => {
+    const filtered = (state.catalog.problems || []).filter((p) => {
       if (state.difficulty !== "all" && p.difficulty !== state.difficulty) return false;
       if (state.status !== "all" && p.guideStatus !== state.status) return false;
       if (state.access !== "all" && p.access !== state.access) return false;
@@ -182,6 +185,18 @@
       return true;
     });
 
+    if (state.sort === "number-desc") {
+      filtered.sort((a, b) => b.number - a.number);
+    } else if (state.sort === "guides-first") {
+      filtered.sort((a, b) => {
+        if (a.guideStatus !== b.guideStatus) return a.guideStatus === "available" ? -1 : 1;
+        return a.number - b.number;
+      });
+    } else {
+      filtered.sort((a, b) => a.number - b.number);
+    }
+
+    state.filtered = filtered;
     const totalPages = Math.max(1, Math.ceil(state.filtered.length / PAGE_SIZE));
     if (state.page > totalPages) state.page = totalPages;
 
@@ -201,16 +216,20 @@
         : `Showing ${startIdx + 1}–${Math.min(startIdx + slice.length, total)} of ${total.toLocaleString()} problems`;
 
     if (slice.length === 0) {
-      els.catalogList.innerHTML = `
-        <div class="empty-state">
-          <h3>No problems match these filters</h3>
-          <p>Try clearing the search query or switching back to all difficulties, topics, and languages.</p>
-        </div>`;
+      els.catalogBody.innerHTML = `
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <h3>No problems match these filters</h3>
+              <p>Try clearing your search or switching back to all difficulties, topics, and languages.</p>
+            </div>
+          </td>
+        </tr>`;
       els.pagination.innerHTML = "";
       return;
     }
 
-    els.catalogList.innerHTML = slice
+    els.catalogBody.innerHTML = slice
       .map((p) => {
         const isAvailable = p.guideStatus === "available";
         const guideBadge = isAvailable
@@ -220,41 +239,40 @@
         const topicButtons = (p.topics || ["unknown"])
           .map(
             (topic) =>
-              `<button type="button" class="topic-chip" data-topic-pick="${esc(topic)}" title="Filter by ${esc(topic)}">${esc(topic)}</button>`
+              `<button type="button" class="topic-chip" data-topic-pick="${esc(topic)}">${esc(topic)}</button>`
           )
           .join("");
 
-        const primaryAction = isAvailable
-          ? `<a class="btn btn-primary btn-sm" href="${guideHref(p)}">Read guide</a>`
-          : `<a class="btn btn-secondary btn-sm" href="${guideHref(p)}">Problem info</a>`;
+        const viewBtn = isAvailable
+          ? `<a class="btn btn-outline-green btn-sm" href="${guideHref(p)}">View Solution →</a>`
+          : `<a class="btn btn-secondary btn-sm" href="${guideHref(p)}">Pending Info →</a>`;
 
-        const officialAction =
+        const officialBtn =
           p.url && p.url !== "unknown"
-            ? `<a class="btn btn-secondary btn-sm" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">Official ↗</a>`
+            ? `<a class="btn btn-secondary btn-sm" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer" title="Official LeetCode statement">Official ↗</a>`
             : "";
 
         return `
-        <article class="problem-row">
-          <div class="problem-num">#${esc(p.number)}</div>
-          <div class="problem-main">
-            <a class="problem-title-link" href="${guideHref(p)}">${esc(p.title)}</a>
-            <div class="badge-row">
-              <span class="badge ${difficultyBadgeClass(p.difficulty)}">${esc(p.difficulty)}</span>
-              <span class="badge ${accessBadgeClass(p.access)}">${esc(p.access)}</span>
-              ${guideBadge}
-              ${
-                p.languages && p.languages.length > 0
-                  ? `<span class="badge badge-unknown">${esc(p.languages.length)} langs</span>`
-                  : ""
-              }
+        <tr>
+          <td><span class="problem-num">${esc(p.number)}</span></td>
+          <td>
+            <div class="problem-title-cell">
+              <a class="problem-title-link" href="${guideHref(p)}">${esc(p.title)}</a>
+              <div class="sub-meta">
+                <span class="badge ${accessBadgeClass(p.access)}">${esc(p.access)}</span>
+                ${
+                  p.languages && p.languages.length > 0
+                    ? `<span class="badge badge-unknown">${esc(p.languages.length)} langs</span>`
+                    : ""
+                }
+              </div>
             </div>
-          </div>
-          <div class="topic-list">${topicButtons}</div>
-          <div class="row-actions">
-            ${primaryAction}
-            ${officialAction}
-          </div>
-        </article>`;
+          </td>
+          <td><div class="topic-list">${topicButtons}</div></td>
+          <td><span class="badge ${difficultyBadgeClass(p.difficulty)}">${esc(p.difficulty)}</span></td>
+          <td>${guideBadge}</td>
+          <td><div class="sub-meta">${viewBtn}${officialBtn}</div></td>
+        </tr>`;
       })
       .join("");
 
@@ -266,7 +284,6 @@
       els.pagination.innerHTML = "";
       return;
     }
-
     const pages = new Set([1, totalPages, state.page - 1, state.page, state.page + 1]);
     const sorted = Array.from(pages)
       .filter((n) => n >= 1 && n <= totalPages)
@@ -297,20 +314,40 @@
 
   function bindEvents() {
     let searchTimer = null;
-    els.searchInput.addEventListener("input", () => {
+    const onSearchInput = (val) => {
+      state.q = val;
+      if (els.searchInput.value !== val) els.searchInput.value = val;
+      if (els.headerSearchInput && els.headerSearchInput.value !== val) els.headerSearchInput.value = val;
       window.clearTimeout(searchTimer);
-      searchTimer = window.setTimeout(() => {
-        state.q = els.searchInput.value;
+      searchTimer = window.setTimeout(() => applyFilters(true), 120);
+    };
+
+    els.searchInput.addEventListener("input", () => onSearchInput(els.searchInput.value));
+    if (els.headerSearchInput) {
+      els.headerSearchInput.addEventListener("input", () => onSearchInput(els.headerSearchInput.value));
+    }
+
+    document.addEventListener("keydown", (ev) => {
+      if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === "k") {
+        ev.preventDefault();
+        (els.headerSearchInput || els.searchInput).focus();
+      }
+    });
+
+    els.diffButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.difficulty = btn.getAttribute("data-diff") || "all";
+        syncControlsFromState();
         applyFilters(true);
-      }, 120);
+      });
     });
 
     [
-      [els.difficultyFilter, "difficulty"],
       [els.topicFilter, "topic"],
       [els.languageFilter, "language"],
       [els.statusFilter, "status"],
       [els.accessFilter, "access"],
+      [els.sortSelect, "sort"],
     ].forEach(([el, key]) => {
       el.addEventListener("change", () => {
         state[key] = el.value;
@@ -325,6 +362,7 @@
       state.language = "all";
       state.status = "all";
       state.access = "all";
+      state.sort = "number-asc";
       state.page = 1;
       syncControlsFromState();
       applyFilters(true);
@@ -339,7 +377,7 @@
       });
     }
 
-    els.catalogList.addEventListener("click", (ev) => {
+    els.catalogBody.addEventListener("click", (ev) => {
       const chip = ev.target.closest("[data-topic-pick]");
       if (!chip) return;
       state.topic = chip.getAttribute("data-topic-pick") || "all";
@@ -374,12 +412,14 @@
       applyFilters(false);
     } catch (err) {
       els.resultsCount.textContent = "Failed to load catalog.";
-      els.catalogList.innerHTML = `
-        <div class="empty-state">
-          <h3>Could not load data/catalog.json</h3>
-          <p>Serve this directory over HTTP (for example <code>python -m http.server 8000</code>) and reload the page.</p>
-          <p>${esc(err.message)}</p>
-        </div>`;
+      els.catalogBody.innerHTML = `
+        <tr><td colspan="6">
+          <div class="empty-state">
+            <h3>Could not load data/catalog.json</h3>
+            <p>Serve this directory over HTTP (for example <code>python -m http.server 8000</code>).</p>
+            <p>${esc(err.message)}</p>
+          </div>
+        </td></tr>`;
     }
   }
 

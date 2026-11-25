@@ -6,7 +6,7 @@
   <title>Problem Guide — Infinity DSA | LeetCode Solutions by InfinityDevLog</title>
   <meta name="description" content="Interactive LeetCode problem guide on Infinity DSA by InfinityDevLog — plain-language intuition, diagrams, dry runs, approach comparisons, and multi-language solutions.">
   <meta name="author" content="InfinityDevLog">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2.4'%3E%3Cpath d='M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.74-8z'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23146c43' stroke-width='2.4'%3E%3Cpath d='M8 8l-4 4 4 4M16 8l4 4-4 4M13 6l-2 12'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/theme.js"></script>
 </head>
@@ -14,11 +14,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="index.html" aria-label="Infinity DSA Home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.74-8z"></path>
-          </svg>
-        </span>
+        <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
         <span class="brand-text">
           <span class="brand-title-row">
             <span class="brand-name">Infinity DSA</span>
@@ -28,11 +24,26 @@
         </span>
       </a>
 
-      <div class="header-actions">
-        <a class="nav-link" href="index.html">All Problems</a>
-        <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle light or dark mode" aria-pressed="false">
-          <span data-theme-icon aria-hidden="true">☾</span>
-          <span data-theme-label>Dark mode</span>
+      <nav class="nav-pills" aria-label="Primary">
+        <a class="nav-pill active" href="index.html#catalog">Problems</a>
+        <a class="nav-pill" href="index.html#topics">Topics</a>
+        <a class="nav-pill" href="index.html#roadmap">Roadmap</a>
+      </nav>
+
+      <div class="header-right">
+        <form class="header-search" action="index.html" method="get">
+          <span class="search-ico" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+          </span>
+          <input name="q" type="search" placeholder="Search problems, topics…" aria-label="Search catalog">
+          <span class="kbd-hint">⌘K</span>
+        </form>
+        <button id="themeToggle" class="theme-pill" type="button" aria-label="Toggle light or dark mode" aria-pressed="false">
+          <span class="sun-slot" aria-hidden="true">☀</span>
+          <span class="moon-slot" aria-hidden="true">☾</span>
         </button>
       </div>
     </div>

@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Infinity DSA — LeetCode Solutions by InfinityDevLog</title>
-  <meta name="description" content="Infinity DSA by InfinityDevLog — A free library of LeetCode Solutions, visual algorithm dry runs, approach comparisons, and multi-language code guides.">
+  <meta name="description" content="Infinity DSA by InfinityDevLog — LeetCode Solutions featuring intuitive explanations, visual dry runs, approach comparisons, and multi-language code.">
   <meta name="author" content="InfinityDevLog">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2.4'%3E%3Cpath d='M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.74-8z'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23146c43' stroke-width='2.4'%3E%3Cpath d='M8 8l-4 4 4 4M16 8l4 4-4 4M13 6l-2 12'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/theme.js"></script>
 </head>
@@ -14,11 +14,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="index.html" aria-label="Infinity DSA Home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.74-8z"></path>
-          </svg>
-        </span>
+        <span class="brand-mark" aria-hidden="true">&lt;/&gt;</span>
         <span class="brand-text">
           <span class="brand-title-row">
             <span class="brand-name">Infinity DSA</span>
@@ -28,12 +24,26 @@
         </span>
       </a>
 
-      <div class="header-actions">
-        <a class="nav-link" href="#catalog">Catalog</a>
-        <a class="nav-link" href="problem.html?slug=two-sum">Start with #1</a>
-        <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle light or dark mode" aria-pressed="false">
-          <span data-theme-icon aria-hidden="true">☾</span>
-          <span data-theme-label>Dark mode</span>
+      <nav class="nav-pills" aria-label="Primary">
+        <a class="nav-pill active" href="#catalog" id="navProblems">Problems</a>
+        <a class="nav-pill" href="#topics" id="navTopics">Topics</a>
+        <a class="nav-pill" href="#roadmap" id="navRoadmap">Roadmap</a>
+      </nav>
+
+      <div class="header-right">
+        <div class="header-search">
+          <span class="search-ico" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+          </span>
+          <input id="headerSearchInput" type="search" placeholder="Search problems…" aria-label="Quick search problems">
+          <span class="kbd-hint">⌘K</span>
+        </div>
+        <button id="themeToggle" class="theme-pill" type="button" aria-label="Toggle light or dark mode" aria-pressed="false">
+          <span class="sun-slot" aria-hidden="true">☀</span>
+          <span class="moon-slot" aria-hidden="true">☾</span>
         </button>
       </div>
     </div>
@@ -41,115 +51,151 @@
 
   <main class="main-content">
     <div class="container">
-      <section class="hero" aria-label="Library overview">
-        <div>
-          <span class="hero-eyebrow">LeetCode Solutions · Free Interactive Library</span>
-          <h1>Understand the intuition before touching the code.</h1>
+      <section class="hero-banner" aria-label="Infinity DSA overview">
+        <svg class="hero-waves" viewBox="0 0 1200 320" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0,250 C220,160 420,300 680,210 C920,130 1050,240 1200,180 L1200,320 L0,320 Z" fill="rgba(20,108,67,0.12)"></path>
+          <path d="M0,275 C260,210 470,315 740,245 C960,188 1090,265 1200,220 L1200,320 L0,320 Z" fill="rgba(25,135,84,0.15)"></path>
+          <path d="M0,240 C240,175 430,285 710,200 C940,130 1080,225 1200,175" fill="none" stroke="rgba(217,155,22,0.55)" stroke-width="2.5"></path>
+        </svg>
+
+        <div class="hero-left">
+          <div class="hero-badge-row">
+            <span class="hero-tag">Infinity DSA · LeetCode Solutions</span>
+            <span class="hero-tag" id="heroProvenanceTag">MIT Catalog Snapshot</span>
+          </div>
+          <h1>Master problem patterns with intuition before code.</h1>
           <p>
-            Infinity DSA by InfinityDevLog indexes the full LeetCode catalog and pairs completed problems with plain-language explanations, labeled diagrams, step-by-step interactive dry runs, approach trade-offs, and verified multi-language implementations.
+            Created by InfinityDevLog — explore the full indexed LeetCode library with plain-language explanations, labeled diagrams, interactive dry runs, approach comparisons, and multi-language solutions.
           </p>
+          <div class="hero-metrics">
+            <div class="metric-pill">
+              <strong id="statTotal">—</strong>
+              <span>Indexed Problems</span>
+            </div>
+            <div class="metric-pill">
+              <strong id="statCompleted">—</strong>
+              <span>Completed Guides</span>
+            </div>
+            <div class="metric-pill">
+              <strong id="statPending">—</strong>
+              <span>Guide Pending</span>
+            </div>
+            <div class="metric-pill">
+              <strong id="statLanguages">—</strong>
+              <span>Languages Covered</span>
+            </div>
+          </div>
         </div>
-        <div class="stats-grid" id="statsGrid">
-          <div class="stat-card">
-            <span class="stat-value" id="statTotal">—</span>
-            <span class="stat-label">Indexed Problems</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value" id="statCompleted">—</span>
-            <span class="stat-label">Completed Guides</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value" id="statPending">—</span>
-            <span class="stat-label">Guide Pending</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-value" id="statLanguages">—</span>
-            <span class="stat-label">Languages Covered</span>
+
+        <div class="hero-right">
+          <div class="hero-preview">
+            <div class="preview-bar">
+              <span class="dots"><i style="background:#ef4444"></i><i style="background:#f59e0b"></i><i style="background:#22c55e"></i></span>
+              <span>#1 Two Sum · Interactive Preview</span>
+              <a href="problem.html?slug=two-sum" style="color:#4ade80;font-weight:700;">Open Guide →</a>
+            </div>
+            <div class="preview-body">
+              <pre class="preview-code">def twoSum(nums, target):
+  seen = {}
+  for i, num in enumerate(nums):
+    need = target - num
+    if need in seen:
+      return [seen[need], i]
+    seen[num] = i</pre>
+              <div class="preview-exec">
+                <span class="exec-ok">✓ Dry Run: Step 4 / 4</span>
+                <span style="color:#94a3b8;">One-Pass Hash Map · O(n)</span>
+                <div class="exec-cells">
+                  <span class="exec-cell">4</span>
+                  <span class="exec-cell hit">9</span>
+                  <span class="exec-cell hit">1</span>
+                  <span class="exec-cell">7</span>
+                </div>
+                <span style="color:#cbd5e1;">Target: 10 → [1, 2]</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="featured-section" id="featuredSection" hidden>
-        <div class="section-header">
-          <h2>Completed Interactive Guides</h2>
-          <button type="button" class="btn btn-secondary btn-sm" id="filterAvailableBtn">Show only completed guides</button>
+      <section id="roadmap" aria-label="Completed Interactive Guides" style="margin-bottom:20px;">
+        <div class="hero-badge-row" style="justify-content:space-between;">
+          <h2 style="margin:0;font-size:1.08rem;">Completed Interactive Guides (Roadmap Batch 1–3)</h2>
+          <button type="button" class="btn btn-outline-green btn-sm" id="filterAvailableBtn">Filter to Completed Guides</button>
         </div>
-        <div class="featured-grid" id="featuredGrid"></div>
+        <div class="completed-strip" id="featuredGrid"></div>
       </section>
 
-      <section id="catalog" aria-label="Problem catalog">
-        <div class="toolbar">
-          <div class="search-row">
-            <div class="search-box">
-              <span class="search-icon" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <section id="catalog" class="catalog-panel" aria-label="Problem catalog">
+        <div class="catalog-toolbar">
+          <div class="toolbar-top">
+            <div class="diff-tabs" role="group" aria-label="Filter by difficulty">
+              <button type="button" class="seg-btn active" data-diff="all">All Problems</button>
+              <button type="button" class="seg-btn" data-diff="Easy">Easy</button>
+              <button type="button" class="seg-btn" data-diff="Medium">Medium</button>
+              <button type="button" class="seg-btn" data-diff="Hard">Hard</button>
+            </div>
+
+            <div class="dropdown-row">
+              <select id="topicFilter" aria-label="Filter by topic">
+                <option value="all">All Topics</option>
+              </select>
+              <select id="languageFilter" aria-label="Filter by code language">
+                <option value="all">All Languages</option>
+              </select>
+              <select id="statusFilter" aria-label="Filter by guide availability">
+                <option value="all">All Statuses</option>
+                <option value="available">Guide available</option>
+                <option value="pending">Guide pending</option>
+              </select>
+              <select id="accessFilter" aria-label="Filter by access status">
+                <option value="all">Free &amp; Premium</option>
+                <option value="Free">Free only</option>
+                <option value="Premium">Premium only</option>
+              </select>
+              <select id="sortSelect" aria-label="Sort problems">
+                <option value="number-asc">Sort: Problem Number ↑</option>
+                <option value="number-desc">Sort: Problem Number ↓</option>
+                <option value="guides-first">Sort: Guides First</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="search-strip" id="topics">
+            <div class="search-input-wrap">
+              <span class="search-ico" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                   <circle cx="11" cy="11" r="8"></circle>
                   <path d="m21 21-4.3-4.3"></path>
                 </svg>
               </span>
-              <input
-                id="searchInput"
-                type="search"
-                placeholder="Search by problem number (e.g. 53), title (e.g. Two Sum), or topic (e.g. Dynamic Programming)…"
-                aria-label="Search problems by number, title, or topic"
-              >
+              <input id="searchInput" type="search" placeholder="Search by problem number (e.g. 53), title (e.g. Two Sum), or topic (e.g. Dynamic Programming)…" aria-label="Search problems by number, title, or topic">
             </div>
-            <button type="button" id="resetFiltersBtn" class="btn btn-secondary">Reset filters</button>
-          </div>
-
-          <div class="filters-grid">
-            <div class="filter-field">
-              <label for="difficultyFilter">Difficulty</label>
-              <select id="difficultyFilter">
-                <option value="all">All difficulties</option>
-                <option value="Easy">Easy</option>
-                <option value="Medium">Medium</option>
-                <option value="Hard">Hard</option>
-                <option value="unknown">Unknown</option>
-              </select>
-            </div>
-
-            <div class="filter-field">
-              <label for="topicFilter">Topic</label>
-              <select id="topicFilter">
-                <option value="all">All topics</option>
-              </select>
-            </div>
-
-            <div class="filter-field">
-              <label for="languageFilter">Code Language</label>
-              <select id="languageFilter">
-                <option value="all">All languages</option>
-              </select>
-            </div>
-
-            <div class="filter-field">
-              <label for="statusFilter">Guide Availability</label>
-              <select id="statusFilter">
-                <option value="all">All entries</option>
-                <option value="available">Guide available</option>
-                <option value="pending">Guide pending</option>
-              </select>
-            </div>
-
-            <div class="filter-field">
-              <label for="accessFilter">Access Status</label>
-              <select id="accessFilter">
-                <option value="all">All (Free &amp; Premium)</option>
-                <option value="Free">Free</option>
-                <option value="Premium">Premium</option>
-                <option value="unknown">Unknown</option>
-              </select>
-            </div>
+            <button type="button" id="resetFiltersBtn" class="btn btn-secondary btn-sm">Reset filters</button>
           </div>
         </div>
 
-        <div class="results-meta">
+        <div class="results-bar">
           <span id="resultsCount">Loading problem catalog…</span>
           <span id="catalogProvenance"></span>
         </div>
 
-        <div id="catalogList" class="catalog-list"></div>
+        <div class="catalog-table-wrap">
+          <table class="catalog-table">
+            <thead>
+              <tr>
+                <th style="width:82px;">#</th>
+                <th>Title</th>
+                <th>Topic(s)</th>
+                <th style="width:120px;">Difficulty</th>
+                <th style="width:130px;">Status</th>
+                <th style="width:220px;">Solution</th>
+              </tr>
+            </thead>
+            <tbody id="catalogBody"></tbody>
+          </table>
+        </div>
+
         <div id="pagination" class="pagination"></div>
       </section>
     </div>
@@ -158,7 +204,7 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <span><strong>Infinity DSA</strong> by InfinityDevLog · LeetCode Solutions</span>
-      <span id="footerSourceNote">Original guides and visual dry runs. Official problem statements linked to LeetCode.</span>
+      <span>Original plain-language guides &amp; visual dry runs. Official problem statements linked to LeetCode.</span>
     </div>
   </footer>
 
